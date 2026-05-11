@@ -473,3 +473,39 @@ button[onclick*="remove"] {
 #modal-peca .form-header {
     margin-bottom: 30px !important;
 }
+
+/* Checklist de Entrada */
+.checklist-container { margin-top: 20px; padding: 15px; background: var(--bg-input); border-radius: 12px; }
+.checklist-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 10px; }
+.checklist-grid label { font-size: 0.85rem; color: var(--text-muted); cursor: pointer; display: flex; align-items: center; gap: 8px; }
+
+/* Quadro Kanban (Ideia 5) */
+.kanban-container {
+    display: flex;
+    gap: 20px;
+    overflow-x: auto;
+    padding-bottom: 20px;
+}
+.kanban-column {
+    background: var(--sidebar-bg);
+    min-width: 280px;
+    border-radius: 15px;
+    padding: 15px;
+    border: 1px solid var(--border-color);
+}
+.kanban-column h4 { 
+    text-align: center; 
+    margin-bottom: 15px; 
+    color: var(--primary-sunset); 
+    font-family: 'Forum';
+    border-bottom: 1px solid var(--primary-teal);
+    padding-bottom: 10px;
+}
+.kanban-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    cursor: grab;
+}
