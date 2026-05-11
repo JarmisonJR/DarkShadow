@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Página de Cadastro</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Forum&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/x-icon" href="Captura de tela 2026-05-06 155442.png">
+    <link rel="stylesheet" href="login.css">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <section class="login-section">
+            <div class="login-box">
+                <h1>Crie sua <span>Conta</span></h1>
+                
+                <form id="auth-form"> 
+                    <div class="input-group">
+                        <label for="reg-nome"><i class="fa-solid fa-user"></i> Nome Completo</label>
+                        <input type="text" id="reg-nome" placeholder="Seu nome completo" required>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="email"><i class="fa-regular fa-envelope"></i> Email</label>
+                        <input type="email" id="email" placeholder="Email completo" required>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="password"><i class="fa-solid fa-lock"></i> Senha</label>
+                        <input type="password" id="password" placeholder="Crie uma senha" required>
+                    </div>
+
+                    <button type="submit" class="btn-login">CADASTRAR</button>
+
+                    <a href="index.html" class="signup-link">Já tem uma conta? <span>Faça Login</span></a>
+                </form>
+            </div>
+        </section>
+
+        <section class="image-section"></section>
+    </div> <script src="cadastro.js"></script>
+</body>
+</html>
