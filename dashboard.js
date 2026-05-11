@@ -343,3 +343,35 @@ function gerarRecibo(id) {
     win.print();
     win.close();
 }
+function renderFinanceiro() {
+    const osList = JSON.parse(localStorage.getItem('SAD_PRO_OS') || '[]');
+    const tbody = document.getElementById('fin-table-body');
+    
+    let bruto = 0;
+    let custoPecas = 0; // Por enquanto 0, até integrarmos com o estoque
+
+    const html = osList.filter(os => os.status === 'Concluído').map(os => {
+        const valorServico = parseFloat(os.maodeobra || 0);
+        bruto += valorServico;
+        
+        return `
+            <tr>
+                <td>#${os.id}</td>
+                <td>${os.cliente}</td>
+                <td>R$ ${valorServico.toFixed(2)}</td>
+                <td>R$ 0,00</td>
+                <td style="color: #10b981;">R$ ${valorServico.toFixed(2)}</td>
+            </tr>
+        `;
+    }).join('');
+
+    if (tbody) tbody.innerHTML = html || '<tr><td colspan="5" style="text-align:center; padding:20px;">Nenhum serviço concluído ainda.</td></tr>';
+    
+    // Atualiza os cards do topo
+    document.getElementById('fin-bruto').innerText = `R$ ${bruto.toFixed(2)}`;
+    document.getElementById('fin-lucro').innerText = `R$ ${bruto.toFixed(2)}`; // Lucro = Bruto (sem custo de peças por enquanto)
+}
+
+// Atualize sua função showScreen para carregar o financeiro
+// No seu showScreen(id):
+// if (id === 'financeiro-screen') renderFinanceiro();
