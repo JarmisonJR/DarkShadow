@@ -36,13 +36,14 @@
                 <button onclick="showScreen('estoque-screen')" class="nav-item">
                     <i class="fas fa-boxes"></i> <span>Estoque / Peças</span>
                 </button>
+                <button onclick="showScreen('financeiro-screen')" class="nav-item">
+                    <i class="fas fa-hand-holding-usd"></i> <span>Financeiro</span>
+                </button>
+                <button onclick="showScreen('kanban-screen')" class="nav-item">
+                    <i class="fas fa-chalkboard-teacher"></i> <span>Quadro Kanban</span>
+                </button>
             </nav>
-<button onclick="showScreen('financeiro-screen')" class="nav-item">
-    <i class="fas fa-hand-holding-usd"></i> <span>Financeiro</span>
-</button>
-<button onclick="showScreen('kanban-screen')" class="nav-item">
-    <i class="fas fa-chalkboard-teacher"></i> <span>Quadro Kanban</span>
-</button>
+
             <div class="sidebar-footer">
                 <button onclick="confirmarSair()" class="nav-item btn-logout">
                     <span>SAIR</span> <i class="fas fa-power-off"></i>
@@ -85,7 +86,6 @@
                         <i class="fas fa-trash-alt"></i> Esvaziar Banco
                     </button>
                 </div>
-
                 <div class="table-container">
                     <table>
                         <thead>
@@ -99,7 +99,7 @@
                         </thead>
                         <tbody id="table-body"></tbody>
                     </table>
-                </div>        
+                </div>
             </section>
 
             <section id="cadastro-screen" class="content-section hidden">
@@ -120,6 +120,22 @@
                             <label><i class="fas fa-comment-dots"></i> Defeito Relatado</label>
                             <textarea id="apa-defeito" placeholder="Descreva o problema..." required></textarea>
                         </div>
+
+                        <div class="checklist-container">
+                            <label><i class="fas fa-tasks"></i> Checklist de Entrada</label>
+                            <div class="checklist-grid">
+                                <label><input type="checkbox" class="os-check" value="Liga"> Liga</label>
+                                <label><input type="checkbox" class="os-check" value="Touch OK"> Touch OK</label>
+                                <label><input type="checkbox" class="os-check" value="Carregando"> Carregando</label>
+                                <label><input type="checkbox" class="os-check" value="Sem Riscos"> Sem Riscos</label>
+                            </div>
+                        </div>
+
+                        <div class="input-group" style="margin-top: 15px;">
+                            <label><i class="fas fa-coins"></i> Valor Estimado Mão de Obra (R$)</label>
+                            <input type="number" id="os-maodeobra" placeholder="0.00" step="0.01">
+                        </div>
+
                         <div class="input-group">
                             <label><i class="fas fa-calendar-alt"></i> Data de Entrada</label>
                             <input type="date" id="apa-data" required>
@@ -139,7 +155,6 @@
                         <i class="fas fa-plus"></i> Adicionar Peça
                     </button>
                 </div>
-
                 <div class="table-container">
                     <table>
                         <thead>
@@ -155,100 +170,88 @@
                     </table>
                 </div>
             </section>
+
             <section id="financeiro-screen" class="content-section hidden">
-    <header class="section-header">
-        <h3><i class="fas fa-chart-line"></i> Fluxo de Caixa</h3>
-        <p class="text-muted">Controle de faturamento e lucro líquido</p>
-    </header>
+                <header class="section-header">
+                    <h3><i class="fas fa-chart-line"></i> Fluxo de Caixa</h3>
+                    <p class="text-muted">Controle de faturamento e lucro líquido</p>
+                </header>
+                <div class="stats-grid">
+                    <div class="stat-card" style="border-top: 3px solid #10b981;">
+                        <h3>Faturamento Bruto</h3>
+                        <p id="fin-bruto" style="color: #10b981; font-size: 1.8rem; font-weight: bold;">R$ 0,00</p>
+                    </div>
+                    <div class="stat-card" style="border-top: 3px solid #ef4444;">
+                        <h3>Custo de Peças</h3>
+                        <p id="fin-custo" style="color: #ef4444; font-size: 1.8rem; font-weight: bold;">R$ 0,00</p>
+                    </div>
+                    <div class="stat-card" style="border-top: 3px solid #ffb38a;">
+                        <h3>Lucro Líquido</h3>
+                        <p id="fin-lucro" style="color: #ffb38a; font-size: 1.8rem; font-weight: bold;">R$ 0,00</p>
+                    </div>
+                </div>
+                <div class="table-container" style="margin-top: 20px;">
+                    <header style="padding: 20px; border-bottom: 1px solid var(--border-color);">
+                        <h4>Resumo de Serviços Concluídos</h4>
+                    </header>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>OS</th>
+                                <th>Cliente</th>
+                                <th>Mão de Obra</th>
+                                <th>Peças</th>
+                                <th>Total</th>
+                            </tr>
+                        </thead>
+                        <tbody id="fin-table-body"></tbody>
+                    </table>
+                </div>
+            </section>
 
-    <div class="stats-grid">
-        <div class="stat-card" style="border-top: 3px solid #10b981;">
-            <h3>Faturamento Bruto</h3>
-            <p id="fin-bruto" style="color: #10b981;">R$ 0,00</p>
-        </div>
-        <div class="stat-card" style="border-top: 3px solid #ef4444;">
-            <h3>Custo de Peças</h3>
-            <p id="fin-custo" style="color: #ef4444;">R$ 0,00</p>
-        </div>
-        <div class="stat-card" style="border-top: 3px solid #ffb38a;">
-            <h3>Lucro Líquido</h3>
-            <p id="fin-lucro" style="color: #ffb38a;">R$ 0,00</p>
-        </div>
-    </div>
-
-    <div class="table-container" style="margin-top: 20px;">
-        <header style="padding: 20px; border-bottom: 1px solid var(--border-color);">
-            <h4>Resumo de Serviços Concluídos</h4>
-        </header>
-        <table>
-            <thead>
-                <tr>
-                    <th>OS</th>
-                    <th>Cliente</th>
-                    <th>Mão de Obra</th>
-                    <th>Peças</th>
-                    <th>Total</th>
-                </tr>
-            </thead>
-            <tbody id="fin-table-body">
-                </tbody>
-        </table>
-    </div>
-</section>
             <section id="kanban-screen" class="content-section hidden">
-    <header class="section-header">
-        <h3><i class="fas fa-chalkboard"></i> Fluxo de Trabalho</h3>
-        <p class="text-muted">Arraste ou mude o status para organizar o dia</p>
-    </header>
+                <header class="section-header">
+                    <h3><i class="fas fa-chalkboard"></i> Fluxo de Trabalho</h3>
+                    <p class="text-muted">Organize suas tarefas visualmente</p>
+                </header>
+                <div class="kanban-container">
+                    <div class="kanban-column" id="col-pendente">
+                        <h4><i class="fas fa-clock"></i> Pendentes</h4>
+                        <div class="kanban-cards-area" id="cards-pendente"></div>
+                    </div>
+                    <div class="kanban-column" id="col-analise">
+                        <h4><i class="fas fa-microscope"></i> Em Análise</h4>
+                        <div class="kanban-cards-area" id="cards-analise"></div>
+                    </div>
+                    <div class="kanban-column" id="col-concluido">
+                        <h4><i class="fas fa-check-circle"></i> Pronto</h4>
+                        <div class="kanban-cards-area" id="cards-concluido"></div>
+                    </div>
+                </div>
+            </section>
 
-    <div class="kanban-container">
-        <div class="kanban-column" id="col-pendente">
-            <h4><i class="fas fa-clock"></i> Pendentes</h4>
-            <div class="kanban-cards-area" id="cards-pendente"></div>
-        </div>
-
-        <div class="kanban-column" id="col-analise">
-            <h4><i class="fas fa-microscope"></i> Em Análise</h4>
-            <div class="kanban-cards-area" id="cards-analise"></div>
-        </div>
-
-        <div class="kanban-column" id="col-concluido">
-            <h4><i class="fas fa-check-circle"></i> Pronto / Entregue</h4>
-            <div class="kanban-cards-area" id="cards-concluido"></div>
-        </div>
-    </div>
-</section>
         </main>
     </div>
 
-    <div id="modal-estoque" class="modal-overlay hidden">
+    <div id="modal-peca" class="modal-overlay hidden">
         <div class="form-card animate-in" style="max-width: 450px;">
             <div class="form-header">
-                <h2><i class="fas fa-box-open"></i> Cadastrar Peça</h2>
-                <p>Adicione novos itens ao seu inventário.</p>
+                <h2><i class="fas fa-box-open"></i> Cadastrar Nova Peça</h2>
+                <p>Preencha os detalhes para atualizar o estoque.</p>
             </div>
-            <form id="stockForm" onsubmit="event.preventDefault(); salvarNovaPeca();">
+            <form id="pecaForm" onsubmit="event.preventDefault(); salvarPecaModal();">
                 <div class="input-group">
-                    <label>Nome da Peça</label>
-                    <input type="text" id="stk-nome" required>
-                </div>
-                <div class="input-group">
-                    <label>Categoria</label>
-                    <select id="stk-categoria">
-                        <option value="Telas">Telas</option>
-                        <option value="Baterias">Baterias</option>
-                        <option value="Conectores">Conectores</option>
-                        <option value="Outros">Outros</option>
-                    </select>
+                    <label><i class="fas fa-tag"></i> Nome da Peça</label>
+                    <input type="text" id="modal-stk-nome" placeholder="Ex: Tela iPhone 13" required>
                 </div>
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
                     <div class="input-group">
-                        <label>Quantidade</label>
-                        <input type="number" id="stk-qtd" min="1" value="1" required>
+                        <label><i class="fas fa-sort-numeric-up"></i> Quantidade</label>
+                        <input type="number" id="modal-stk-qtd" min="1" value="1" required>
                     </div>
                     <div class="input-group">
-                        <label>Preço Custo</label>
-                        <input type="number" step="0.01" id="stk-preco" placeholder="0.00" required>
+                        <label><i class="fas fa-dollar-sign"></i> Preço Custo</label>
+                        <input type="number" step="0.01" id="modal-stk-preco" placeholder="0.00" required>
                     </div>
                 </div>
                 <div class="form-buttons">
@@ -258,35 +261,7 @@
             </form>
         </div>
     </div>
-<div class="checklist-container">
-    <label><i class="fas fa-tasks"></i> Checklist de Entrada</label>
-    <div class="checklist-grid">
-        <label><input type="checkbox" class="os-check" value="Liga"> Liga</label>
-        <label><input type="checkbox" class="os-check" value="Touch OK"> Touch OK</label>
-        <label><input type="checkbox" class="os-check" value="Carregando"> Carregando</label>
-        <label><input type="checkbox" class="os-check" value="Sem Riscos"> Sem Riscos</label>
-    </div>
-</div>
 
-<div class="input-group">
-    <label><i class="fas fa-coins"></i> Valor Estimado Mão de Obra (R$)</label>
-    <input type="number" id="os-maodeobra" placeholder="0.00" step="0.01">
-</div>
-// ... dentro do map da tabela ...
-<td>
-    <div style="display: flex; gap: 8px;">
-        <button onclick="notificarWhatsApp('${os.cliente}', '${os.aparelho}', '${os.id}')" class="btn-del" style="color: #25d366; border-color: #25d366;" title="Notificar WhatsApp">
-            <i class="fab fa-whatsapp"></i>
-        </button>
-        <button onclick="gerarRecibo(${os.id})" class="btn-del" style="color: #3b82f6; border-color: #3b82f6;" title="Gerar PDF">
-            <i class="fas fa-file-pdf"></i>
-        </button>
-        <button onclick="confirmarExclusao(${os.id})" class="btn-del">
-            <i class="fas fa-trash"></i>
-        </button>
-    </div>
-</td>
-    
     <div id="custom-confirm" class="modal-overlay hidden">
         <div class="confirm-card">
             <div class="confirm-icon"><i class="fas fa-exclamation-triangle" id="modal-icon"></i></div>
@@ -300,36 +275,5 @@
     </div>
 
     <script src="dashboard.js"></script>
-    <div id="modal-peca" class="modal-overlay hidden">
-    <div class="form-card animate-in" style="max-width: 450px;">
-        <div class="form-header">
-            <h2><i class="fas fa-box-open"></i> Cadastrar Nova Peça</h2>
-            <p>Preencha os detalhes para atualizar o estoque.</p>
-        </div>
-        
-        <form id="pecaForm" onsubmit="event.preventDefault(); salvarPecaModal();">
-            <div class="input-group">
-                <label><i class="fas fa-tag"></i> Nome da Peça</label>
-                <input type="text" id="modal-stk-nome" placeholder="Ex: Tela iPhone 13" required>
-            </div>
-            
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-                <div class="input-group">
-                    <label><i class="fas fa-sort-numeric-up"></i> Quantidade</label>
-                    <input type="number" id="modal-stk-qtd" min="1" value="1" required>
-                </div>
-                <div class="input-group">
-                    <label><i class="fas fa-dollar-sign"></i> Preço Custo</label>
-                    <input type="number" step="0.01" id="modal-stk-preco" placeholder="0.00" required>
-                </div>
-            </div>
-
-            <div class="form-buttons">
-                <button type="button" onclick="fecharModalPeca()" class="btn-secondary">Cancelar</button>
-                <button type="submit" class="btn-primary">Salvar no Estoque</button>
-            </div>
-        </form>
-    </div>
-</div>
 </body>
 </html>
