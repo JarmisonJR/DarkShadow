@@ -375,3 +375,48 @@ function renderFinanceiro() {
 // Atualize sua função showScreen para carregar o financeiro
 // No seu showScreen(id):
 // if (id === 'financeiro-screen') renderFinanceiro();
+function renderKanban() {
+    const osList = JSON.parse(localStorage.getItem('SAD_PRO_OS') || '[]');
+    
+    // Áreas de destino
+    const areaPendente = document.getElementById('cards-pendente');
+    const areaAnalise = document.getElementById('cards-analise');
+    const areaConcluido = document.getElementById('cards-concluido');
+
+    // Limpa as colunas
+    areaPendente.innerHTML = '';
+    areaAnalise.innerHTML = '';
+    areaConcluido.innerHTML = '';
+
+    osList.forEach(os => {
+        const card = `
+            <div class="kanban-card animate-in">
+                <div style="display: flex; justify-content: space-between; align-items: start;">
+                    <b>#${os.id}</b>
+                    <small style="color: var(--primary-sunset)">${os.data}</small>
+                </div>
+                <p style="margin: 10px 0; font-size: 0.9rem;">${os.cliente} - <b>${os.aparelho}</b></p>
+                <div style="display: flex; gap: 5px;">
+                    <button onclick="mudarStatusKanban(${os.id}, 'Pendente')" class="btn-del" style="font-size: 10px; width: auto; padding: 2px 5px;">P</button>
+                    <button onclick="mudarStatusKanban(${os.id}, 'Análise')" class="btn-del" style="font-size: 10px; width: auto; padding: 2px 5px;">A</button>
+                    <button onclick="mudarStatusKanban(${os.id}, 'Concluído')" class="btn-del" style="font-size: 10px; width: auto; padding: 2px 5px;">C</button>
+                </div>
+            </div>
+        `;
+
+        if (os.status === 'Pendente') areaPendente.innerHTML += card;
+        else if (os.status === 'Análise') areaAnalise.innerHTML += card;
+        else if (os.status === 'Concluído') areaConcluido.innerHTML += card;
+    });
+}
+
+function mudarStatusKanban(id, novoStatus) {
+    let osList = JSON.parse(localStorage.getItem('SAD_PRO_OS') || '[]');
+    osList = osList.map(os => {
+        if (os.id == id) os.status = novoStatus;
+        return os;
+    });
+    localStorage.setItem('SAD_PRO_OS', JSON.stringify(osList));
+    renderKanban();
+    updateStats();
+}
