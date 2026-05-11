@@ -209,6 +209,21 @@
     <label><i class="fas fa-coins"></i> Valor Estimado Mão de Obra (R$)</label>
     <input type="number" id="os-maodeobra" placeholder="0.00" step="0.01">
 </div>
+// ... dentro do map da tabela ...
+<td>
+    <div style="display: flex; gap: 8px;">
+        <button onclick="notificarWhatsApp('${os.cliente}', '${os.aparelho}', '${os.id}')" class="btn-del" style="color: #25d366; border-color: #25d366;" title="Notificar WhatsApp">
+            <i class="fab fa-whatsapp"></i>
+        </button>
+        <button onclick="gerarRecibo(${os.id})" class="btn-del" style="color: #3b82f6; border-color: #3b82f6;" title="Gerar PDF">
+            <i class="fas fa-file-pdf"></i>
+        </button>
+        <button onclick="confirmarExclusao(${os.id})" class="btn-del">
+            <i class="fas fa-trash"></i>
+        </button>
+    </div>
+</td>
+    
     <div id="custom-confirm" class="modal-overlay hidden">
         <div class="confirm-card">
             <div class="confirm-icon"><i class="fas fa-exclamation-triangle" id="modal-icon"></i></div>
