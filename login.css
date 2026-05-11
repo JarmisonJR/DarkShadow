@@ -1,0 +1,133 @@
+/* 1. Reset e Fonte Global */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Forum', serif; /* Sua fonte escolhida */
+}
+
+body {
+    background-color: #000;
+    color: rgb(253, 177, 115);
+    overflow: hidden; /* Evita barras de rolagem desnecessárias */
+}
+
+/* 2. Estrutura Lado a Lado */
+.container {
+    display: flex;
+    height: 100vh;
+}
+
+.login-section {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 50px;
+}
+
+.login-box {
+    width: 100%;
+    max-width: 400px;
+}
+
+/* 3. Título e Links */
+h1 {
+    font-size: 3rem;
+    margin-bottom: 30px;
+}
+
+h1 span {
+    color: #ffb38a; /* Bege alaranjado da lua/horizonte */
+    text-shadow: 0 0 10px rgba(255, 179, 138, 0.5);
+}
+
+.forgot-password, .signup-link {
+    display: block;
+    color: #fafafa;
+    text-decoration: none;
+    font-size: 0.9rem;
+    margin-top: 10px;
+    transition: 0.3s;
+}
+
+.forgot-password { text-align: right; }
+.signup-link { text-align: center; margin-top: 30px; }
+
+.forgot-password:hover, .signup-link:hover {
+    color: #ffb38a;
+}
+
+/* 4. Inputs e Ícones */
+.input-group {
+    margin-bottom: 20px;
+}
+
+label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+    font-size: 1.1rem;
+    color: #fcfcfc;
+}
+
+label i {
+    color: #ffb38a;
+    font-size: 0.9rem;
+}
+
+/* 4. Inputs e Ícones */
+.input-group {
+    margin-bottom: 20px;
+}
+
+input {
+    width: 100%;
+    padding: 12px;
+    background-color: transparent; /* Remove a barra branca */
+    border: 1px solid #444;        /* Cria uma borda cinza escura visível no preto */
+    border-radius: 4px;
+    color: white;                  /* Cor do texto que você digita */
+    outline: none;
+    font-family: 'Forum', serif;
+    transition: 0.3s;
+}
+
+/* 5. Botão com Degradê */
+.btn-login {
+    width: 100%;
+    padding: 14px;
+    margin-top: 20px;
+    border: none;
+    border-radius: 4px;
+   background: linear-gradient(to right, #155e63, #ffb38a);
+    color: rgb(247, 239, 239);
+    font-size: 1.2rem;
+    font-family: 'Forum', serif;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.btn-login:hover {
+    filter: brightness(1.2);
+    transform: translateY(-2px);
+}
+
+/* 6. Seção da Imagem (O Gran Finale) */
+.image-section {
+    flex: 1;
+    /* Aqui colocamos um degradê PRETO por cima da imagem no próprio carregamento */
+    background-image: linear-gradient(to right, #000 0%, transparent 50%), url('image.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    min-height: 100vh;
+}
+
+input:focus {
+    border-image: linear-gradient(to left, #155e63, #ffb38a) 1;
+    box-shadow: 0 0 10px rgba(112, 98, 216, 0.3);
+    transition: 0.3s;
+}
