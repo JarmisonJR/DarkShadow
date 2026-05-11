@@ -314,3 +314,32 @@ function confirmarSair() {
         () => { window.location.href = "index.html"; }
     );
 }
+// Ideia 2: CRM / WhatsApp
+function notificarWhatsApp(nome, aparelho, id) {
+    const mensagem = window.encodeURIComponent(`Olá ${nome}, o técnico terminou a análise do seu ${aparelho} (OS #${id}). Pode entrar em contato conosco?`);
+    window.open(`https://api.whatsapp.com/send?text=${mensagem}`, '_blank');
+}
+
+// Ideia 3: Recibo Simples (Simulação antes de usar biblioteca PDF)
+function gerarRecibo(id) {
+    const osList = JSON.parse(localStorage.getItem('SAD_PRO_OS') || '[]');
+    const os = osList.find(o => o.id == id);
+    
+    const conteudo = `
+        TECHNICIAN PRO - RECIBO DE OS #${os.id}
+        -----------------------------------
+        CLIENTE: ${os.cliente}
+        APARELHO: ${os.aparelho}
+        DEFEITO: ${os.defeito}
+        STATUS: ${os.status}
+        DATA: ${os.data}
+        -----------------------------------
+        Obrigado pela confiança!
+    `;
+    
+    // Abre uma nova janela com o texto para impressão
+    const win = window.open('', 'PRINT', 'height=600,width=800');
+    win.document.write(`<pre>${conteudo}</pre>`);
+    win.print();
+    win.close();
+}
