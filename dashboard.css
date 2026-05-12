@@ -1,5 +1,5 @@
 /* TECHNICIAN PRO - HORIZON EDITION 
-    VERSÃO DEFINITIVA UNIFICADA & CONSERTADA
+    VERSÃO INTEGRADA: FINANCEIRO + KANBAN + CRM 
 */
 
 @import url('https://fonts.googleapis.com/css2?family=Forum&family=Inter:wght@400;600;700&display=swap');
@@ -20,6 +20,8 @@
     
     --danger: #ef4444;
     --success: #10b981;
+    --info: #3b82f6;
+    --warning: #f59e0b;
 }
 
 /* --- RESET & GLOBAL --- */
@@ -33,7 +35,7 @@ body {
     overflow-x: hidden;
 }
 
-h1, h2, h3, .sidebar-logo { font-family: 'Forum', serif; }
+h1, h2, h3, h4, .sidebar-logo { font-family: 'Forum', serif; }
 
 .hidden { display: none !important; }
 
@@ -74,6 +76,7 @@ h1, h2, h3, .sidebar-logo { font-family: 'Forum', serif; }
     cursor: pointer;
     text-align: left;
     width: 100%;
+    font-size: 0.95rem;
 }
 
 .nav-item:hover { background: rgba(255, 255, 255, 0.05); color: var(--text-white); }
@@ -84,11 +87,7 @@ h1, h2, h3, .sidebar-logo { font-family: 'Forum', serif; }
     border-left: 3px solid var(--primary-sunset);
 }
 
-.btn-logout {
-    color: var(--danger) !important;
-    margin-top: auto;
-    font-weight: 600;
-}
+.btn-logout { color: var(--danger) !important; margin-top: auto; font-weight: 600; }
 
 /* --- MAIN LAYOUT --- */
 .main-wrapper {
@@ -100,6 +99,8 @@ h1, h2, h3, .sidebar-logo { font-family: 'Forum', serif; }
     gap: 30px;
 }
 
+.section-header { margin-bottom: 10px; }
+
 .welcome-banner {
     background: linear-gradient(100deg, #050505 0%, var(--primary-teal) 100%);
     padding: 40px;
@@ -110,42 +111,38 @@ h1, h2, h3, .sidebar-logo { font-family: 'Forum', serif; }
 }
 
 .welcome-banner h1 { font-size: 2.5rem; margin-bottom: 5px; }
-.welcome-banner p, #current-date { color: var(--primary-sunset); opacity: 0.9; }
+#current-date { color: var(--primary-sunset); opacity: 0.9; font-weight: 600; }
 
 /* --- ESTATÍSTICAS (Cards) --- */
 .stats-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 20px;
+    width: 100%;
 }
 
 .stat-card {
-    background: var(--card-bg);
-    border: 1px solid var(--border-color);
-    padding: 25px;
+    background: var(--card-bg) !important;
+    border: 1px solid var(--border-color) !important;
+    padding: 25px !important;
     border-radius: 20px;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    transition: 0.3s;
     text-align: center;
+    transition: 0.3s ease;
 }
 
-.stat-card:hover { transform: translateY(-5px); }
+.stat-card:hover { transform: translateY(-5px); border-color: var(--primary-sunset) !important; }
 
-/* Cores e Bordas Individuais dos Cards */
-.stat-card:nth-child(1) { border-top: 3px solid #4db6ac; }
-.stat-card:nth-child(2) { border-top: 3px solid var(--primary-sunset); }
-.stat-card:nth-child(3) { border-top: 3px solid var(--danger); }
+.stat-card h3 { font-size: 1rem; color: var(--text-muted); margin-bottom: 10px; text-transform: uppercase; }
+.stat-card p, .stat-card span { font-size: 1.8rem; font-weight: bold; font-family: 'Forum'; }
 
-.stat-card h3 { font-size: 0.9rem; color: var(--text-muted); margin-bottom: 5px; text-transform: uppercase; letter-spacing: 1px; }
-.stat-card span, .stat-card p { font-size: 1.8rem; font-weight: bold; font-family: 'Forum'; }
-
-/* Cor dos números acompanhando a borda */
-.stat-card:nth-child(1) span { color: #4db6ac; }
-.stat-card:nth-child(2) span { color: var(--primary-sunset); }
-.stat-card:nth-child(3) span { color: var(--danger); }
+/* Cores por posição nos grids de stats */
+.stat-card:nth-child(1) { border-top: 3px solid #4db6ac !important; }
+.stat-card:nth-child(2) { border-top: 3px solid var(--primary-sunset) !important; }
+.stat-card:nth-child(3) { border-top: 3px solid var(--danger) !important; }
 
 /* --- TABELAS --- */
 .table-container {
@@ -169,9 +166,8 @@ th {
 
 td { padding: 18px; border-bottom: 1px solid var(--border-color); vertical-align: middle; }
 
-/* --- BADGES DE STATUS & ESTOQUE --- */
-.status-badge, .stock-badge {
-    display: inline-block;
+/* --- BADGES & STATUS --- */
+.status-badge {
     padding: 6px 14px;
     border-radius: 20px;
     font-size: 0.75rem;
@@ -180,54 +176,15 @@ td { padding: 18px; border-bottom: 1px solid var(--border-color); vertical-align
     border: 1px solid transparent;
     text-align: center;
     min-width: 100px;
-}
-
-.status-pendente, .stock-low { 
-    background: rgba(255, 179, 138, 0.1) !important; 
-    color: var(--primary-sunset) !important; 
-    border-color: rgba(255, 179, 138, 0.3) !important; 
-}
-
-.status-concluido, .stock-ok { 
-    background: rgba(16, 185, 129, 0.1) !important; 
-    color: var(--success) !important; 
-    border-color: rgba(16, 185, 129, 0.3) !important; 
-}
-
-/* --- BOTÕES DE AÇÃO --- */
-.btn-del {
-    background: rgba(239, 68, 68, 0.1) !important;
-    color: var(--danger) !important;
-    border: 1px solid rgba(239, 68, 68, 0.2) !important;
-    width: 36px; height: 36px;
-    border-radius: 10px;
     cursor: pointer;
-    transition: 0.3s;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
 }
 
-.btn-del:hover { background: var(--danger) !important; color: white !important; transform: scale(1.1); }
+.status-pendente { background: rgba(255, 179, 138, 0.1); color: var(--primary-sunset); border-color: rgba(255, 179, 138, 0.2); }
+.status-analise { background: rgba(59, 130, 246, 0.1); color: var(--info); border-color: rgba(59, 130, 246, 0.2); }
+.status-concluido { background: rgba(16, 185, 129, 0.1); color: var(--success); border-color: rgba(16, 185, 129, 0.2); }
 
-.btn-empty-db {
-    background: rgba(239, 68, 68, 0.1) !important;
-    color: var(--danger) !important;
-    border: 1px solid rgba(239, 68, 68, 0.3) !important;
-    padding: 8px 16px;
-    border-radius: 8px;
-    cursor: pointer;
-    margin-bottom: 15px;
-    font-size: 0.85rem;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.btn-empty-db:hover { background: var(--danger) !important; color: white !important; }
-
-/* --- BOTÕES GLOBAIS (FORÇA O GRADIENTE) --- */
-.btn-primary, button[type="submit"], .btn-main {
+/* --- BOTÕES --- */
+.btn-primary, button[type="submit"] {
     background: linear-gradient(to right, var(--primary-teal), var(--primary-sunset)) !important;
     color: var(--bg-black) !important;
     padding: 12px 24px;
@@ -242,44 +199,73 @@ td { padding: 18px; border-bottom: 1px solid var(--border-color); vertical-align
 
 .btn-primary:hover { filter: brightness(1.1); transform: translateY(-2px); box-shadow: 0 4px 15px var(--sunset-glow); }
 
-/* --- MODAIS (CENTRALIZAÇÃO & BLUR) --- */
+.btn-secondary {
+    background: transparent !important;
+    color: var(--text-white) !important;
+    border: 1px solid var(--border-color) !important;
+    padding: 10px 20px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.btn-secondary:hover { border-color: var(--primary-sunset); color: var(--primary-sunset); }
+
+.btn-del {
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--text-muted);
+    border: 1px solid var(--border-color);
+    width: 36px; height: 36px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: 0.3s;
+    display: inline-flex; align-items: center; justify-content: center;
+}
+
+.btn-del:hover { background: var(--danger) !important; color: white !important; border-color: var(--danger) !important; transform: scale(1.1); }
+
+.btn-empty-db {
+    background: rgba(239, 68, 68, 0.1) !important;
+    color: var(--danger) !important;
+    border: 1px solid rgba(239, 68, 68, 0.3) !important;
+    padding: 8px 16px; border-radius: 8px; cursor: pointer;
+    font-size: 0.85rem; display: inline-flex; align-items: center; gap: 8px;
+}
+
+/* --- MODAIS --- */
 .modal-overlay {
     position: fixed;
     top: 0; left: 0;
     width: 100%; height: 100%;
     background: rgba(0, 0, 0, 0.85);
     backdrop-filter: blur(8px);
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    display: flex; align-items: center; justify-content: center;
     z-index: 10000;
 }
 
-.confirm-card {
+.confirm-card, .form-card {
     background: var(--card-bg);
     padding: 40px;
     border-radius: 24px;
     border: 1px solid var(--primary-sunset);
-    text-align: center;
-    max-width: 400px;
     width: 90%;
+    max-width: 500px;
+    text-align: center;
     box-shadow: 0 20px 50px rgba(0,0,0,0.8);
     animation: modalPop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
+#confirm-yes { background: var(--danger) !important; color: white !important; min-width: 120px; border-radius: 10px; border: none; padding: 12px; font-weight: bold; cursor: pointer; }
+#confirm-no { min-width: 120px; }
+
 @keyframes modalPop {
-    from { transform: scale(0.9); opacity: 0; }
-    to { transform: scale(1); opacity: 1; }
+    from { opacity: 0; transform: scale(0.9) translateY(20px); }
+    to { opacity: 1; transform: scale(1) translateY(0); }
 }
 
-/* --- FORMULÁRIOS & INPUTS --- */
-.form-card {
-    background: var(--card-bg);
-    padding: 35px;
-    border-radius: 20px;
-    border: 1px solid var(--border-color);
-    max-width: 700px;
-}
+/* --- INPUTS & FORMULÁRIOS --- */
+.input-group { margin-bottom: 15px; text-align: left; }
+.input-group label { display: block; margin-bottom: 8px; color: var(--primary-sunset); font-size: 0.9rem; }
 
 input, textarea, select {
     width: 100%;
@@ -290,239 +276,64 @@ input, textarea, select {
     border-radius: 10px;
     outline: none;
     transition: 0.3s;
-    margin-top: 8px;
 }
 
-input:focus, textarea:focus { border-color: var(--primary-sunset); }
+input:focus { border-color: var(--primary-sunset); }
+input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(1); cursor: pointer; }
 
-/* Ajuste do ícone de calendário no input date */
-input[type="date"]::-webkit-calendar-picker-indicator {
-    filter: invert(1);
-    cursor: pointer;
-}
-
-/* --- ESTOQUE / PEÇAS (Grid e Labels) --- */
-.inventory-select-grid {
-    display: grid;
-    grid-template-columns: 1fr auto;
-    gap: 10px;
-    align-items: center;
-}
-
-.text-defeito {
-    color: var(--text-muted);
-    font-size: 0.85rem;
-    font-style: italic;
-}
-/* Botões de Ação Principal */
-.btn-primary, 
-button[type="submit"], 
-#serviceForm button[type="submit"] {
-    background: linear-gradient(to right, var(--primary-teal), var(--primary-sunset)) !important;
-    color: var(--bg-black) !important;
-    border: none !important;
-    padding: 12px 24px;
-    border-radius: 10px;
-    font-weight: bold;
-    font-family: 'Forum', serif;
-    font-size: 1.1rem;
-    cursor: pointer;
-    transition: 0.3s;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-}
-
-/* Botões de Cancelar (Imagem 2) */
-.btn-secondary, 
-button[onclick*="close"], 
-button[onclick*="remove"] {
-    background: transparent !important;
-    color: var(--text-white) !important;
-    border: 1px solid var(--text-muted) !important;
-    padding: 10px 20px;
-    border-radius: 8px;
-    cursor: pointer;
-    font-family: 'Inter', sans-serif;
-}
-
-.btn-secondary:hover {
-    border-color: var(--primary-sunset);
-    color: var(--primary-sunset);
-}
-.stats-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr); /* 3 colunas iguais */
-    gap: 20px;
-    width: 100%;
-}
-
-.stat-card {
-    background: var(--card-bg) !important;
-    border: 1px solid var(--border-color) !important;
-    padding: 25px !important;
-    border-radius: 20px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-}
-
-/* Garante que o texto dentro do card não quebre de forma estranha */
-.stat-card h3 {
-    font-size: 1rem;
-    white-space: nowrap;
-    margin: 10px 0;
-}
-.confirm-card {
-    background: var(--card-bg);
-    padding: 40px;
-    border-radius: 24px;
-    border: 1px solid var(--primary-sunset);
-    text-align: center;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 20px;
-}
-
-.confirm-buttons {
-    display: flex;
-    gap: 15px;
-    justify-content: center;
-    width: 100%;
-}
-/* Estilo para o botão Confirmar (Vermelho de Alerta) */
-#confirm-yes {
-    background: #ef4444 !important; /* Vermelho vibrante */
-    color: white !important;
-    border: none !important;
-    padding: 12px 25px !important;
-    border-radius: 10px !important;
-    font-weight: bold !important;
-    font-family: 'Inter', sans-serif !important;
-    cursor: pointer;
-    transition: 0.3s ease;
-    min-width: 120px;
-}
-
-#confirm-yes:hover {
-    background: #dc2626 !important;
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(239, 68, 68, 0.4);
-}
-
-/* Estilo para o botão Cancelar (Borda Sunset) */
-#confirm-no {
-    background: transparent !important;
-    color: white !important;
-    border: 1px solid rgba(255, 255, 255, 0.2) !important;
-    padding: 12px 25px !important;
-    border-radius: 10px !important;
-    cursor: pointer;
-    transition: 0.3s ease;
-    min-width: 120px;
-}
-
-#confirm-no:hover {
-    border-color: var(--primary-sunset) !important;
-    color: var(--primary-sunset) !important;
-    background: rgba(255, 179, 138, 0.05) !important;
-}
-
-/* Centralização dos botões */
-.confirm-buttons {
-    display: flex;
-    gap: 15px;
-    justify-content: center;
-    margin-top: 20px;
-}
-.modal-overlay {
-    position: fixed;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    background: rgba(0, 0, 0, 0.85);
-    backdrop-filter: blur(8px); /* Efeito de vidro jateado no fundo */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 10000;
-}
-
-.animate-in {
-    animation: modalPop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-
-@keyframes modalPop {
-    from { opacity: 0; transform: scale(0.9) translateY(20px); }
-    to { opacity: 1; transform: scale(1) translateY(0); }
-}
-/* Garante que o modal suma quando tiver a classe hidden */
-.hidden { display: none !important; }
-/* No seu arquivo CSS */
-#modal-peca .form-card {
-    padding: 45px !important; /* Aumenta o espaço interno */
-    gap: 25px !important;      /* Aumenta o espaço entre os blocos de input */
-}
-
-#modal-peca .input-group {
-    margin-bottom: 20px !important; /* Espaço maior entre as linhas */
-}
-
-#modal-peca .form-header {
-    margin-bottom: 30px !important;
-}
-
-/* Checklist de Entrada */
-.checklist-container { margin-top: 20px; padding: 15px; background: var(--bg-input); border-radius: 12px; }
-.checklist-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 10px; }
+/* --- CHECKLIST --- */
+.checklist-container { margin-top: 20px; padding: 15px; background: var(--bg-input); border-radius: 12px; text-align: left; }
+.checklist-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-top: 10px; }
 .checklist-grid label { font-size: 0.85rem; color: var(--text-muted); cursor: pointer; display: flex; align-items: center; gap: 8px; }
+.os-check { width: 16px; height: 16px; cursor: pointer; }
 
-/* Quadro Kanban (Ideia 5) */
+/* --- KANBAN --- */
 .kanban-container {
     display: flex;
     gap: 20px;
     overflow-x: auto;
     padding-bottom: 20px;
+    align-items: flex-start;
 }
+
 .kanban-column {
     background: var(--sidebar-bg);
-    min-width: 280px;
-    border-radius: 15px;
-    padding: 15px;
+    min-width: 300px;
+    border-radius: 20px;
+    padding: 20px;
     border: 1px solid var(--border-color);
+    flex-shrink: 0;
 }
+
 .kanban-column h4 { 
-    text-align: center; 
-    margin-bottom: 15px; 
-    color: var(--primary-sunset); 
-    font-family: 'Forum';
-    border-bottom: 1px solid var(--primary-teal);
-    padding-bottom: 10px;
+    text-align: center; margin-bottom: 20px; 
+    color: var(--primary-sunset); font-size: 1.2rem;
+    border-bottom: 1px solid rgba(255, 179, 138, 0.1); padding-bottom: 15px;
 }
+
+.kanban-cards-area {
+    min-height: 300px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
 .kanban-card {
     background: var(--card-bg);
     border: 1px solid var(--border-color);
-    padding: 15px;
-    border-radius: 10px;
-    margin-bottom: 10px;
-    cursor: grab;
-}
-.kanban-cards-area {
-    min-height: 200px;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    margin-top: 10px;
+    padding: 18px;
+    border-radius: 15px;
+    transition: 0.3s;
+    cursor: default;
 }
 
-.kanban-card b {
-    font-family: 'Forum', serif;
-    font-size: 1.1rem;
-}
+.kanban-card:hover { border-color: var(--primary-sunset); transform: scale(1.02); box-shadow: 0 5px 15px rgba(0,0,0,0.4); }
+.kanban-card b { color: var(--text-white); font-size: 1.1rem; }
+.kanban-card small { color: var(--text-muted); }
 
-.kanban-card:hover {
-    border-color: var(--primary-sunset);
-    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+/* --- ANIMAÇÃO --- */
+.animate-in { animation: slideUp 0.4s ease-out; }
+@keyframes slideUp {
+    from { opacity: 0; transform: translateY(15px); }
+    to { opacity: 1; transform: translateY(0); }
 }
