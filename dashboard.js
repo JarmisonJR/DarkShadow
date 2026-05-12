@@ -249,78 +249,103 @@ function ajustarEstoque(id, mudanca) {
     renderInventory();
 }
 
-function salvarNovaPeca() {
-    const nova = {
+// --- GESTÃO DE ESTOQUE ---
+
+// 1. Abre o modal de cadastro
+function abrirModalPeca() {
+    const modal = document.getElementById('modal-peca');
+    if (modal) {
+        modal.classList.remove('hidden');
+        document.getElementById('modal-stk-nome').focus();
+    }
+}
+
+// 2. Fecha o modal de cadastro
+function fecharModalPeca() {
+    const modal = document.getElementById('modal-peca');
+    if (modal) {
+        modal.classList.add('hidden');
+        document.getElementById('pecaForm').reset();
+    }
+}
+
+// 3. Salva a peça no LocalStorage
+function salvarPecaModal() {
+    const nome = document.getElementById('modal-stk-nome').value;
+    const qtd = parseInt(document.getElementById('modal-stk-qtd').value) || 0;
+    const preco = parseFloat(document.getElementById('modal-stk-preco').value) || 0;
+
+    const novaPeca = {
         id: Date.now(),
-        nome: document.getElementById('stk-nome').value,
-        categoria: document.getElementById('stk-categoria').value,
-        qtd: document.getElementById('stk-qtd').value,
-        preco: document.getElementById('stk-preco').value
+        nome,
+        categoria: "Geral",
+        qtd,
+        preco
     };
+
     let estoque = JSON.parse(localStorage.getItem('SAD_PRO_STOCK') || '[]');
-    estoque.push(nova);
+    estoque.push(novaPeca);
     localStorage.setItem('SAD_PRO_STOCK', JSON.stringify(estoque));
+
     fecharModalPeca();
+    renderInventory();
+    openConfirm("Sucesso", "Item adicionado ao estoque!", null);
+}
+
+// 4. Renderiza a tabela na tela
+function renderInventory() {
+    const tbody = document.getElementById('inventory-table-body');
+    if (!tbody) return;
+
+    const estoque = JSON.parse(localStorage.getItem('SAD_PRO_STOCK') || '[]');
+    
+    if (estoque.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding: 40px; color: #71717a;">Estoque vazio.</td></tr>';
+        return;
+    }
+
+    tbody.innerHTML = estoque.map(peca => `
+        <tr>
+            <td><b>${peca.nome}</b></td>
+            <td>${peca.categoria}</td>
+            <td>
+                <span class="status-badge ${peca.qtd <= 2 ? 'status-pendente' : 'status-concluido'}">
+                    ${peca.qtd} un.
+                </span>
+            </td>
+            <td style="color: #ffb38a;">R$ ${parseFloat(peca.preco).toLocaleString('pt-BR', {minimumFractionDigits: 2})}</td>
+            <td>
+                <div style="display: flex; gap: 8px; align-items: center;">
+                    <button onclick="ajustarEstoque(${peca.id}, 1)" class="btn-del" style="color: #10b981; border-color: rgba(16, 185, 129, 0.3);">+</button>
+                    <button onclick="ajustarEstoque(${peca.id}, -1)" class="btn-del" style="color: #fff;">-</button>
+                    <button onclick="confirmarExclusaoPeca(${peca.id})" class="btn-del">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            </td>
+        </tr>
+    `).join('');
+}
+
+// 5. Ajusta quantidade (+ ou -)
+function ajustarEstoque(id, mudanca) {
+    let estoque = JSON.parse(localStorage.getItem('SAD_PRO_STOCK') || '[]');
+    estoque = estoque.map(p => {
+        if (p.id === id) {
+            p.qtd = Math.max(0, (parseInt(p.qtd) || 0) + mudanca);
+        }
+        return p;
+    });
+    localStorage.setItem('SAD_PRO_STOCK', JSON.stringify(estoque));
     renderInventory();
 }
 
-function fecharModalPeca() {
-    document.getElementById('modal-estoque').classList.add('hidden');
-    document.getElementById('stockForm').reset();
-}
-
-function abrirModalPeca() {
-    document.getElementById('modal-estoque').classList.remove('hidden');
-}
-
-// --- UTILITÁRIOS ---
-function updateStats() {
-    const osList = JSON.parse(localStorage.getItem('SAD_PRO_OS') || '[]');
-    const abertas = osList.filter(os => os.status === 'Pendente').length;
-    const urgentes = osList.filter(os => os.status === 'Pendente' && new Date(os.data) < new Date().setHours(0,0,0,0)).length;
-
-    if(document.getElementById('count-open')) document.getElementById('count-open').innerText = abertas;
-    if(document.getElementById('count-total')) document.getElementById('count-total').innerText = osList.length;
-    if(document.getElementById('count-urgent')) document.getElementById('count-urgent').innerText = urgentes;
-}
-
-function openConfirm(titulo, msg, acao, textoBtn = "Confirmar") {
-    const modal = document.getElementById('custom-confirm');
-    const btnSim = document.getElementById('confirm-yes');
-    document.getElementById('confirm-title').innerText = titulo;
-    document.getElementById('confirm-message').innerText = msg;
-    btnSim.innerText = textoBtn;
-    modal.classList.remove('hidden');
-
-    const novoBtn = btnSim.cloneNode(true);
-    btnSim.parentNode.replaceChild(novoBtn, btnSim);
-    novoBtn.onclick = () => { acao(); closeConfirm(); };
-}
-
-function closeConfirm() { document.getElementById('custom-confirm').classList.add('hidden'); }
-function atualizarData() { 
-    const el = document.getElementById('current-date');
-    if(el) el.innerText = new Date().toLocaleDateString('pt-br', {weekday: 'long', day:'numeric', month:'long'}); 
-}
-function aplicarTemaSalvo() { if(localStorage.getItem('SAD_PRO_THEME') === 'light') document.body.classList.replace('dark-theme', 'light-theme'); }
-function confirmarSair() { openConfirm("Sair", "Deseja encerrar a sessão?", () => window.location.href = "index.html"); }
-function confirmarExclusao(id) {
-    openConfirm("Excluir OS", "Tem certeza?", () => {
-        let os = JSON.parse(localStorage.getItem('SAD_PRO_OS')).filter(o => o.id !== id);
-        localStorage.setItem('SAD_PRO_OS', JSON.stringify(os));
-        renderTable(); updateStats();
-    });
-}
-function limparBanco() {
-    openConfirm("Limpar Tudo", "Isso apagará todas as ordens!", () => {
-        localStorage.removeItem('SAD_PRO_OS');
-        renderTable(); updateStats();
-    });
-}
+// 6. Confirmação de exclusão
 function confirmarExclusaoPeca(id) {
-    openConfirm("Excluir Peça", "Remover do estoque?", () => {
-        let e = JSON.parse(localStorage.getItem('SAD_PRO_STOCK')).filter(p => p.id !== id);
-        localStorage.setItem('SAD_PRO_STOCK', JSON.stringify(e));
+    openConfirm("Remover Peça?", "Deseja excluir permanentemente este item?", () => {
+        let estoque = JSON.parse(localStorage.getItem('SAD_PRO_STOCK') || '[]');
+        estoque = estoque.filter(p => p.id !== id);
+        localStorage.setItem('SAD_PRO_STOCK', JSON.stringify(estoque));
         renderInventory();
     });
 }
