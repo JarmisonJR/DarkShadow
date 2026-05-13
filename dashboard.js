@@ -1,320 +1,473 @@
-/* 
-    TECHNICIAN PRO - UNIFIED CORE 
-    Sistema de Gestão de Ordens de Serviço - Versão Horizon & Logs
-*/
-
-// --- ESTADO GLOBAL DA APLICAÇÃO ---
-let ordens = JSON.parse(localStorage.getItem('SAD_PRO_OS')) || [];
-let estoque = JSON.parse(localStorage.getItem('SAD_PRO_STOCK')) || [];
-
-// --- CLASSE PRINCIPAL DO DASHBOARD ---
 class Dashboard {
     constructor() {
         this.usuarioNome = localStorage.getItem('SAD_USER_NAME') || "Técnico";
-        this.currentOsIdLog = null;
         this.init();
     }
 
     init() {
         document.addEventListener('DOMContentLoaded', () => {
             this.renderizarBoasVindas();
-            this.atualizarData();
-            this.aplicarTemaSalvo();
-            this.updateStats();
-            
-            // Inicia na tela de Dashboard
-            showScreen('dashboard-screen'); 
-            
-            // Inicializa componentes visuais
-            this.inicializarGrafico();
-            this.configurarSortable();
+            showScreen('home-screen');
+            atualizarData();
+            updateStats();
+            aplicarTemaSalvo();
         });
     }
 
     renderizarBoasVindas() {
-        const welcomeElement = document.getElementById('welcome-text') || document.querySelector('.welcome-banner h1');
-        if (welcomeElement) welcomeElement.innerText = `Horizon Edition - Olá, ${this.usuarioNome}`;
-    }
-
-    atualizarData() {
-        const dateEl = document.getElementById('current-date');
-        if (dateEl) {
-            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-            dateEl.innerText = new Date().toLocaleDateString('pt-BR', options);
+        const welcomeElement = document.getElementById('welcome-text');
+        if (welcomeElement) {
+            welcomeElement.innerText = `Bem-vindo, Técnico ${this.usuarioNome}!`;
         }
     }
-
-    aplicarTemaSalvo() {
-        if (localStorage.getItem('SAD_PRO_THEME') === 'light') document.body.classList.add('light-theme');
-    }
-
-    updateStats() {
-        const total = ordens.length;
-        const pendentes = ordens.filter(os => os.status.toLowerCase() !== 'concluído' && os.status.toLowerCase() !== 'concluido').length;
-        
-        const elTotal = document.getElementById('stat-total') || document.getElementById('count-total');
-        const elPend = document.getElementById('stat-pendente') || document.getElementById('count-open');
-        
-        if (elTotal) elTotal.innerText = total;
-        if (elPend) elPend.innerText = pendentes;
-    }
-
-    inicializarGrafico() {
-        const ctx = document.getElementById('meuGrafico');
-        if (!ctx || typeof Chart === 'undefined') return;
-        new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'],
-                datasets: [{
-                    label: 'Faturamento R$',
-                    data: [120, 190, 300, 500, 230, 400],
-                    borderColor: '#ffb38a',
-                    backgroundColor: 'rgba(255, 179, 138, 0.1)',
-                    borderWidth: 3,
-                    tension: 0.4,
-                    fill: true
-                }]
-            },
-            options: { responsive: true, maintainAspectRatio: false }
-        });
-    }
-
-    configurarSortable() {
-        const colunas = ['cards-pendente', 'cards-analise', 'cards-concluido'];
-        colunas.forEach(colId => {
-            const el = document.getElementById(colId);
-            if (el && typeof Sortable !== 'undefined') {
-                new Sortable(el, {
-                    group: 'kanban',
-                    animation: 150,
-                    onEnd: (evt) => {
-                        const osId = evt.item.dataset.id;
-                        const statusRaw = evt.to.id.split('-')[1];
-                        const novoStatus = statusRaw.charAt(0).toUpperCase() + statusRaw.slice(1);
-                        mudarStatusOS(osId, novoStatus === 'Analise' ? 'Análise' : novoStatus);
-                    }
-                });
-            }
-        });
-    }
 }
 
-const app = new Dashboard();
+const appDashboard = new Dashboard();
 
-// --- NAVEGAÇÃO ENTRE TELAS (CONTROLA OS BOTÕES DA SIDEBAR) ---
-function showScreen(screenId) {
-    const sections = document.querySelectorAll('.content-section, .table-container, .kanban-container, .inventory-container');
-    sections.forEach(s => s.classList.add('hidden'));
+// --- SISTEMA DE NAVEGAÇÃO ---
+function showScreen(id) {
+    document.querySelectorAll('.content-section').forEach(s => s.classList.add('hidden'));
 
-    const target = document.getElementById(screenId);
-    if (target) {
-        target.classList.remove('hidden');
-    } else {
-        console.error("Seção não encontrada:", screenId);
-    }
+    const mainLayout = document.getElementById('main-layout');
+    if (mainLayout) mainLayout.classList.remove('hidden');
 
-    document.querySelectorAll('.nav-item').forEach(btn => btn.classList.remove('active'));
-    const activeBtn = document.querySelector(`button[onclick*="${screenId}"]`);
-    if (activeBtn) activeBtn.classList.add('active');
+    const target = document.getElementById(id);
+    if (target) target.classList.remove('hidden');
 
-    renderizarDados(screenId);
+    document.querySelectorAll('.nav-item').forEach(btn => {
+        btn.classList.remove('active');
+        const acao = btn.getAttribute('onclick');
+        if (acao && acao.includes(id)) {
+            btn.classList.add('active');
+        }
+    });
+
+    // Gatilhos de carregamento de dados por tela
+    if (id === 'lista-screen') renderTable();
+    if (id === 'estoque-screen') renderInventory();
+    if (id === 'financeiro-screen') renderFinanceiro();
+    if (id === 'kanban-screen') renderKanban();
+    if (id === 'cadastro-screen') popularSelectPecas(); // Popular peças ao abrir cadastro
+
+    updateStats();
 }
 
-function renderizarDados(id) {
-    app.updateStats();
-    if (id === 'lista-screen') renderizarTabela();
-    if (id === 'kanban-screen') renderizarKanban();
-    if (id === 'estoque-screen') renderizarEstoque();
-    if (id === 'financeiro-screen') renderizarFinanceiro();
-    if (id === 'cadastro-screen') atualizarSelectPecas();
-}
-
-// --- FUNÇÃO SAIR ---
-function confirmarSair() {
-    if (confirm("Deseja realmente encerrar a sessão?")) {
-        localStorage.removeItem('SAD_USER_NAME');
-        location.reload();
-    }
-}
-
-// --- GESTÃO DE ORDENS (CADASTRO) ---
-const serviceForm = document.getElementById('serviceForm') || document.getElementById('os-form');
+// --- GESTÃO DE ORDENS (CRUD) ---
+const serviceForm = document.getElementById('serviceForm');
 if (serviceForm) {
-    serviceForm.addEventListener('submit', async function(e) {
+    serviceForm.addEventListener('submit', function(e) {
         e.preventDefault();
-        
-        const pecaId = document.getElementById('os-peca-usada')?.value;
-        let custoPeca = 0;
 
+        // Captura do Checklist (Ideia 4)
+        const checklist = [];
+        document.querySelectorAll('.os-check:checked').forEach(el => checklist.push(el.value));
+
+        const pecaId = document.getElementById('os-peca-usada').value;
+        let custoPecaSelecionada = 0;
+
+        // Lógica de Baixa no Estoque e Captura de Custo
         if (pecaId) {
-            const idx = estoque.findIndex(p => p.id == pecaId);
-            if (idx !== -1 && estoque[idx].qtd > 0) {
-                estoque[idx].qtd--;
-                custoPeca = parseFloat(estoque[idx].preco);
+            let estoque = JSON.parse(localStorage.getItem('SAD_PRO_STOCK') || '[]');
+            const index = estoque.findIndex(p => p.id == pecaId);
+            
+            if (index !== -1 && estoque[index].qtd > 0) {
+                custoPecaSelecionada = parseFloat(estoque[index].preco);
+                estoque[index].qtd -= 1; // Baixa automática
                 localStorage.setItem('SAD_PRO_STOCK', JSON.stringify(estoque));
             }
         }
 
         const novaOS = {
-            id: Math.floor(1000 + Math.random() * 9000),
+            id: Math.floor(100 + Math.random() * 899),
             cliente: document.getElementById('cli-nome').value,
-            cpf: document.getElementById('cli-cpf').value,
             aparelho: document.getElementById('apa-nome').value,
             defeito: document.getElementById('apa-defeito').value,
-            data: new Date().toLocaleDateString('pt-BR'),
-            valor: parseFloat(document.getElementById('os-maodeobra')?.value || 0),
-            pagamento: document.getElementById('os-pagamento').value,
-            custoPeca: custoPeca,
-            status: 'Pendente',
-            logs: [{ data: new Date().toLocaleString(), texto: "Ordem de serviço aberta." }]
+            data: document.getElementById('apa-data').value,
+            maodeobra: document.getElementById('os-maodeobra').value || 0,
+            idPeca: pecaId,
+            custoPeca: custoPecaSelecionada,
+            checklist: checklist,
+            status: 'Pendente'
         };
 
-        ordens.push(novaOS);
-        localStorage.setItem('SAD_PRO_OS', JSON.stringify(ordens));
-        
-        alert(`OS #${novaOS.id} criada com sucesso!`);
+        let osList = JSON.parse(localStorage.getItem('SAD_PRO_OS') || '[]');
+        osList.push(novaOS);
+        localStorage.setItem('SAD_PRO_OS', JSON.stringify(osList));
+
         this.reset();
-        showScreen('lista-screen');
+        
+        openConfirm(
+            "Ordem Registrada", 
+            "A ordem de serviço foi salva com sucesso!", 
+            () => showScreen('lista-screen'),
+            "Ver Lista"
+        );
+        openConfirm("Ordem Registrada", "A ordem foi salva e o estoque atualizado!", () => showScreen('lista-screen'), "Ver Lista");
     });
 }
 
-// --- RENDERIZADORES DE TELAS ---
-
-function renderizarTabela() {
+function renderTable() {
     const tbody = document.getElementById('table-body');
     if (!tbody) return;
 
-    if (ordens.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:20px;">Nenhuma ordem encontrada.</td></tr>`;
+    let osList = JSON.parse(localStorage.getItem('SAD_PRO_OS') || '[]');
+    if (osList.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding: 40px; color: #71717a;">Nenhuma ordem salva.</td></tr>';
         return;
     }
 
-    tbody.innerHTML = ordens.slice().reverse().map(os => `
-        <tr onclick="abrirDetalhes(${os.id})" style="cursor:pointer" class="animate-in">
+    tbody.innerHTML = [...osList].reverse().map(os => `
+        <tr>
             <td>#${os.id}</td>
             <td><b>${os.cliente}</b></td>
-            <td>${os.aparelho}</td>
-            <td><span class="status-badge status-${os.status.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")}">${os.status}</span></td>
+            <td>${os.aparelho}<br><small style="color: #71717a;">${os.defeito}</small></td>
             <td>
-                <button onclick="event.stopPropagation(); excluirOS(${os.id})" class="btn-del">
-                    <i class="fas fa-trash"></i>
-                </button>
+                <span class="status-badge ${os.status === 'Pendente' ? 'status-pendente' : (os.status === 'Análise' ? 'status-analise' : 'status-concluido')}" 
+                      onclick="mudarStatusKanban(${os.id}, 'Análise')" style="cursor:pointer">
+                    ${os.status}
+                </span>
+            </td>
+            <td>
+                <div style="display: flex; gap: 8px;">
+                    <button onclick="notificarWhatsApp('${os.cliente}', '${os.aparelho}', '${os.id}')" class="btn-del" style="color: #25d366; border-color: #25d366;" title="WhatsApp">
+                        <i class="fab fa-whatsapp"></i>
+                    </button>
+                    <button onclick="gerarRecibo(${os.id})" class="btn-del" style="color: #3b82f6; border-color: #3b82f6;" title="PDF">
+                        <i class="fas fa-file-pdf"></i>
+                    </button>
+                    <button onclick="confirmarExclusao(${os.id})" class="btn-del">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                    <button onclick="notificarWhatsApp('${os.cliente}', '${os.aparelho}', '${os.id}')" class="btn-del" style="color: #25d366; border-color: #25d366;" title="WhatsApp"><i class="fab fa-whatsapp"></i></button>
+                    <button onclick="gerarRecibo(${os.id})" class="btn-del" style="color: #3b82f6; border-color: #3b82f6;" title="PDF"><i class="fas fa-file-pdf"></i></button>
+                    <button onclick="confirmarExclusao(${os.id})" class="btn-del"><i class="fas fa-trash"></i></button>
+                </div>
             </td>
         </tr>
     `).join('');
 }
 
-function renderizarKanban() {
-    const cols = {
-        'pendente': document.getElementById('cards-pendente'),
-        'analise': document.getElementById('cards-analise'),
-        'concluido': document.getElementById('cards-concluido')
-    };
-    Object.values(cols).forEach(c => { if(c) c.innerHTML = ''; });
+// --- IDEIA 1: FINANCEIRO ---
+// --- FINANCEIRO (CÁLCULO DE LUCRO LÍQUIDO) ---
+function renderFinanceiro() {
+    const osList = JSON.parse(localStorage.getItem('SAD_PRO_OS') || '[]');
+    const tbody = document.getElementById('fin-table-body');
+    if (!tbody) return;
 
-    ordens.forEach(os => {
-        // Normaliza o status para bater com o ID da coluna (sem acento)
-        const statusKey = os.status.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-        const card = document.createElement('div');
-        card.className = 'kanban-card animate-in';
-        card.dataset.id = os.id;
-        card.innerHTML = `<b>#${os.id} - ${os.cliente}</b><br><small>${os.aparelho}</small>`;
-        card.onclick = () => abrirDetalhes(os.id);
+    let bruto = 0;
+    let faturamentoBruto = 0;
+    let custoTotalPecas = 0;
+
+    const concluídos = osList.filter(os => os.status === 'Concluído');
+
+    tbody.innerHTML = concluídos.map(os => {
+        const valor = parseFloat(os.maodeobra || 0);
+        bruto += valor;
+        const maoDeObra = parseFloat(os.maodeobra || 0);
+        const custoPeca = parseFloat(os.custoPeca || 0);
         
-        if (cols[statusKey]) cols[statusKey].appendChild(card);
+        faturamentoBruto += maoDeObra;
+        custoTotalPecas += custoPeca;
+        
+        return `
+            <tr>
+                <td>#${os.id}</td>
+                <td>${os.cliente}</td>
+                <td>R$ ${valor.toFixed(2)}</td>
+                <td>R$ 0,00</td>
+                <td style="color: #10b981; font-weight: bold;">R$ ${valor.toFixed(2)}</td>
+                <td>R$ ${maoDeObra.toFixed(2)}</td>
+                <td style="color: #ef4444;">R$ ${custoPeca.toFixed(2)}</td>
+                <td style="color: #10b981; font-weight: bold;">R$ ${maoDeObra.toFixed(2)}</td>
+            </tr>
+        `;
+    }).join('') || '<tr><td colspan="5" style="text-align:center; padding:20px;">Nenhum serviço faturado.</td></tr>';
+
+    document.getElementById('fin-bruto').innerText = `R$ ${bruto.toFixed(2)}`;
+    document.getElementById('fin-lucro').innerText = `R$ ${bruto.toFixed(2)}`;
+    const lucroLiquido = faturamentoBruto - custoTotalPecas;
+    document.getElementById('fin-bruto').innerText = `R$ ${faturamentoBruto.toFixed(2)}`;
+    document.getElementById('fin-custo').innerText = `R$ ${custoTotalPecas.toFixed(2)}`;
+    document.getElementById('fin-lucro').innerText = `R$ ${lucroLiquido.toFixed(2)}`;
+}
+
+// --- IDEIA 5: KANBAN ---
+// --- KANBAN ---
+function renderKanban() {
+    const osList = JSON.parse(localStorage.getItem('SAD_PRO_OS') || '[]');
+    const areas = {
+        'Pendente': document.getElementById('cards-pendente'),
+        'Análise': document.getElementById('cards-analise'),
+        'Concluído': document.getElementById('cards-concluido')
+    };
+
+    Object.values(areas).forEach(a => a.innerHTML = '');
+    Object.values(areas).forEach(a => { if(a) a.innerHTML = ''; });
+
+    osList.forEach(os => {
+        const card = `
+            <div class="kanban-card animate-in">
+                <div style="display: flex; justify-content: space-between;">
+                    <b>#${os.id}</b>
+                    <small>${os.data}</small>
+                </div>
+                <p style="margin: 8px 0;">${os.cliente} - <b>${os.aparelho}</b></p>
+                <div style="display: flex; gap: 4px;">
+                    <button onclick="mudarStatusKanban(${os.id}, 'Pendente')" class="btn-del" style="font-size: 9px; width: auto; padding: 2px 4px;">P</button>
+                    <button onclick="mudarStatusKanban(${os.id}, 'Análise')" class="btn-del" style="font-size: 9px; width: auto; padding: 2px 4px;">A</button>
+                    <button onclick="mudarStatusKanban(${os.id}, 'Concluído')" class="btn-del" style="font-size: 9px; width: auto; padding: 2px 4px;">C</button>
+                </div>
+            </div>
+        `;
+        if (areas[os.status]) areas[os.status].innerHTML += card;
     });
 }
 
-function renderizarEstoque() {
+function mudarStatusKanban(id, novoStatus) {
+    let osList = JSON.parse(localStorage.getItem('SAD_PRO_OS') || '[]');
+    osList = osList.map(os => {
+        if (os.id == id) os.status = novoStatus;
+        return os;
+    });
+    localStorage.setItem('SAD_PRO_OS', JSON.stringify(osList));
+    
+    // Atualiza a tela atual que o usuário está vendo
+    const activeScreen = document.querySelector('.content-section:not(.hidden)').id;
+    if (activeScreen === 'kanban-screen') renderKanban();
+    if (activeScreen === 'lista-screen') renderTable();
+    updateStats();
+}
+
+// --- IDEIA 2 & 3: CRM E RECIBO ---
+function notificarWhatsApp(nome, aparelho, id) {
+    const msg = window.encodeURIComponent(`Olá ${nome}, a manutenção do seu ${aparelho} (OS #${id}) foi atualizada.`);
+    window.open(`https://api.whatsapp.com/send?text=${msg}`, '_blank');
+}
+
+function gerarRecibo(id) {
+    const os = JSON.parse(localStorage.getItem('SAD_PRO_OS')).find(o => o.id == id);
+    const win = window.open('', 'PRINT', 'height=600,width=800');
+    win.document.write(`<html><body style="font-family:sans-serif; padding:20px;">
+        <h2>RECIBO DE SERVIÇO - #${os.id}</h2>
+        <hr><p><b>Cliente:</b> ${os.cliente}</p>
+        <p><b>Aparelho:</b> ${os.aparelho}</p>
+        <p><b>Defeito:</b> ${os.defeito}</p>
+        <p><b>Checklist:</b> ${os.checklist.join(', ') || 'Nenhum'}</p>
+        <p><b>Valor:</b> R$ ${parseFloat(os.maodeobra).toFixed(2)}</p>
+        <hr><center>Technician PRO - Horizon Edition</center>
+    </body></html>`);
+    win.print();
+    win.close();
+    showScreen(document.querySelector('.content-section:not(.hidden)')?.id);
+}
+
+// --- ESTOQUE ---
+function renderInventory() {
     const tbody = document.getElementById('inventory-table-body');
     if (!tbody) return;
-    tbody.innerHTML = estoque.map(p => `
-        <tr>
-            <td>${p.nome}</td>
-            <td>${p.qtd} un</td>
-            <td>R$ ${parseFloat(p.preco).toFixed(2)}</td>
-            <td><button class="btn-del" onclick="removerPeca(${p.id})"><i class="fas fa-times"></i></button></td>
-        </tr>
-    `).join('');
-}
-
-function renderizarFinanceiro() {
-    let bruto = 0, custoTotal = 0;
-    const tbody = document.getElementById('fin-table-body');
-    const concluidos = ordens.filter(os => os.status.toLowerCase() === 'concluído' || os.status.toLowerCase() === 'concluido');
-
-    const html = concluidos.map(os => {
-        const taxa = os.pagamento === 'credito' ? os.valor * 0.05 : (os.pagamento === 'debito' ? os.valor * 0.02 : 0);
-        const custoOS = (os.custoPeca || 0) + taxa;
-        const lucro = os.valor - custoOS;
-        bruto += os.valor;
-        custoTotal += custoOS;
-        
-        return `<tr>
-            <td>#${os.id}</td>
-            <td>${os.cliente} <br><small>${os.pagamento.toUpperCase()}</small></td>
-            <td>R$ ${os.valor.toFixed(2)}</td>
-            <td style="color:#ef4444">- R$ ${custoOS.toFixed(2)}</td>
-            <td style="color:#10b981; font-weight:bold">R$ ${lucro.toFixed(2)}</td>
-        </tr>`;
-    }).join('');
-
-    if(tbody) tbody.innerHTML = html || '<tr><td colspan="5" style="text-align:center;">Nenhum serviço concluído.</td></tr>';
-
-    const elBruto = document.getElementById('fin-bruto');
-    const elCusto = document.getElementById('fin-custo');
-    const elLucro = document.getElementById('fin-lucro');
-
-    if(elBruto) elBruto.innerText = `R$ ${bruto.toFixed(2)}`;
-    if(elCusto) elCusto.innerText = `R$ ${custoTotal.toFixed(2)}`;
-    if(elLucro) elLucro.innerText = `R$ ${(bruto - custoTotal).toFixed(2)}`;
-}
-
-// --- FUNÇÕES DE APOIO ---
-
-function mudarStatusOS(id, novoStatus) {
-    const idx = ordens.findIndex(o => o.id == id);
-    if (idx !== -1) {
-        ordens[idx].status = novoStatus;
-        ordens[idx].logs.push({ data: new Date().toLocaleString(), texto: `Status alterado para ${novoStatus}` });
-        localStorage.setItem('SAD_PRO_OS', JSON.stringify(ordens));
-        app.updateStats();
-    }
-}
-
-function excluirOS(id) {
-    if (confirm("Excluir esta OS permanentemente?")) {
-        ordens = ordens.filter(o => o.id != id);
-        localStorage.setItem('SAD_PRO_OS', JSON.stringify(ordens));
-        renderizarTabela();
-        app.updateStats();
-    }
-}
-
-function esvaziarBanco() {
-    if (confirm("ATENÇÃO: Isso apagará todas as Ordens de Serviço. Continuar?")) {
-        ordens = [];
-        localStorage.setItem('SAD_PRO_OS', JSON.stringify(ordens));
-        renderizarTabela();
-        app.updateStats();
-    }
-}
-
-function atualizarSelectPecas() {
+// --- GESTÃO DE ESTOQUE ---
+function popularSelectPecas() {
     const select = document.getElementById('os-peca-usada');
     if (!select) return;
-    select.innerHTML = '<option value="">Selecione uma peça...</option>' + 
-        estoque.map(p => `<option value="${p.id}">${p.nome} (${p.qtd} em estoque)</option>`).join('');
+    const estoque = JSON.parse(localStorage.getItem('SAD_PRO_STOCK') || '[]');
+    
+    tbody.innerHTML = estoque.map(peca => `
+        <tr>
+            <td><b>${peca.nome}</b></td>
+            <td>${peca.categoria}</td>
+            <td><span class="status-badge ${peca.qtd <= 2 ? 'status-pendente' : 'status-concluido'}">${peca.qtd} un.</span></td>
+            <td style="color: #ffb38a;">R$ ${parseFloat(peca.preco).toFixed(2)}</td>
+            <td style="display: flex; gap: 5px;">
+                <button onclick="ajustarEstoque(${peca.id}, 1)" class="btn-del">+</button>
+                <button onclick="ajustarEstoque(${peca.id}, -1)" class="btn-del">-</button>
+                <button onclick="confirmarExclusaoPeca(${peca.id})" class="btn-del"><i class="fas fa-trash"></i></button>
+            </td>
+        </tr>
+    `).join('') || '<tr><td colspan="5" style="text-align:center;">Estoque vazio.</td></tr>';
 }
 
-function toggleTheme() {
-    document.body.classList.toggle('light-theme');
-    const isLight = document.body.classList.contains('light-theme');
-    localStorage.setItem('SAD_PRO_THEME', isLight ? 'light' : 'dark');
+function ajustarEstoque(id, mudanca) {
+    let estoque = JSON.parse(localStorage.getItem('SAD_PRO_STOCK') || '[]');
+    estoque = estoque.map(p => {
+        if (p.id === id) p.qtd = Math.max(0, (parseInt(p.qtd) || 0) + mudanca);
+        return p;
+    select.innerHTML = '<option value="">Nenhuma peça (Apenas serviço)</option>';
+    estoque.forEach(p => {
+        if (p.qtd > 0) select.innerHTML += `<option value="${p.id}">${p.nome} (Estoque: ${p.qtd})</option>`;
+    });
+    localStorage.setItem('SAD_PRO_STOCK', JSON.stringify(estoque));
+    renderInventory();
 }
 
-function abrirDetalhes(id) {
-    // Implemente a lógica de abrir o modal de detalhes/logs aqui se necessário
-    console.log("Abrindo detalhes da OS:", id);
+// --- GESTÃO DE ESTOQUE ---
+
+// 1. Abre o modal de cadastro
+function abrirModalPeca() {
+    const modal = document.getElementById('modal-peca');
+    if (modal) {
+        modal.classList.remove('hidden');
+        document.getElementById('modal-stk-nome').focus();
+    }
+    document.getElementById('modal-peca')?.classList.remove('hidden');
+}
+
+// 2. Fecha o modal de cadastro
+function fecharModalPeca() {
+    const modal = document.getElementById('modal-peca');
+    if (modal) {
+        modal.classList.add('hidden');
+        document.getElementById('pecaForm').reset();
+    }
+    document.getElementById('modal-peca')?.classList.add('hidden');
+    document.getElementById('pecaForm')?.reset();
+}
+
+// 3. Salva a peça no LocalStorage
+function salvarPecaModal() {
+    const nome = document.getElementById('modal-stk-nome').value;
+    const qtd = parseInt(document.getElementById('modal-stk-qtd').value) || 0;
+    const preco = parseFloat(document.getElementById('modal-stk-preco').value) || 0;
+
+    const novaPeca = {
+        id: Date.now(),
+        nome,
+        categoria: "Geral",
+        qtd,
+        preco
+    };
+
+    const novaPeca = { id: Date.now(), nome, categoria: "Geral", qtd, preco };
+    let estoque = JSON.parse(localStorage.getItem('SAD_PRO_STOCK') || '[]');
+    estoque.push(novaPeca);
+    localStorage.setItem('SAD_PRO_STOCK', JSON.stringify(estoque));
+
+    fecharModalPeca();
+    renderInventory();
+    openConfirm("Sucesso", "Item adicionado ao estoque!", null);
+}
+
+// 4. Renderiza a tabela na tela
+function renderInventory() {
+    const tbody = document.getElementById('inventory-table-body');
+    if (!tbody) return;
+
+    const estoque = JSON.parse(localStorage.getItem('SAD_PRO_STOCK') || '[]');
+    
+    if (estoque.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding: 40px; color: #71717a;">Estoque vazio.</td></tr>';
+        return;
+    }
+
+    tbody.innerHTML = estoque.map(peca => `
+        <tr>
+            <td><b>${peca.nome}</b></td>
+            <td>${peca.categoria}</td>
+            <td>
+                <span class="status-badge ${peca.qtd <= 2 ? 'status-pendente' : 'status-concluido'}">
+                    ${peca.qtd} un.
+                </span>
+            </td>
+            <td><span class="status-badge ${peca.qtd <= 2 ? 'status-pendente' : 'status-concluido'}">${peca.qtd} un.</span></td>
+            <td style="color: #ffb38a;">R$ ${parseFloat(peca.preco).toLocaleString('pt-BR', {minimumFractionDigits: 2})}</td>
+            <td>
+                <div style="display: flex; gap: 8px; align-items: center;">
+                    <button onclick="ajustarEstoque(${peca.id}, 1)" class="btn-del" style="color: #10b981; border-color: rgba(16, 185, 129, 0.3);">+</button>
+                    <button onclick="ajustarEstoque(${peca.id}, -1)" class="btn-del" style="color: #fff;">-</button>
+                    <button onclick="confirmarExclusaoPeca(${peca.id})" class="btn-del">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                <div style="display: flex; gap: 8px;">
+                    <button onclick="ajustarEstoque(${peca.id}, 1)" class="btn-del" style="color:#10b981">+</button>
+                    <button onclick="ajustarEstoque(${peca.id}, -1)" class="btn-del">-</button>
+                    <button onclick="confirmarExclusaoPeca(${peca.id})" class="btn-del"><i class="fas fa-trash"></i></button>
+                </div>
+            </td>
+        </tr>
+    `).join('');
+    `).join('') || '<tr><td colspan="5" style="text-align:center;">Vazio.</td></tr>';
+}
+
+// 5. Ajusta quantidade (+ ou -)
+function ajustarEstoque(id, mudanca) {
+    let estoque = JSON.parse(localStorage.getItem('SAD_PRO_STOCK') || '[]');
+    estoque = estoque.map(p => {
+        if (p.id === id) {
+            p.qtd = Math.max(0, (parseInt(p.qtd) || 0) + mudanca);
+        }
+        return p;
+    });
+    estoque = estoque.map(p => { if (p.id === id) p.qtd = Math.max(0, p.qtd + mudanca); return p; });
+    localStorage.setItem('SAD_PRO_STOCK', JSON.stringify(estoque));
+    renderInventory();
+}
+
+// 6. Confirmação de exclusão
+// --- UTILITÁRIOS ---
+function notificarWhatsApp(nome, aparelho, id) {
+    const msg = window.encodeURIComponent(`Olá ${nome}, a manutenção do seu ${aparelho} (OS #${id}) foi atualizada.`);
+    window.open(`https://api.whatsapp.com/send?text=${msg}`, '_blank');
+}
+
+function gerarRecibo(id) {
+    const os = JSON.parse(localStorage.getItem('SAD_PRO_OS')).find(o => o.id == id);
+    const win = window.open('', 'PRINT', 'height=600,width=800');
+    win.document.write(`<html><body style="font-family:sans-serif; padding:20px;">
+        <h2>RECIBO - #${os.id}</h2><hr>
+        <p><b>Cliente:</b> ${os.cliente}</p><p><b>Aparelho:</b> ${os.aparelho}</p>
+        <p><b>Valor Mão de Obra:</b> R$ ${parseFloat(os.maodeobra).toFixed(2)}</p>
+        <p><b>Checklist:</b> ${os.checklist.join(', ') || 'Nenhum'}</p>
+        <hr><center>Technician PRO</center></body></html>`);
+    win.print(); win.close();
+}
+
+function updateStats() {
+    const osList = JSON.parse(localStorage.getItem('SAD_PRO_OS') || '[]');
+    const abertas = osList.filter(os => os.status === 'Pendente').length;
+    if(document.getElementById('count-open')) document.getElementById('count-open').innerText = abertas;
+    if(document.getElementById('count-total')) document.getElementById('count-total').innerText = osList.length;
+}
+
+function openConfirm(titulo, msg, acao, textoBtn = "Confirmar") {
+    const modal = document.getElementById('custom-confirm');
+    const btnSim = document.getElementById('confirm-yes');
+    if(!modal || !btnSim) return;
+    document.getElementById('confirm-title').innerText = titulo;
+    document.getElementById('confirm-message').innerText = msg;
+    btnSim.innerText = textoBtn;
+    modal.classList.remove('hidden');
+    const novoBtn = btnSim.cloneNode(true);
+    btnSim.parentNode.replaceChild(novoBtn, btnSim);
+    novoBtn.onclick = () => { acao(); closeConfirm(); };
+}
+
+function closeConfirm() { document.getElementById('custom-confirm').classList.add('hidden'); }
+function atualizarData() { 
+    const el = document.getElementById('current-date');
+    if(el) el.innerText = new Date().toLocaleDateString('pt-br', {weekday: 'long', day:'numeric', month:'long'}); 
+}
+function aplicarTemaSalvo() { if(localStorage.getItem('SAD_PRO_THEME') === 'light') document.body.classList.replace('dark-theme', 'light-theme'); }
+function confirmarSair() { openConfirm("Sair", "Deseja encerrar a sessão?", () => window.location.href = "index.html"); }
+function confirmarExclusao(id) {
+    openConfirm("Excluir", "Tem certeza?", () => {
+        let os = JSON.parse(localStorage.getItem('SAD_PRO_OS')).filter(o => o.id !== id);
+        localStorage.setItem('SAD_PRO_OS', JSON.stringify(os));
+        renderTable(); updateStats();
+    });
+}
+function confirmarExclusaoPeca(id) {
+    openConfirm("Remover Peça?", "Deseja excluir permanentemente este item?", () => {
+        let estoque = JSON.parse(localStorage.getItem('SAD_PRO_STOCK') || '[]');
+        estoque = estoque.filter(p => p.id !== id);
+        localStorage.setItem('SAD_PRO_STOCK', JSON.stringify(estoque));
+    openConfirm("Excluir Peça", "Remover do estoque?", () => {
+        let e = JSON.parse(localStorage.getItem('SAD_PRO_STOCK')).filter(p => p.id !== id);
+        localStorage.setItem('SAD_PRO_STOCK', JSON.stringify(e));
+        renderInventory();
+    });
+}
+function limparBanco() {
+    openConfirm("Limpar Tudo", "Apagar todas as ordens?", () => {
+        localStorage.removeItem('SAD_PRO_OS');
+        renderTable(); updateStats();
+    });
 }
