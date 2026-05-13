@@ -178,12 +178,16 @@ function fecharModalPeca() {
     document.getElementById('modal-peca').classList.add('hidden');
 }
 
+// --- SISTEMA DE ESTOQUE ATUALIZADO ---
 function salvarPecaModal() {
     const nome = document.getElementById('modal-stk-nome').value;
     const qtd = document.getElementById('modal-stk-qtd').value;
     const preco = document.getElementById('modal-stk-preco').value;
 
-    if (!nome || !qtd || !preco) return alert("Preencha todos os campos!");
+    if (!nome || !qtd || !preco) {
+        alert("Preencha todos os campos!");
+        return;
+    }
 
     const estoque = getEstoque();
     estoque.push({
@@ -196,6 +200,8 @@ function salvarPecaModal() {
     saveEstoque(estoque);
     fecharModalPeca();
     renderEstoque();
+    
+    // Limpa o formulário após salvar
     document.getElementById('pecaForm').reset();
 }
 
