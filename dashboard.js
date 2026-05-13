@@ -10,8 +10,8 @@ function showScreen(screenId) {
         section.classList.add('hidden');
     });
 
-    // 2. Remove destaque de todos os itens do menu
-    document.querySelectorAll('.sidebar-nav li').forEach(item => {
+    // 2. Remove destaque de todos os itens do menu (Ajustado para bater com seu HTML)
+    document.querySelectorAll('.nav-item').forEach(item => {
         item.classList.remove('active');
     });
 
@@ -33,7 +33,10 @@ function showScreen(screenId) {
 
 // --- GESTÃO DE ORDENS DE SERVIÇO (OS) ---
 const getOS = () => JSON.parse(localStorage.getItem('SAD_PRO_OS') || '[]');
-const saveOS = (data) => localStorage.setItem('SAD_PRO_OS', JSON.stringify(data));
+const saveOS = (data) => {
+    localStorage.setItem('SAD_PRO_OS', JSON.stringify(data));
+    updateStats();
+};
 
 function handleFormSubmit(e) {
     e.preventDefault();
@@ -55,7 +58,6 @@ function handleFormSubmit(e) {
     
     e.target.reset();
     showScreen('lista-screen');
-    updateStats();
 }
 
 function excluirOS(id) {
@@ -63,7 +65,6 @@ function excluirOS(id) {
         const filtrados = getOS().filter(os => os.id != id);
         saveOS(filtrados);
         renderTable();
-        updateStats();
     }
 }
 
@@ -75,7 +76,7 @@ function drag(ev, id) { ev.dataTransfer.setData("osId", id); }
 function drop(ev) {
     ev.preventDefault();
     const id = ev.dataTransfer.getData("osId");
-    const targetCol = ev.currentTarget.id; // Ex: col-andamento
+    const targetCol = ev.currentTarget.id; 
 
     let novoStatus = 'Pendente';
     if (targetCol === 'col-andamento') novoStatus = 'Em Andamento';
@@ -88,10 +89,10 @@ function drop(ev) {
 
     saveOS(osList);
     renderKanban();
-    updateStats();
 }
 
 function renderKanban() {
+    // Busca pelas áreas de cards dentro das colunas
     const columns = {
         'Pendente': document.querySelector('#col-pendente .kanban-cards'),
         'Em Andamento': document.querySelector('#col-andamento .kanban-cards'),
@@ -109,7 +110,7 @@ function renderKanban() {
         card.innerHTML = `
             <h4>${os.cliente}</h4>
             <p>${os.aparelho}</p>
-            <div class="kanban-card-footer">
+            <div class="kanban-card-footer" style="display:flex; justify-content:space-between; margin-top:10px; font-size:0.8rem;">
                 <small>#${os.id}</small>
                 <strong>R$ ${os.valor.toFixed(2)}</strong>
             </div>
@@ -135,29 +136,29 @@ function salvarPecaModal() {
     const qtd = document.getElementById('modal-stk-qtd').value;
     const preco = document.getElementById('modal-stk-preco').value;
 
-    if (!nome || !qtd || !preco) return alert("Preencha tudo!");
+    if (!nome || !qtd || !preco) return alert("Preencha todos os campos!");
 
     const estoque = getEstoque();
     estoque.push({
         id: Date.now(),
         nome,
         quantidade: parseInt(qtd),
-        preco: parseFloat(preco),
-        categoria: "Geral"
+        preco: parseFloat(preco)
     });
 
     saveEstoque(estoque);
     fecharModalPeca();
     renderEstoque();
+    document.getElementById('pecaForm').reset();
 }
 
 function renderEstoque() {
-    const tbody = document.getElementById('stock-body'); // Corrigido ID para bater com o HTML anterior
+    const tbody = document.getElementById('stock-body'); 
     if (!tbody) return;
 
     const data = getEstoque();
     if (data.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="4">Estoque vazio</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="4" style="text-align:center">Estoque vazio</td></tr>';
         return;
     }
 
@@ -165,7 +166,7 @@ function renderEstoque() {
         <tr>
             <td>${peca.nome}</td>
             <td>${peca.quantidade} un</td>
-            <td>R$ ${peca.preco.toLocaleString('pt-BR')}</td>
+            <td>R$ ${peca.preco.toLocaleString('pt-BR', {minimumFractionDigits: 2})}</td>
             <td>
                 <button onclick="excluirPeca(${peca.id})" class="btn-del"><i class="fas fa-trash"></i></button>
             </td>
@@ -174,7 +175,7 @@ function renderEstoque() {
 }
 
 function excluirPeca(id) {
-    if(confirm("Remover peça?")) {
+    if(confirm("Remover peça do estoque?")) {
         saveEstoque(getEstoque().filter(p => p.id !== id));
         renderEstoque();
     }
@@ -183,33 +184,47 @@ function excluirPeca(id) {
 // --- FINANCEIRO E DASHBOARD ---
 function renderFinanceiro() {
     const osList = getOS();
+    const estoque = getEstoque();
     const tbody = document.getElementById('finance-body');
-    let total = 0;
+    
+    let totalEntradas = 0;
+    let totalSaidas = 0;
 
-    if(!tbody) return;
-    tbody.innerHTML = osList.filter(os => os.valor > 0).map(os => {
-        total += os.valor;
+    // Cálculo Entradas (OS Concluídas)
+    const entradasHTML = osList.filter(os => os.valor > 0).map(os => {
+        totalEntradas += os.valor;
         return `
             <tr>
                 <td>${os.data}</td>
                 <td>OS #${os.id} - ${os.cliente}</td>
                 <td><span class="status-badge status-concluido">Entrada</span></td>
-                <td>R$ ${os.valor.toLocaleString('pt-BR')}</td>
+                <td>R$ ${os.valor.toLocaleString('pt-BR', {minimumFractionDigits: 2})}</td>
             </tr>
         `;
     }).join('');
 
-    document.getElementById('fin-entradas').innerText = `R$ ${total.toLocaleString('pt-BR')}`;
-    document.getElementById('fin-saldo').innerText = `R$ ${total.toLocaleString('pt-BR')}`;
+    // Cálculo Saídas (Custo de Estoque)
+    estoque.forEach(p => { totalSaidas += (p.preco * p.quantidade); });
+
+    if(tbody) tbody.innerHTML = entradasHTML || '<tr><td colspan="4" style="text-align:center">Sem movimentações</td></tr>';
+
+    // Atualiza cards financeiros
+    if(document.getElementById('fin-entradas')) document.getElementById('fin-entradas').innerText = `R$ ${totalEntradas.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
+    if(document.getElementById('fin-saidas')) document.getElementById('fin-saidas').innerText = `R$ ${totalSaidas.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
+    if(document.getElementById('fin-saldo')) document.getElementById('fin-saldo').innerText = `R$ ${(totalEntradas - totalSaidas).toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
 }
 
-// Dentro da função renderTable no seu JS:
 function renderTable() {
     const tbody = document.getElementById('table-body');
-    const osList = getOS();
+    if (!tbody) return;
 
-    tbody.innerHTML = osList.map(os => {
-        // Define a classe de cor baseada no status
+    const osList = getOS();
+    if (osList.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center">Nenhuma ordem encontrada</td></tr>';
+        return;
+    }
+
+    tbody.innerHTML = osList.slice().reverse().map(os => {
         const statusClass = os.status === 'Concluído' ? 'status-concluido' : 
                            os.status === 'Em Andamento' ? 'status-andamento' : 'status-pendente';
 
@@ -218,10 +233,11 @@ function renderTable() {
                 <td>#${os.id}</td>
                 <td>${os.cliente}</td>
                 <td>${os.aparelho}</td>
+                <td>${os.data}</td>
                 <td><span class="status-badge ${statusClass}">${os.status}</span></td>
                 <td>
-                    <button onclick="gerarPDF(${os.id})" class="btn-action"><i class="fas fa-file-pdf"></i></button>
-                    <button onclick="excluirOS(${os.id})" class="btn-del"><i class="fas fa-trash"></i></button>
+                    <button onclick="gerarPDF(${os.id})" class="btn-action" title="Gerar PDF"><i class="fas fa-file-pdf"></i></button>
+                    <button onclick="excluirOS(${os.id})" class="btn-del" title="Excluir"><i class="fas fa-trash"></i></button>
                 </td>
             </tr>
         `;
@@ -241,78 +257,6 @@ function updateStats() {
     if(dateEl) dateEl.innerText = new Date().toLocaleDateString('pt-BR');
 }
 
-// --- INICIALIZAÇÃO ---
-document.addEventListener('DOMContentLoaded', () => {
-    const form = document.getElementById('serviceForm');
-    if(form) form.addEventListener('submit', handleFormSubmit);
-    
-    updateStats();
-});
-function limparBanco() {
-    if(confirm("Isso apagará TODAS as ordens de serviço. Continuar?")) {
-        localStorage.removeItem('SAD_PRO_OS');
-        location.reload();
-    }
-}
-/* Layout Kanban */
-.kanban-container {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 20px;
-    align-items: start;
-}
-
-.kanban-column {
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 12px;
-    padding: 15px;
-    min-height: 500px;
-    border: 1px solid #333;
-}
-
-.kanban-header {
-    font-weight: 700;
-    text-transform: uppercase;
-    margin-bottom: 15px;
-    color: #155e63;
-    border-bottom: 2px solid #155e63;
-    padding-bottom: 5px;
-}
-
-.kanban-card {
-    background: #252525;
-    border-left: 4px solid #155e63;
-    padding: 15px;
-    border-radius: 8px;
-    margin-bottom: 10px;
-    cursor: grab;
-    transition: transform 0.2s;
-}
-
-.kanban-card:active { cursor: grabbing; }
-
-.kanban-card h4 { margin: 0 0 5px 0; font-size: 1rem; }
-.kanban-card p { font-size: 0.85rem; color: #aaa; margin: 0; }
-
-/* Status Badges */
-.status-badge {
-    padding: 5px 10px;
-    border-radius: 20px;
-    font-size: 0.75rem;
-    font-weight: 600;
-}
-
-.status-pendente { background: #ff980033; color: #ff9800; }
-.status-andamento { background: #2196f333; color: #2196f3; }
-.status-concluido { background: #4caf5033; color: #4caf50; }
-
-/* Financeiro Cards */
-.card-entrada { border-bottom: 4px solid #4caf50; }
-.card-saida { border-bottom: 4px solid #f44336; }
-.card-saldo { border-bottom: 4px solid #2196f3; }
-
-/* Utilitários */
-.hidden { display: none !important; }
 function gerarPDF(id) {
     const os = getOS().find(o => o.id == id);
     if (!os) return;
@@ -321,16 +265,46 @@ function gerarPDF(id) {
     const content = document.getElementById('pdf-content');
     
     content.innerHTML = `
-        <p><strong>Ordem de Serviço:</strong> #${os.id}</p>
-        <p><strong>Cliente:</strong> ${os.cliente}</p>
-        <p><strong>Aparelho:</strong> ${os.aparelho}</p>
-        <p><strong>Defeito:</strong> ${os.defeito}</p>
-        <p><strong>Valor:</strong> R$ ${os.valor.toFixed(2)}</p>
-        <p><strong>Data:</strong> ${os.data}</p>
+        <div style="font-family: sans-serif; color: #333;">
+            <h2 style="color: #155e63;">DETALHES DA ORDEM DE SERVIÇO #${os.id}</h2>
+            <hr>
+            <p><strong>Cliente:</strong> ${os.cliente}</p>
+            <p><strong>WhatsApp:</strong> ${os.telefone || 'Não informado'}</p>
+            <p><strong>Aparelho:</strong> ${os.aparelho}</p>
+            <p><strong>Defeito Relatado:</strong> ${os.defeito}</p>
+            <p><strong>Data de Entrada:</strong> ${os.data}</p>
+            <p><strong>Status Atual:</strong> ${os.status}</p>
+            <h3 style="margin-top: 20px;">Valor Total: R$ ${os.valor.toFixed(2)}</h3>
+        </div>
     `;
 
     element.style.display = 'block';
-    html2pdf().from(element).save(`OS_${os.id}.pdf`).then(() => {
+    const opt = {
+        margin: 10,
+        filename: `OS_${os.id}_${os.cliente}.pdf`,
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2 },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+    };
+
+    html2pdf().set(opt).from(element).save().then(() => {
         element.style.display = 'none';
     });
 }
+
+function limparBanco() {
+    if(confirm("ATENÇÃO: Isso apagará TODAS as ordens e histórico. Deseja continuar?")) {
+        localStorage.removeItem('SAD_PRO_OS');
+        location.reload();
+    }
+}
+
+// --- INICIALIZAÇÃO ---
+document.addEventListener('DOMContentLoaded', () => {
+    const form = document.getElementById('serviceForm');
+    if(form) form.addEventListener('submit', handleFormSubmit);
+    
+    // Inicia na home
+    showScreen('home-screen');
+    updateStats();
+});
