@@ -111,25 +111,22 @@ h1, h2, h3, h4, .sidebar-logo { font-family: 'Forum', serif; }
 
 /* --- MAIN LAYOUT (FULLSCREEN HORIZON) --- */
 .main-wrapper {
-    margin-left: 260px;
-    width: calc(100% - 260px);
-    max-width: none !important;
-    padding: 40px;
+    margin-left: 260px; /* Mantém o espaço da sidebar */
+    width: calc(100% - 260px); /* Ocupa exatamente o que sobra */
+    max-width: none !important; /* Remove qualquer trava de largura anterior */
+    padding: 40px; /* Dá respiro nas bordas */
     display: flex;
     flex-direction: column;
-    gap: 35px;
-    min-height: 100vh;
+    gap: 30px;
 }
 
 /* --- BANNER DE BOAS-VINDAS --- */
 .welcome-banner {
-    background: linear-gradient(100deg, #050505 0%, var(--primary-teal) 100%);
-    padding: 50px;
-    border-radius: 24px;
-    border: 1px solid var(--primary-teal);
-    width: 100%;
+    width: 100%; /* Faz o banner ocupar toda a largura disponível */
     box-sizing: border-box;
-    position: relative;
+    padding: 50px; /* Aumenta o preenchimento interno para ficar imponente */
+    background: linear-gradient(100deg, #050505 0%, var(--primary-teal) 100%);
+    border-radius: 24px;
 }
 
 .welcome-banner h1 { font-size: 2.8rem; margin-bottom: 8px; }
