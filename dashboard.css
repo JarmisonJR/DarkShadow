@@ -52,6 +52,7 @@ body {
     min-height: 100vh;
     overflow-x: hidden;
     transition: background 0.3s, color 0.3s;
+    display: flex; /* Adicionado para garantir o alinhamento lado a lado */
 }
 
 h1, h2, h3, h4, .sidebar-logo { 
@@ -71,6 +72,8 @@ h1, h2, h3, h4, .sidebar-logo {
     position: fixed;
     height: 100vh;
     z-index: 1000;
+    left: 0;
+    top: 0;
 }
 
 .sidebar-logo {
@@ -125,14 +128,16 @@ h1, h2, h3, h4, .sidebar-logo {
     font-weight: 600; 
 }
 
-/* --- MAIN LAYOUT --- */
+/* --- MAIN LAYOUT --- (CONSERTADO) */
 .main-wrapper {
-    margin-left: 260px;
-    width: calc(100% - 260px);
+    margin-left: 260px; /* Alinhado exatamente com a largura da sidebar */
+    width: calc(100% - 260px); /* Ocupa o restante da tela */
     padding: 30px;
     display: flex;
     flex-direction: column;
     gap: 30px;
+    min-height: 100vh;
+    position: relative;
 }
 
 .welcome-banner {
@@ -150,10 +155,9 @@ h1, h2, h3, h4, .sidebar-logo {
 /* --- ESTATÍSTICAS (Cards) --- */
 .stats-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /* Responsivo e flexível */
+    grid-template-columns: repeat(3, 1fr);
     gap: 20px;
     width: 100%;
-    margin-bottom: 30px;
 }
 
 .stat-card {
@@ -193,19 +197,16 @@ h1, h2, h3, h4, .sidebar-logo {
     font-family: 'Forum'; 
 }
 
+/* --- TABELAS --- */
 .table-container {
-    width: 100%;
-    overflow-x: auto; /* Adiciona scroll lateral se a tela for muito pequena */
     background: var(--card-bg);
     border-radius: 15px;
     border: 1px solid var(--border-color);
+    overflow-x: auto; /* Permite scroll se a tabela for maior que o enquadramento */
 }
 
-table {
-    width: 100%;
-    border-collapse: collapse;
-    min-width: 600px; /* Impede que a tabela esmague os dados */
-}
+table { width: 100%; border-collapse: collapse; }
+
 th {
     background: var(--primary-teal);
     color: var(--primary-sunset);
@@ -463,26 +464,4 @@ input:focus, textarea:focus {
     .main-wrapper { margin-left: 80px; width: calc(100% - 80px); }
     .stats-grid { grid-template-columns: 1fr; }
     .checklist-grid { grid-template-columns: 1fr; }
-}
-/* No seu arquivo style.css */
-
-.dashboard-container {
-    display: flex; /* Garante que sidebar e conteúdo fiquem lado a lado */
-    min-height: 100vh;
-}
-
-.main-wrapper {
-    flex: 1; /* Faz o conteúdo ocupar todo o espaço restante */
-    margin-left: 260px; /* Alinhado com a largura da sua .sidebar */
-    padding: 30px;
-    width: calc(100% - 260px); /* Garante que não haja estouro horizontal */
-    box-sizing: border-box;
-}
-
-/* Ajuste para telas menores */
-@media (max-width: 1024px) {
-    .main-wrapper {
-        margin-left: 80px;
-        width: calc(100% - 80px);
-    }
 }
