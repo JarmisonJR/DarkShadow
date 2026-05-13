@@ -11,6 +11,7 @@ class Dashboard {
             atualizarData();
             updateStats();
             aplicarTemaSalvo();
+            this.inicializarGrafico();
         });
     }
 
@@ -19,6 +20,26 @@ class Dashboard {
         if (welcomeElement) {
             welcomeElement.innerText = `Bem-vindo, Técnico ${this.usuarioNome}!`;
         }
+    }
+
+    inicializarGrafico() {
+        const ctx = document.getElementById('meuGrafico');
+        if (!ctx) return;
+
+        // Exemplo simples de gráfico (requer Chart.js no HTML)
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'],
+                datasets: [{
+                    label: 'Faturamento R$',
+                    data: [120, 190, 300, 500, 230, 400],
+                    borderColor: '#8b5cf6',
+                    tension: 0.4
+                }]
+            },
+            options: { responsive: true, maintainAspectRatio: false }
+        });
     }
 }
 
@@ -46,7 +67,7 @@ function showScreen(id) {
     if (id === 'estoque-screen') renderInventory();
     if (id === 'financeiro-screen') renderFinanceiro();
     if (id === 'kanban-screen') renderKanban();
-    if (id === 'cadastro-screen') popularSelectPecas(); // Popular peças ao abrir cadastro
+    if (id === 'cadastro-screen') popularSelectPecas(); 
     
     updateStats();
 }
@@ -62,16 +83,12 @@ if (serviceForm) {
 
         const pecaId = document.getElementById('os-peca-usada').value;
         let custoPecaSelecionada = 0;
-// Dentro do objeto novaOS
-const dataConclusao = new Date(); // Data de hoje
-const dataGarantia = new Date();
-dataGarantia.setDate(dataConclusao.getDate() + 90); // Soma 90 dias
 
-const novaOS = {
-    // ... campos existentes ...
-    garantiaAte: dataGarantia.toLocaleDateString('pt-BR'),
-    // ...
-};
+        // Lógica de Datas e Garantia
+        const dataConclusao = new Date();
+        const dataGarantia = new Date();
+        dataGarantia.setDate(dataConclusao.getDate() + 90);
+
         // Lógica de Baixa no Estoque e Captura de Custo
         if (pecaId) {
             let estoque = JSON.parse(localStorage.getItem('SAD_PRO_STOCK') || '[]');
@@ -79,7 +96,7 @@ const novaOS = {
             
             if (index !== -1 && estoque[index].qtd > 0) {
                 custoPecaSelecionada = parseFloat(estoque[index].preco);
-                estoque[index].qtd -= 1; // Baixa automática
+                estoque[index].qtd -= 1; 
                 localStorage.setItem('SAD_PRO_STOCK', JSON.stringify(estoque));
             }
         }
@@ -90,18 +107,19 @@ const novaOS = {
             aparelho: document.getElementById('apa-nome').value,
             defeito: document.getElementById('apa-defeito').value,
             data: document.getElementById('apa-data').value,
-            maodeobra: document.getElementById('os-maodeobra').value || 0,
+            maodeobra: parseFloat(document.getElementById('os-maodeobra').value) || 0,
             idPeca: pecaId,
             custoPeca: custoPecaSelecionada,
             checklist: checklist,
-            status: 'Pendente'
+            status: 'Pendente',
+            garantiaAte: dataGarantia.toLocaleDateString('pt-BR')
         };
 
         let osList = JSON.parse(localStorage.getItem('SAD_PRO_OS') || '[]');
         osList.push(novaOS);
         localStorage.setItem('SAD_PRO_OS', JSON.stringify(osList));
 
-        this.reset();
+        serviceForm.reset();
         openConfirm("Ordem Registrada", "A ordem foi salva e o estoque atualizado!", () => showScreen('lista-screen'), "Ver Lista");
     });
 }
@@ -138,7 +156,7 @@ function renderTable() {
     `).join('');
 }
 
-// --- FINANCEIRO (CÁLCULO DE LUCRO LÍQUIDO) ---
+// --- FINANCEIRO ---
 function renderFinanceiro() {
     const osList = JSON.parse(localStorage.getItem('SAD_PRO_OS') || '[]');
     const tbody = document.getElementById('fin-table-body');
@@ -147,11 +165,12 @@ function renderFinanceiro() {
     let faturamentoBruto = 0;
     let custoTotalPecas = 0;
 
-    const concluídos = osList.filter(os => os.status === 'Concluído');
+    const concluidos = osList.filter(os => os.status === 'Concluído');
 
-    tbody.innerHTML = concluídos.map(os => {
+    tbody.innerHTML = concluidos.map(os => {
         const maoDeObra = parseFloat(os.maodeobra || 0);
         const custoPeca = parseFloat(os.custoPeca || 0);
+        const lucroOS = maoDeObra - custoPeca;
         
         faturamentoBruto += maoDeObra;
         custoTotalPecas += custoPeca;
@@ -162,7 +181,7 @@ function renderFinanceiro() {
                 <td>${os.cliente}</td>
                 <td>R$ ${maoDeObra.toFixed(2)}</td>
                 <td style="color: #ef4444;">R$ ${custoPeca.toFixed(2)}</td>
-                <td style="color: #10b981; font-weight: bold;">R$ ${maoDeObra.toFixed(2)}</td>
+                <td style="color: #10b981; font-weight: bold;">R$ ${lucroOS.toFixed(2)}</td>
             </tr>
         `;
     }).join('') || '<tr><td colspan="5" style="text-align:center; padding:20px;">Nenhum serviço faturado.</td></tr>';
@@ -210,7 +229,10 @@ function mudarStatusKanban(id, novoStatus) {
         return os;
     });
     localStorage.setItem('SAD_PRO_OS', JSON.stringify(osList));
-    showScreen(document.querySelector('.content-section:not(.hidden)')?.id);
+    
+    // Identifica qual tela está aberta para atualizar os dados
+    const activeSection = document.querySelector('.content-section:not(.hidden)');
+    if (activeSection) showScreen(activeSection.id);
 }
 
 // --- GESTÃO DE ESTOQUE ---
@@ -281,21 +303,28 @@ function notificarWhatsApp(nome, aparelho, id) {
 
 function gerarRecibo(id) {
     const os = JSON.parse(localStorage.getItem('SAD_PRO_OS')).find(o => o.id == id);
+    if(!os) return;
     const win = window.open('', 'PRINT', 'height=600,width=800');
     win.document.write(`<html><body style="font-family:sans-serif; padding:20px;">
         <h2>RECIBO - #${os.id}</h2><hr>
         <p><b>Cliente:</b> ${os.cliente}</p><p><b>Aparelho:</b> ${os.aparelho}</p>
         <p><b>Valor Mão de Obra:</b> R$ ${parseFloat(os.maodeobra).toFixed(2)}</p>
+        <p><b>Garantia até:</b> ${os.garantiaAte || '90 dias'}</p>
         <p><b>Checklist:</b> ${os.checklist.join(', ') || 'Nenhum'}</p>
         <hr><center>Technician PRO</center></body></html>`);
-    win.print(); win.close();
+    win.document.close();
+    win.print(); 
+    win.close();
 }
 
 function updateStats() {
     const osList = JSON.parse(localStorage.getItem('SAD_PRO_OS') || '[]');
     const abertas = osList.filter(os => os.status === 'Pendente').length;
+    const urgentes = osList.filter(os => os.status === 'Análise').length;
+
     if(document.getElementById('count-open')) document.getElementById('count-open').innerText = abertas;
     if(document.getElementById('count-total')) document.getElementById('count-total').innerText = osList.length;
+    if(document.getElementById('count-urgent')) document.getElementById('count-urgent').innerText = urgentes;
 }
 
 function openConfirm(titulo, msg, acao, textoBtn = "Confirmar") {
@@ -306,18 +335,27 @@ function openConfirm(titulo, msg, acao, textoBtn = "Confirmar") {
     document.getElementById('confirm-message').innerText = msg;
     btnSim.innerText = textoBtn;
     modal.classList.remove('hidden');
+    
     const novoBtn = btnSim.cloneNode(true);
     btnSim.parentNode.replaceChild(novoBtn, btnSim);
     novoBtn.onclick = () => { acao(); closeConfirm(); };
 }
 
 function closeConfirm() { document.getElementById('custom-confirm').classList.add('hidden'); }
+
 function atualizarData() { 
     const el = document.getElementById('current-date');
     if(el) el.innerText = new Date().toLocaleDateString('pt-br', {weekday: 'long', day:'numeric', month:'long'}); 
 }
-function aplicarTemaSalvo() { if(localStorage.getItem('SAD_PRO_THEME') === 'light') document.body.classList.replace('dark-theme', 'light-theme'); }
+
+function aplicarTemaSalvo() { 
+    if(localStorage.getItem('SAD_PRO_THEME') === 'light') {
+        document.body.classList.replace('dark-theme', 'light-theme'); 
+    }
+}
+
 function confirmarSair() { openConfirm("Sair", "Deseja encerrar a sessão?", () => window.location.href = "index.html"); }
+
 function confirmarExclusao(id) {
     openConfirm("Excluir", "Tem certeza?", () => {
         let os = JSON.parse(localStorage.getItem('SAD_PRO_OS')).filter(o => o.id !== id);
@@ -325,6 +363,7 @@ function confirmarExclusao(id) {
         renderTable(); updateStats();
     });
 }
+
 function confirmarExclusaoPeca(id) {
     openConfirm("Excluir Peça", "Remover do estoque?", () => {
         let e = JSON.parse(localStorage.getItem('SAD_PRO_STOCK')).filter(p => p.id !== id);
@@ -332,32 +371,20 @@ function confirmarExclusaoPeca(id) {
         renderInventory();
     });
 }
+
 function limparBanco() {
     openConfirm("Limpar Tudo", "Apagar todas as ordens?", () => {
         localStorage.removeItem('SAD_PRO_OS');
         renderTable(); updateStats();
     });
 }
+
 function filtrarOrdens() {
     const termo = document.getElementById('inputBusca').value.toLowerCase();
     const rows = document.querySelectorAll('#table-body tr');
 
     rows.forEach(row => {
-        const textoCélula = row.innerText.toLowerCase();
-        row.style.display = textoCélula.includes(termo) ? "" : "none";
+        const textoCelular = row.innerText.toLowerCase();
+        row.style.display = textoCelular.includes(termo) ? "" : "none";
     });
-}
-function gerarListaCompras() {
-    const estoque = JSON.parse(localStorage.getItem('SAD_PRO_STOCK') || '[]');
-    const faltantes = estoque.filter(p => p.qtd <= 2);
-    
-    if (faltantes.length === 0) return alert("Estoque está em dia!");
-
-    let mensagem = "*Lista de Reposição - Assistência*\n\n";
-    faltantes.forEach(p => {
-        mensagem += `- ${p.nome} (Atualmente: ${p.qtd} un)\n`;
-    });
-
-    const link = `https://api.whatsapp.com/send?text=${encodeURIComponent(mensagem)}`;
-    window.open(link, '_blank');
 }
