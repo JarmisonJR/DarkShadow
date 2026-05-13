@@ -4,68 +4,77 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Technician PRO | Gestão de Manutenção</title>
-    
+
     <!-- Fontes e Ícones -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Forum&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
+
     <!-- CSS Unificado -->
     <link rel="stylesheet" href="dashboard.css">
-    
+
     <!-- Dependência para PDF -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-    <link rel="icon" type="image/x-icon" href="Captura de tela 2026-05-06 155442.png">
 </head>
 <body class="dark-theme">
 
     <div id="main-layout" class="display-flex">
-        <button id="mobile-toggle" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
 
         <!-- SIDEBAR -->
         <aside class="sidebar" id="sidebar">
             <div class="sidebar-logo">TECHNICIAN <span>PRO</span></div>
-            <nav class="sidebar-nav">
-                <ul>
-                    <li onclick="showScreen('home-screen')"><i class="fas fa-home"></i> Dashboard</li>
-                    <li onclick="showScreen('kanban-screen')"><i class="fas fa-columns"></i> Kanban</li>
-                    <li onclick="showScreen('lista-screen')"><i class="fas fa-list"></i> Ordens</li>
-                    <li onclick="showScreen('cadastro-screen')"><i class="fas fa-plus-circle"></i> Nova Ordem</li>
-                    <li onclick="showScreen('estoque-screen')"><i class="fas fa-box"></i> Estoque</li>
-                    <li onclick="showScreen('financeiro-screen')"><i class="fas fa-wallet"></i> Financeiro</li>
-                </ul>
+
+            <nav class="nav-menu">
+                <button onclick="showScreen('home-screen')" class="nav-item active">
+                    <i class="fas fa-th-large"></i> <span>Dashboard</span>
+                </button>
+                <button onclick="showScreen('cadastro-screen')" class="nav-item">
+                    <i class="far fa-edit"></i> <span>Nova Ordem</span>
+                </button>
+                <button onclick="showScreen('kanban-screen')" class="nav-item">
+                    <i class="fas fa-columns"></i> <span>Fluxo Kanban</span>
+                </button>
+                <button onclick="showScreen('lista-screen')" class="nav-item">
+                    <i class="fas fa-list-ul"></i> <span>Lista de Ordens</span>
+                </button>
+                <button onclick="showScreen('estoque-screen')" class="nav-item">
+                    <i class="fas fa-boxes"></i> <span>Estoque / Peças</span>
+                </button>
+                <button onclick="showScreen('financeiro-screen')" class="nav-item">
+                    <i class="fas fa-wallet"></i> <span>Financeiro</span>
+                </button>
             </nav>
+
+            <div class="sidebar-footer">
+                <button onclick="confirmarSair()" class="nav-item btn-logout">
+                    <span>SAIR</span> <i class="fas fa-power-off"></i>
+                </button>
+            </div>
         </aside>
 
         <!-- CONTEÚDO PRINCIPAL -->
-        <main class="main-wrapper main-content">
+        <main class="main-wrapper">
 
             <!-- HOME / DASHBOARD -->
             <section id="home-screen" class="content-section">
                 <header class="welcome-banner">
                     <div>
                         <h1 id="welcome-text">Bem-vindo, Técnico!</h1>
-                        <p id="current-date" class="text-muted"></p>
-                        <p>Gerencie suas ordens de serviço com eficiência.</p>
+                        <p id="current-date"></p>
                     </div>
-                    <i class="fas fa-wrench icon-overlay"></i>
                 </header>
 
                 <div class="stats-grid">
-                    <div class="stat-card">
-                        <h3>Total de Ordens</h3>
-                        <p id="stat-total">0</p>
+                    <div class="stat-card" onclick="showScreen('lista-screen')" style="cursor:pointer">
+                        <h3>Ordens Abertas</h3>
+                        <span id="count-open">0</span>
                     </div>
                     <div class="stat-card">
-                        <h3>Em Aberto</h3>
-                        <p id="stat-pendente">0</p>
+                        <h3>Registros Totais</h3>
+                        <span id="count-total">0</span>
                     </div>
                     <div class="stat-card">
-                        <h3>Finalizadas</h3>
-                        <p id="stat-concluido">0</p>
-                    </div>
-                    <div class="stat-card card-urgente">
                         <h3>Urgentes</h3>
-                        <p id="stat-urgente">0</p>
+                        <span id="count-urgent">0</span>
                     </div>
                 </div>
             </section>
@@ -77,16 +86,16 @@
                 </div>
                 <div class="kanban-container">
                     <div class="kanban-column" id="col-pendente" ondrop="drop(event)" ondragover="allowDrop(event)">
-                        <div class="kanban-header">Pendente</div>
-                        <div class="kanban-cards"></div>
+                        <div class="kanban-title">PENDENTE</div>
+                        <div class="kanban-cards-area"></div>
                     </div>
                     <div class="kanban-column" id="col-andamento" ondrop="drop(event)" ondragover="allowDrop(event)">
-                        <div class="kanban-header">Em Andamento</div>
-                        <div class="kanban-cards"></div>
+                        <div class="kanban-title">EM ANDAMENTO</div>
+                        <div class="kanban-cards-area"></div>
                     </div>
                     <div class="kanban-column" id="col-concluido" ondrop="drop(event)" ondragover="allowDrop(event)">
-                        <div class="kanban-header">Concluído</div>
-                        <div class="kanban-cards"></div>
+                        <div class="kanban-title">CONCLUÍDO</div>
+                        <div class="kanban-cards-area"></div>
                     </div>
                 </div>
             </section>
@@ -100,13 +109,12 @@
                     </button>
                 </div>
                 <div class="table-container">
-                    <table id="os-table">
+                    <table>
                         <thead>
                             <tr>
                                 <th>ID</th>
                                 <th>Cliente</th>
-                                <th>Aparelho</th>
-                                <th>Data</th>
+                                <th>Aparelho / Defeito</th>
                                 <th>Status</th>
                                 <th>Ações</th>
                             </tr>
@@ -126,17 +134,13 @@
                         <h3>Total Entradas</h3>
                         <p id="fin-entradas">R$ 0,00</p>
                     </div>
-                    <div class="stat-card card-saida">
-                        <h3>Total Saídas</h3>
-                        <p id="fin-saidas">R$ 0,00</p>
-                    </div>
                     <div class="stat-card card-saldo">
                         <h3>Saldo em Caixa</h3>
                         <p id="fin-saldo">R$ 0,00</p>
                     </div>
                 </div>
                 <div class="table-container" style="margin-top: 20px;">
-                    <table id="finance-table">
+                    <table>
                         <thead>
                             <tr>
                                 <th>Data</th>
@@ -145,12 +149,12 @@
                                 <th>Valor</th>
                             </tr>
                         </thead>
-                        <tbody id="finance-body"></tbody>
+                        <tbody id="finance-table-body"></tbody>
                     </table>
                 </div>
             </section>
 
-            <!-- CADASTRO -->
+            <!-- CADASTRO DE ORDEM -->
             <section id="cadastro-screen" class="content-section hidden">
                 <div class="form-card animate-in">
                     <div class="form-header">
@@ -204,22 +208,22 @@
                         <thead>
                             <tr>
                                 <th>Peça</th>
+                                <th>Categoria</th>
                                 <th>Quantidade</th>
-                                <th>Preço Custo</th>
+                                <th>Preço Un.</th>
                                 <th>Ações</th>
                             </tr>
                         </thead>
-                        <tbody id="stock-body"></tbody>
+                        <tbody id="inventory-table-body"></tbody>
                     </table>
                 </div>
             </section>
-
         </main>
     </div>
 
     <!-- MODAL PEÇA -->
     <div id="modal-peca" class="modal-overlay hidden">
-        <div class="form-card animate-in" style="max-width: 450px; background: #1e1e1e; padding: 20px; border-radius: 12px;">
+        <div class="form-card animate-in" style="max-width: 450px;">
             <h2>Cadastrar Peça</h2>
             <form id="pecaForm" onsubmit="event.preventDefault(); salvarPecaModal();">
                 <div class="input-group">
@@ -235,10 +239,15 @@
                         <label>Preço Custo</label>
                         <input type="number" step="0.01" id="modal-stk-preco" required>
                     </div>
+                    <!-- No seu section id="financeiro-screen" -->
+<div class="stat-card card-saida">
+    <h3>Total Custos (Estoque)</h3>
+    <p id="fin-saidas">R$ 0,00</p>
+</div>
                 </div>
-                <div class="confirm-buttons" style="margin-top: 20px; display: flex; gap: 10px;">
+                <div class="confirm-buttons">
                     <button type="button" onclick="fecharModalPeca()" class="btn-no" style="background: transparent; border: 1px solid #444; color: #fff; padding: 10px 20px; border-radius: 8px; cursor: pointer;">Cancelar</button>
-                    <button type="submit" class="btn-primary" style="background: #155e63; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer;">Salvar</button>
+                    <button type="submit" class="btn-primary">Salvar</button>
                 </div>
             </form>
         </div>
@@ -247,12 +256,11 @@
     <!-- MODAL CONFIRMAÇÃO -->
     <div id="custom-confirm" class="modal-overlay hidden">
         <div class="confirm-card">
-            <i class="fas fa-exclamation-triangle" id="modal-icon"></i>
             <h3 id="confirm-title">Atenção</h3>
             <p id="confirm-message"></p>
             <div class="confirm-buttons">
-                <button id="confirm-no" class="btn-secondary" onclick="closeConfirm()">Cancelar</button>
-                <button id="confirm-yes" class="btn-primary">Confirmar</button>
+                <button id="confirm-no" onclick="closeConfirm()">Cancelar</button>
+                <button id="confirm-yes">Confirmar</button>
             </div>
         </div>
     </div>
