@@ -140,27 +140,28 @@ th {
 .status-badge {
     padding: 5px 12px;
     border-radius: 20px;
-    font-size: 0.8rem;
+    font-size: 0.75rem;
     font-weight: 600;
+    text-transform: uppercase;
 }
 
-.status-pendente { background: #fef3c7; color: #92400e; }
-.status-andamento { background: #dbeafe; color: #1e40af; }
-.status-concluido { background: #d1fae5; color: #065f46; }
+.status-pendente { background: #fee2e2; color: #ef4444; }
+.status-andamento { background: #dbeafe; color: #3b82f6; }
+.status-concluido { background: #dcfce7; color: #10b981; }
 
-/* --- BOTÕES E AÇÕES --- */
 .btn-action {
-    padding: 8px;
+    background: #f1f5f9;
     border: none;
+    padding: 8px;
     border-radius: 6px;
     cursor: pointer;
-    background: transparent;
-    transition: background 0.2s;
+    color: #475569;
+    transition: 0.2s;
 }
 
-.btn-action:hover { background: #f1f5f9; }
-
-.btn-del { color: var(--color-danger); }
+.btn-action:hover { background: #e2e8f0; color: #1e293b; }
+.btn-del { color: #ef4444; background: #fee2e2; border: none; padding: 8px; border-radius: 6px; cursor: pointer; }
+.btn-del:hover { background: #fca5a5; }
 .fa-whatsapp { color: var(--secondary); }
 .fa-file-pdf { color: var(--accent); }
 
@@ -173,20 +174,30 @@ th {
     height: 100%;
     background: rgba(0, 0, 0, 0.5);
     display: flex;
-    justify-content: center;
     align-items: center;
+    justify-content: center;
     z-index: 1000;
 }
 
 .modal-content {
-    background: var(--white);
+    background: white;
     padding: 25px;
     border-radius: 12px;
     width: 90%;
-    max-width: 450px;
-    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+    max-width: 400px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
 }
 
+.hidden {
+    display: none !important;
+}
+
+.modal-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
+}
 .form-group {
     margin-bottom: 15px;
 }
@@ -223,11 +234,30 @@ th {
 .stat-card h3 { font-size: 2rem; color: var(--primary); }
 .stat-card p { color: #64748b; font-size: 0.9rem; margin-top: 5px; }
 
-/* --- PDF TEMPLATE (OCULTO) --- */
 #pdf-template {
+    display: none;
     padding: 40px;
     background: white;
-    width: 800px;
-    position: absolute;
-    left: -9999px; /* Fora da tela, mas acessível pelo html2pdf */
+}
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.data-table th {
+    background: #f1f5f9;
+    padding: 12px;
+    text-align: left;
+    font-size: 0.85rem;
+    color: #475569;
+}
+
+.data-table td {
+    padding: 12px;
+    border-bottom: 1px solid #f1f5f9;
+    font-size: 0.9rem;
 }
