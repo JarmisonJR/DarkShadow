@@ -193,16 +193,19 @@ h1, h2, h3, h4, .sidebar-logo {
     font-family: 'Forum'; 
 }
 
-/* --- TABELAS --- */
 .table-container {
+    width: 100%;
+    overflow-x: auto; /* Adiciona scroll lateral se a tela for muito pequena */
     background: var(--card-bg);
     border-radius: 15px;
     border: 1px solid var(--border-color);
-    overflow: hidden;
 }
 
-table { width: 100%; border-collapse: collapse; }
-
+table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 600px; /* Impede que a tabela esmague os dados */
+}
 th {
     background: var(--primary-teal);
     color: var(--primary-sunset);
