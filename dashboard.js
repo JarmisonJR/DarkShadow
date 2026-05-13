@@ -25,6 +25,7 @@ function showScreen(screenId) {
     if (screenId === 'financeiro-screen') renderFinanceiro();
     if (screenId === 'lista-screen') renderTable();
     if (screenId === 'home-screen') updateStats();
+    if (screenId === 'estoque-screen') renderEstoque();
 }
 
 // --- SISTEMA KANBAN (DRAG & DROP) ---
@@ -108,11 +109,6 @@ function renderFinanceiro() {
 
     osList.forEach(os => {
         const valorServico = parseFloat(os.valor) || 0;
-        // Simulando custo de peças: 
-        // Para um sistema avançado, você selecionaria a peça. 
-        // Aqui, vamos considerar que o campo "valor" é o que entra.
-        // Se você quiser descontar custos fixos ou peças específicas:
-        
         totalBruto += valorServico;
 
         tbody.innerHTML += `
@@ -125,10 +121,8 @@ function renderFinanceiro() {
         `;
     });
 
-    // Cálculo do Lucro (Exemplo: supondo que 30% do valor de OS concluídas seja custo de peças se não especificado)
-    // Ou você pode subtrair o valor total do seu estoque aqui
     let estoque = JSON.parse(localStorage.getItem('SAD_PRO_ESTOQUE') || '[]');
-    totalCustos = estoque.reduce((acc, peca) => acc + (peca.precoCusto * peca.quantidade), 0);
+    totalCustos = estoque.reduce((acc, peca) => acc + (parseFloat(peca.precoCusto || 0) * parseInt(peca.quantidade || 0)), 0);
 
     const lucroLiquido = totalBruto - totalCustos;
 
@@ -139,9 +133,9 @@ function renderFinanceiro() {
     const saldoEl = document.getElementById('fin-saldo');
     saldoEl.innerText = `R$ ${lucroLiquido.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
     
-    // Cor do saldo (vermelho se estiver no prejuízo)
     saldoEl.style.color = lucroLiquido >= 0 ? '#10b981' : '#ef4444';
 }
+
 // --- COMUNICAÇÃO E DOCUMENTOS ---
 function enviarWhatsApp(id) {
     const osList = JSON.parse(localStorage.getItem('SAD_PRO_OS') || '[]');
@@ -243,7 +237,9 @@ function excluirOS(id) {
 function limparBanco() {
     if (confirm("ALERTA: Isso apagará TODOS os dados permanentemente. Continuar?")) {
         localStorage.removeItem('SAD_PRO_OS');
+        localStorage.removeItem('SAD_PRO_ESTOQUE');
         renderTable();
+        renderEstoque();
         updateStats();
     }
 }
@@ -272,13 +268,8 @@ if (serviceForm) {
     });
 }
 
-// Inicialização
-document.addEventListener('DOMContentLoaded', () => {
-    updateStats();
-});
 // --- SISTEMA DE ESTOQUE (PEÇAS) ---
 
-// Abre o modal de cadastro de peça
 function abrirModalPeca() {
     const modal = document.getElementById('modal-peca');
     if (modal) {
@@ -287,7 +278,6 @@ function abrirModalPeca() {
     }
 }
 
-// Fecha o modal de cadastro de peça
 function fecharModalPeca() {
     const modal = document.getElementById('modal-peca');
     if (modal) {
@@ -295,7 +285,6 @@ function fecharModalPeca() {
     }
 }
 
-// Salva a peça no LocalStorage
 function salvarPecaModal() {
     const nome = document.getElementById('modal-stk-nome').value;
     const qtd = parseInt(document.getElementById('modal-stk-qtd').value);
@@ -310,7 +299,7 @@ function salvarPecaModal() {
         id: Date.now(),
         nome: nome,
         quantidade: qtd,
-        precoCusto: precoCusto // Guardamos o valor que você pagou pela peça
+        precoCusto: precoCusto
     };
 
     let estoque = JSON.parse(localStorage.getItem('SAD_PRO_ESTOQUE') || '[]');
@@ -320,14 +309,7 @@ function salvarPecaModal() {
     fecharModalPeca();
     renderEstoque();
 }
-    // Salva e atualiza
-    localStorage.setItem('SAD_PRO_ESTOQUE', JSON.stringify(estoque));
-    
-    fecharModalPeca();
-    renderEstoque();
-}
 
-// Renderiza a tabela de estoque
 function renderEstoque() {
     const tbody = document.getElementById('inventory-table-body');
     if (!tbody) return;
@@ -335,16 +317,16 @@ function renderEstoque() {
     let estoque = JSON.parse(localStorage.getItem('SAD_PRO_ESTOQUE') || '[]');
 
     if (estoque.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">Nenhuma peça em estoque.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding: 20px;">Nenhuma peça em estoque.</td></tr>';
         return;
     }
 
     tbody.innerHTML = estoque.map(peca => `
         <tr>
             <td>${peca.nome}</td>
-            <td><span class="status-badge status-andamento">${peca.categoria}</span></td>
             <td>${peca.quantidade} un</td>
-            <td>R$ ${peca.preco.toLocaleString('pt-BR', {minimumFractionDigits: 2})}</td>
+            <td>R$ ${parseFloat(peca.precoCusto).toLocaleString('pt-BR', {minimumFractionDigits: 2})}</td>
+            <td>R$ ${(peca.quantidade * peca.precoCusto).toLocaleString('pt-BR', {minimumFractionDigits: 2})}</td>
             <td>
                 <button onclick="excluirPeca(${peca.id})" class="btn-del" title="Excluir">
                     <i class="fas fa-trash"></i>
@@ -354,7 +336,6 @@ function renderEstoque() {
     `).join('');
 }
 
-// Exclui uma peça específica
 function excluirPeca(id) {
     if (confirm("Deseja remover esta peça do estoque?")) {
         let estoque = JSON.parse(localStorage.getItem('SAD_PRO_ESTOQUE') || '[]');
@@ -364,8 +345,7 @@ function excluirPeca(id) {
     }
 }
 
-// --- ATUALIZAÇÃO DA NAVEGAÇÃO PARA O ESTOQUE ---
-// Adicione esta verificação dentro da sua função showScreen existente:
-/*
-    if (screenId === 'estoque-screen') renderEstoque();
-*/
+// Inicialização Global
+document.addEventListener('DOMContentLoaded', () => {
+    updateStats();
+});
