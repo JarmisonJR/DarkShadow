@@ -105,7 +105,7 @@
     <section id="lista-screen" class="content-section hidden">
         <div class="section-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
             <h2>Ordens de Serviço</h2>
-            <button class="btn-empty-db" onclick="limparBanco()">
+            <button class="btn-limpar-banco" onclick="limparBanco()">
                 <i class="fas fa-trash-alt"></i> Limpar Banco
             </button>
         </div>
@@ -194,8 +194,8 @@
                     </div>
                 </div>
                 <div class="form-buttons" style="margin-top: 20px; display: flex; gap: 10px;">
-                    <button type="button" onclick="showScreen('home-screen')" class="btn-no">Cancelar</button>
-                    <button type="submit" class="btn-primary">Salvar Ordem</button>
+                    <button type="button" onclick="showScreen('home-screen')" class="btn-cancel">Cancelar</button>
+                    <button type="submit" class="btn-primary-gradient">Salvar Ordem</button>
                 </div>
             </form>
         </div>
@@ -205,7 +205,7 @@
     <section id="estoque-screen" class="content-section hidden">
         <div class="section-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
             <h2>Estoque de Peças</h2>
-            <button class="btn-primary" onclick="abrirModalPeca()">
+            <button class="btn-primary-gradient" onclick="abrirModalPeca()">
                 <i class="fas fa-plus"></i> Nova Peça
             </button>
         </div>
