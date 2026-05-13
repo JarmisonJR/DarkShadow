@@ -1,3 +1,8 @@
+/* 
+    TECHNICIAN PRO - HORIZON EDITION 
+    JS CORE - DASHBOARD, KANBAN, FINANCEIRO & ESTOQUE
+*/
+
 class Dashboard {
     constructor() {
         this.usuarioNome = localStorage.getItem('SAD_USER_NAME') || "Técnico";
@@ -7,25 +12,60 @@ class Dashboard {
     init() {
         document.addEventListener('DOMContentLoaded', () => {
             this.renderizarBoasVindas();
-            showScreen('home-screen');
-            atualizarData();
-            updateStats();
-            aplicarTemaSalvo();
+            this.atualizarData();
+            this.aplicarTemaSalvo();
+            this.updateStats();
+            
+            // Inicializa a primeira tela
+            showScreen('dashboard'); 
+            
+            // Inicializa componentes visuais
             this.inicializarGrafico();
-            this.configurarSortable(); // Novo: Drag and Drop
+            this.configurarSortable();
         });
     }
 
     renderizarBoasVindas() {
-        const welcomeElement = document.getElementById('welcome-text');
+        const welcomeElement = document.querySelector('.welcome-banner h1');
         if (welcomeElement) {
-            welcomeElement.innerText = `Bem-vindo, Técnico ${this.usuarioNome}!`;
+            welcomeElement.innerText = `Horizon Edition - Olá, ${this.usuarioNome}`;
         }
+    }
+
+    atualizarData() {
+        const dateEl = document.getElementById('current-date');
+        if (dateEl) {
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            dateEl.innerText = new Date().toLocaleDateString('pt-BR', options);
+        }
+    }
+
+    aplicarTemaSalvo() {
+        const tema = localStorage.getItem('SAD_PRO_THEME');
+        if (tema === 'light') {
+            document.body.classList.add('light-theme');
+        }
+    }
+
+    updateStats() {
+        const osList = JSON.parse(localStorage.getItem('SAD_PRO_OS') || '[]');
+        const stats = {
+            total: osList.length,
+            pendentes: osList.filter(os => os.status === 'Pendente').length,
+            concluidos: osList.filter(os => os.status === 'Concluído').length
+        };
+
+        // Atualiza elementos de estatística se existirem na tela
+        const elTotal = document.getElementById('stat-total');
+        const elPend = document.getElementById('stat-pendente');
+        if (elTotal) elTotal.innerText = stats.total;
+        if (elPend) elPend.innerText = stats.pendentes;
     }
 
     inicializarGrafico() {
         const ctx = document.getElementById('meuGrafico');
-        if (!ctx) return;
+        if (!ctx || typeof Chart === 'undefined') return;
+        
         new Chart(ctx, {
             type: 'line',
             data: {
@@ -33,15 +73,25 @@ class Dashboard {
                 datasets: [{
                     label: 'Faturamento R$',
                     data: [120, 190, 300, 500, 230, 400],
-                    borderColor: '#8b5cf6',
-                    tension: 0.4
+                    borderColor: '#ffb38a',
+                    backgroundColor: 'rgba(255, 179, 138, 0.1)',
+                    borderWidth: 3,
+                    tension: 0.4,
+                    fill: true
                 }]
             },
-            options: { responsive: true, maintainAspectRatio: false }
+            options: { 
+                responsive: true, 
+                maintainAspectRatio: false,
+                plugins: { legend: { labels: { color: '#a1a1aa' } } },
+                scales: {
+                    y: { grid: { color: '#262626' }, ticks: { color: '#a1a1aa' } },
+                    x: { grid: { color: '#262626' }, ticks: { color: '#a1a1aa' } }
+                }
+            }
         });
     }
 
-    // --- NOVO: DRAG AND DROP ---
     configurarSortable() {
         const colunas = ['cards-pendente', 'cards-analise', 'cards-concluido'];
         colunas.forEach(colId => {
@@ -50,9 +100,10 @@ class Dashboard {
                 new Sortable(el, {
                     group: 'kanban',
                     animation: 150,
+                    ghostClass: 'kanban-ghost',
                     onEnd: (evt) => {
                         const osId = evt.item.dataset.id;
-                        const novoStatusRaw = evt.to.id.split('-')[1]; // extrai 'pendente' de 'cards-pendente'
+                        const novoStatusRaw = evt.to.id.split('-')[1]; 
                         const statusFormatado = novoStatusRaw.charAt(0).toUpperCase() + novoStatusRaw.slice(1);
                         mudarStatusKanban(osId, statusFormatado === 'Analise' ? 'Análise' : statusFormatado);
                     }
@@ -64,27 +115,20 @@ class Dashboard {
 
 const appDashboard = new Dashboard();
 
-// --- TEMA DARK/LIGHT ---
+/* --- TEMA DARK/LIGHT --- */
 function toggleTheme() {
     const body = document.body;
-    const btnText = document.getElementById('theme-text');
-    
-    if (body.classList.contains('dark-theme')) {
-        body.classList.replace('dark-theme', 'light-theme');
-        localStorage.setItem('SAD_PRO_THEME', 'light');
-        btnText.innerText = "Modo Claro";
-    } else {
-        body.classList.replace('light-theme', 'dark-theme');
-        localStorage.setItem('SAD_PRO_THEME', 'dark');
-        btnText.innerText = "Modo Escuro";
-    }
+    body.classList.toggle('light-theme');
+    const isLight = body.classList.contains('light-theme');
+    localStorage.setItem('SAD_PRO_THEME', isLight ? 'light' : 'dark');
 }
 
-// --- GESTÃO DE FOTOS (CONVERSÃO PARA BASE64) ---
+/* --- GESTÃO DE FOTOS --- */
 async function processarFotos() {
     const input = document.getElementById('os-fotos');
-    const fotosBase64 = [];
+    if (!input || !input.files.length) return [];
     
+    const fotosBase64 = [];
     for (const file of input.files) {
         const base64 = await new Promise((resolve) => {
             const reader = new FileReader();
@@ -96,23 +140,25 @@ async function processarFotos() {
     return fotosBase64;
 }
 
-// --- SUBMISSÃO DA OS ATUALIZADA ---
-const serviceForm = document.getElementById('serviceForm');
+/* --- SUBMISSÃO DA OS --- */
+const serviceForm = document.getElementById('os-form');
 if (serviceForm) {
     serviceForm.addEventListener('submit', async function(e) {
         e.preventDefault();
-
+        
+        // Coleta checklist
         const checklist = [];
         document.querySelectorAll('.os-check:checked').forEach(el => checklist.push(el.value));
 
-        const pecaId = document.getElementById('os-peca-usada').value;
+        // Coleta dados financeiros e estoque
+        const pecaId = document.getElementById('os-peca').value;
         const tipoPagamento = document.getElementById('os-pagamento').value;
         let custoPecaSelecionada = 0;
 
-        // Processar fotos (espera converter as imagens)
+        // Processar fotos
         const fotos = await processarFotos();
 
-        // Lógica de Estoque
+        // Lógica de Estoque simples
         if (pecaId) {
             let estoque = JSON.parse(localStorage.getItem('SAD_PRO_STOCK') || '[]');
             const index = estoque.findIndex(p => p.id == pecaId);
@@ -124,18 +170,18 @@ if (serviceForm) {
         }
 
         const novaOS = {
-            id: Math.floor(100 + Math.random() * 899),
+            id: Math.floor(1000 + Math.random() * 9000),
             cliente: document.getElementById('cli-nome').value,
             cpf: document.getElementById('cli-cpf').value,
             aparelho: document.getElementById('apa-nome').value,
             defeito: document.getElementById('apa-defeito').value,
-            data: document.getElementById('apa-data').value,
-            maodeobra: parseFloat(document.getElementById('os-maodeobra').value) || 0,
+            data: new Date().toLocaleDateString(),
+            valor: parseFloat(document.getElementById('os-valor').value) || 0,
             pagamento: tipoPagamento,
             idPeca: pecaId,
             custoPeca: custoPecaSelecionada,
             checklist: checklist,
-            fotos: fotos, // Salva o array de imagens
+            fotos: fotos,
             logs: [{ data: new Date().toLocaleString(), texto: "Ordem de serviço aberta." }],
             status: 'Pendente'
         };
@@ -145,158 +191,51 @@ if (serviceForm) {
         localStorage.setItem('SAD_PRO_OS', JSON.stringify(osList));
 
         serviceForm.reset();
-        openConfirm("Sucesso", "OS Criada com fotos e histórico!", () => showScreen('lista-screen'));
+        alert("Sucesso! Ordem de Serviço #" + novaOS.id + " criada.");
+        showScreen('ordens');
     });
 }
 
-// --- FINANCEIRO COM TAXAS ---
-function renderFinanceiro() {
-    const osList = JSON.parse(localStorage.getItem('SAD_PRO_OS') || '[]');
-    const tbody = document.getElementById('fin-table-body');
-    if (!tbody) return;
-    
-    let faturamentoBruto = 0;
-    let custoTotalReal = 0; // Peças + Taxas de Cartão
-
-    const concluidos = osList.filter(os => os.status === 'Concluído');
-
-    tbody.innerHTML = concluidos.map(os => {
-        const maoDeObra = parseFloat(os.maodeobra || 0);
-        const custoPeca = parseFloat(os.custoPeca || 0);
-        
-        // Cálculo de Taxa de Cartão
-        let taxaCartao = 0;
-        if (os.pagamento === 'debito') taxaCartao = maoDeObra * 0.019;
-        if (os.pagamento === 'credito') taxaCartao = maoDeObra * 0.049;
-
-        const lucroOS = maoDeObra - custoPeca - taxaCartao;
-        
-        faturamentoBruto += maoDeObra;
-        custoTotalReal += (custoPeca + taxaCartao);
-        
-        return `
-            <tr>
-                <td>#${os.id}</td>
-                <td>${os.cliente} <br><small>${os.pagamento.toUpperCase()}</small></td>
-                <td>R$ ${maoDeObra.toFixed(2)}</td>
-                <td style="color: #ef4444;">R$ ${(custoPeca + taxaCartao).toFixed(2)}</td>
-                <td style="color: #10b981; font-weight: bold;">R$ ${lucroOS.toFixed(2)}</td>
-            </tr>
-        `;
-    }).join('') || '<tr><td colspan="5" style="text-align:center;">Sem dados.</td></tr>';
-
-    document.getElementById('fin-bruto').innerText = `R$ ${faturamentoBruto.toFixed(2)}`;
-    document.getElementById('fin-custo').innerText = `R$ ${custoTotalReal.toFixed(2)}`;
-    document.getElementById('fin-lucro').innerText = `R$ ${(faturamentoBruto - custoTotalReal).toFixed(2)}`;
-    
-    // Atualiza barra de meta (Ex: Meta de 5000)
-    const meta = 5000;
-    const porc = Math.min((faturamentoBruto / meta) * 100, 100);
-    document.getElementById('goal-bar').style.width = porc + "%";
-    document.getElementById('goal-percent').innerText = porc.toFixed(1) + "%";
-}
-
-// --- SISTEMA DE LOGS / HISTÓRICO ---
-let currentOsIdLog = null;
-
-function abrirDetalhes(id) {
-    const os = JSON.parse(localStorage.getItem('SAD_PRO_OS')).find(o => o.id == id);
-    if (!os) return;
-    
-    currentOsIdLog = id;
-    document.getElementById('modal-os-titulo').innerText = `OS #${os.id} - ${os.aparelho}`;
-    document.getElementById('os-info-cliente').innerHTML = `
-        <p><b>Cliente:</b> ${os.cliente} | <b>CPF:</b> ${os.cpf || 'Não informado'}</p>
-        <p><b>Defeito:</b> ${os.defeito}</p>
-        <div id="os-fotos-preview" style="display:flex; gap:5px; margin-top:10px; overflow-x:auto;">
-            ${os.fotos ? os.fotos.map(f => `<img src="${f}" style="height:60px; border-radius:5px;">`).join('') : ''}
-        </div>
-    `;
-    
-    renderLogs(os.logs);
-    document.getElementById('modal-detalhes').classList.remove('hidden');
-}
-
-function renderLogs(logs) {
-    const container = document.getElementById('os-logs');
-    container.innerHTML = logs.map(l => `
-        <div style="font-size:12px; margin-bottom:8px; border-bottom:1px solid #ddd;">
-            <b style="color:#8b5cf6;">${l.data}</b>: ${l.texto}
-        </div>
-    `).join('');
-}
-
-function salvarLog() {
-    const texto = document.getElementById('input-novo-log').value;
-    if (!texto || !currentOsIdLog) return;
-
-    let osList = JSON.parse(localStorage.getItem('SAD_PRO_OS'));
-    const index = osList.findIndex(o => o.id == currentOsIdLog);
-    
-    osList[index].logs.push({
-        data: new Date().toLocaleString(),
-        texto: texto
-    });
-
-    localStorage.setItem('SAD_PRO_OS', JSON.stringify(osList));
-    document.getElementById('input-novo-log').value = '';
-    renderLogs(osList[index].logs);
-}
-
-function fecharModalDetalhes() {
-    document.getElementById('modal-detalhes').classList.add('hidden');
-}
-
-// --- ORÇAMENTO RÁPIDO ---
-function gerarOrcamento() {
-    const cliente = document.getElementById('cli-nome').value || "Cliente";
-    const aparelho = document.getElementById('apa-nome').value || "Aparelho";
-    const valor = document.getElementById('os-maodeobra').value || "0.00";
-    
-    const texto = `Olá ${cliente}, o orçamento para o conserto do seu ${aparelho} ficou em R$ ${valor}. Gostaria de autorizar o serviço?`;
-    window.open(`https://api.whatsapp.com/send?text=${window.encodeURIComponent(texto)}`, '_blank');
-}
-
-// Reutilizando funções básicas (Manter as que você já tinha)
+/* --- NAVEGAÇÃO ENTRE TELAS --- */
 function showScreen(id) {
-    document.querySelectorAll('.content-section').forEach(s => s.classList.add('hidden'));
-    const target = document.getElementById(id);
+    // Esconde todas as seções (assumindo que você usa classes ou IDs para as telas)
+    document.querySelectorAll('.content-section, .form-card, .table-container, .kanban-container').forEach(s => {
+        if(!s.classList.contains('sidebar')) s.classList.add('hidden');
+    });
+
+    const target = document.getElementById(id) || document.querySelector('.' + id);
     if (target) target.classList.remove('hidden');
-    
-    if (id === 'lista-screen') renderTable();
-    if (id === 'financeiro-screen') renderFinanceiro();
-    if (id === 'kanban-screen') renderKanban();
-    if (id === 'estoque-screen') renderInventory();
-    if (id === 'cadastro-screen') popularSelectPecas();
+
+    // Gatilhos específicos
+    if (id === 'ordens') renderTable();
+    if (id === 'kanban') renderKanban();
 }
 
-function renderTable() {
-    const tbody = document.getElementById('table-body');
-    let osList = JSON.parse(localStorage.getItem('SAD_PRO_OS') || '[]');
-    tbody.innerHTML = osList.reverse().map(os => `
-        <tr onclick="abrirDetalhes(${os.id})" style="cursor:pointer">
-            <td>#${os.id}</td>
-            <td><b>${os.cliente}</b></td>
-            <td>${os.aparelho}</td>
-            <td><span class="status-badge status-${os.status.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")}">${os.status}</span></td>
-            <td>
-                <button onclick="event.stopPropagation(); confirmarExclusao(${os.id})" class="btn-del"><i class="fas fa-trash"></i></button>
-            </td>
-        </tr>
-    `).join('');
-}
-
+/* --- KANBAN RENDER --- */
 function renderKanban() {
     const osList = JSON.parse(localStorage.getItem('SAD_PRO_OS') || '[]');
-    const areas = {
+    const colunas = {
         'Pendente': document.getElementById('cards-pendente'),
         'Análise': document.getElementById('cards-analise'),
         'Concluído': document.getElementById('cards-concluido')
     };
-    Object.values(areas).forEach(a => a.innerHTML = '');
+
+    // Limpa colunas
+    Object.values(colunas).forEach(c => { if(c) c.innerHTML = ''; });
+
     osList.forEach(os => {
-        const card = `<div class="kanban-card" data-id="${os.id}"><b>#${os.id}</b><p>${os.cliente}<br>${os.aparelho}</p></div>`;
-        if (areas[os.status]) areas[os.status].innerHTML += card;
+        const card = document.createElement('div');
+        card.className = 'kanban-card';
+        card.dataset.id = os.id;
+        card.innerHTML = `
+            <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
+                <span style="color:var(--primary-sunset); font-weight:bold;">#${os.id}</span>
+                <i class="fas fa-ellipsis-v" style="color:var(--text-muted); cursor:pointer;"></i>
+            </div>
+            <p style="font-weight:600; margin-bottom:5px;">${os.cliente}</p>
+            <p style="font-size:0.85rem; color:var(--text-muted);">${os.aparelho}</p>
+        `;
+        if (colunas[os.status]) colunas[os.status].appendChild(card);
     });
 }
 
@@ -310,8 +249,15 @@ function mudarStatusKanban(id, novoStatus) {
         return os;
     });
     localStorage.setItem('SAD_PRO_OS', JSON.stringify(osList));
-    updateStats();
+    appDashboard.updateStats();
 }
 
-// Mantenha as funções de estoque (renderInventory, ajustarEstoque, etc) que você já possui.
-// As funções de utilitários como atualizarData e aplicarTemaSalvo devem continuar iguais.
+/* --- WHATSAPP / ORÇAMENTO --- */
+function gerarOrcamento() {
+    const cliente = document.getElementById('cli-nome').value || "Cliente";
+    const aparelho = document.getElementById('apa-nome').value || "Aparelho";
+    const valor = document.getElementById('os-valor').value || "0.00";
+    
+    const texto = `Olá ${cliente}, o orçamento para o conserto do seu ${aparelho} ficou em R$ ${valor}. Gostaria de autorizar o serviço?`;
+    window.open(`https://api.whatsapp.com/send?text=${window.encodeURIComponent(texto)}`, '_blank');
+}
