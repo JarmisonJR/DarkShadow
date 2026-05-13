@@ -112,7 +112,7 @@ h1, h2, h3, h4, .sidebar-logo { font-family: 'Forum', serif; }
 /* --- MAIN LAYOUT (FULLSCREEN HORIZON) --- */
 .main-wrapper {
     margin-left: 260px; /* Mantém o espaço da sidebar */
-    width: calc(100% - 260px); /* Ocupa exatamente o que sobra */
+    width: calc(160% - 200px); /* Ocupa exatamente o que sobra */
     max-width: none !important; /* Remove qualquer trava de largura anterior */
     padding: 40px; /* Dá respiro nas bordas */
     display: flex;
