@@ -41,7 +41,7 @@ body.light-theme {
 
 /* --- RESET & GLOBAL --- */
 * { 
-    margin: 0; 
+    margin: 4px; 
     padding: 0; 
     box-sizing: border-box; 
 }
@@ -145,7 +145,7 @@ h1, h2, h3, h4, .sidebar-logo {
 
 .welcome-banner {
     background: linear-gradient(100deg, #050505 0%, var(--primary-teal) 100%);
-    padding: 40px;
+    padding: 10px;
     border-radius: 24px;
     border: 1px solid var(--primary-teal);
     position: relative;
