@@ -338,3 +338,26 @@ function limparBanco() {
         renderTable(); updateStats();
     });
 }
+function filtrarOrdens() {
+    const termo = document.getElementById('inputBusca').value.toLowerCase();
+    const rows = document.querySelectorAll('#table-body tr');
+
+    rows.forEach(row => {
+        const textoCélula = row.innerText.toLowerCase();
+        row.style.display = textoCélula.includes(termo) ? "" : "none";
+    });
+}
+function gerarListaCompras() {
+    const estoque = JSON.parse(localStorage.getItem('SAD_PRO_STOCK') || '[]');
+    const faltantes = estoque.filter(p => p.qtd <= 2);
+    
+    if (faltantes.length === 0) return alert("Estoque está em dia!");
+
+    let mensagem = "*Lista de Reposição - Assistência*\n\n";
+    faltantes.forEach(p => {
+        mensagem += `- ${p.nome} (Atualmente: ${p.qtd} un)\n`;
+    });
+
+    const link = `https://api.whatsapp.com/send?text=${encodeURIComponent(mensagem)}`;
+    window.open(link, '_blank');
+}
