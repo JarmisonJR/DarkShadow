@@ -1,178 +1,156 @@
-/* 
-    TECHNICIAN PRO - HORIZON EDITION 
-    VERSÃO FINAL CORRIGIDA - AJUSTE DE ENCAIXE TOTAL
-*/
+/* ================================================================
+   ATUALIZAÇÃO: KANBAN, FINANCEIRO & NOVAS AÇÕES
+   ================================================================ */
 
-@import url('https://fonts.googleapis.com/css2?family=Forum&family=Inter:wght@400;600;700&display=swap');
-
-:root {
-    --bg-black: #000000;
-    --sidebar-bg: #0a0a0b;
-    --card-bg: #111114;
-    --bg-input: #1a1a1e;
-    --primary-sunset: #ffb38a;
-    --primary-teal: #155e63;
-    --sunset-glow: rgba(255, 179, 138, 0.3);
-    --text-white: #ffffff;
-    --text-muted: #a1a1aa;
-    --border-color: #262626;
-    --danger: #ef4444;
-    --success: #10b981;
-    --info: #3b82f6;
-    --warning: #f59e0b;
-}
-
-body.light-theme {
-    --bg-black: #f4f4f5;
-    --sidebar-bg: #ffffff;
-    --card-bg: #ffffff;
-    --bg-input: #f9f9fb;
-    --text-white: #18181b;
-    --text-muted: #71717a;
-    --border-color: #e4e4e7;
-    --primary-teal: #2d5a5a;
-}
-
-/* --- ESTRUTURA CRÍTICA DE ENCAIXE --- */
-* { 
-    margin: 0; 
-    padding: 0; 
-    box-sizing: border-box; 
-}
-
-body { 
-    background-color: var(--bg-black); 
-    color: var(--text-white);
-    font-family: 'Inter', sans-serif; 
-    min-height: 100vh;
-    display: flex; /* Alinha Sidebar e Main lado a lado */
-    overflow-x: hidden; /* Impede a rolagem horizontal lateral */
-}
-
-/* --- SIDEBAR FIXA --- */
-.sidebar {
-    width: 260px;
-    min-width: 260px;
-    background: var(--sidebar-bg);
-    border-right: 1px solid var(--border-color);
-    padding: 30px 20px;
-    display: flex;
-    flex-direction: column;
-    height: 100vh;
-    position: sticky; /* Mantém a sidebar visível enquanto o main rola */
-    top: 0;
-}
-
-.sidebar-logo {
-    font-size: 1.6rem;
-    text-transform: uppercase;
-    margin-bottom: 40px;
-    letter-spacing: 2px;
-    text-align: center;
-    font-family: 'Forum', serif;
-}
-.sidebar-logo span { color: var(--primary-sunset); text-shadow: 0 0 10px var(--sunset-glow); }
-
-/* --- MAIN WRAPPER (O CONSERTO) --- */
-.main-wrapper {
-    flex: 1;            /* Ocupa 100% do espaço que a sidebar deixa livre */
-    min-width: 0;       /* Truque para evitar que o conteúdo interno force a largura */
-    padding: 40px;
-    display: flex;
-    flex-direction: column;
-    gap: 30px;
-    background-color: var(--bg-black);
-}
-
-/* --- BANNER LARGURA TOTAL --- */
-.welcome-banner {
-    width: 100%;
-    padding: 50px;
-    background: linear-gradient(100deg, #050505 0%, var(--primary-teal) 100%);
-    border-radius: 24px;
-    border: 1px solid var(--border-color);
-}
-
-.welcome-banner h1 { font-family: 'Forum', serif; font-size: 2.8rem; margin-bottom: 8px; }
-
-/* --- GRID DE CARDS --- */
-.stats-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 25px;
-    width: 100%;
-}
-
-.stat-card {
-    background: var(--card-bg);
-    border: 1px solid var(--border-color);
-    padding: 35px;
-    border-radius: 20px;
-    text-align: center;
-}
-
-/* --- FORMULÁRIOS CENTRALIZADOS --- */
-.form-section {
-    background: var(--card-bg);
-    padding: 40px;
-    border-radius: 24px;
-    border: 1px solid var(--border-color);
-    width: 100%;
-    max-width: 1100px; /* Não deixa o formulário ficar "infinito" em telas grandes */
-    margin: 0 auto;    /* Centraliza se sobrar espaço */
-}
-
-.form-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 20px;
-    margin-bottom: 20px;
-}
-
-input, textarea, select {
-    width: 100%;
-    background: var(--bg-input) !important;
-    border: 1px solid var(--border-color);
-    padding: 15px;
-    color: white;
-    border-radius: 12px;
-    outline: none;
-}
-
-/* --- KANBAN INTELIGENTE --- */
+/* --- SISTEMA KANBAN (DRAG & DROP) --- */
 .kanban-container {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr); /* 3 colunas perfeitas */
+    display: flex;
     gap: 20px;
-    width: 100%;
+    padding: 10px 0;
+    overflow-x: auto;
     align-items: flex-start;
+    scrollbar-width: thin;
+    scrollbar-color: var(--primary-teal) var(--bg-black);
 }
 
 .kanban-column {
-    background: var(--sidebar-bg);
-    border-radius: 24px;
-    padding: 20px;
-    border: 1px solid var(--border-color);
-    min-width: 0;
-}
-
-/* --- TABELAS --- */
-.table-container {
     background: var(--card-bg);
-    border-radius: 20px;
     border: 1px solid var(--border-color);
-    width: 100%;
-    overflow-x: auto;
+    border-radius: 20px;
+    min-width: 300px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 500px;
+    transition: 0.3s;
 }
 
-table { width: 100%; border-collapse: collapse; }
-th { background: var(--primary-teal); color: var(--primary-sunset); padding: 20px; text-align: left; }
-td { padding: 18px; border-bottom: 1px solid var(--border-color); }
+.kanban-title {
+    padding: 20px;
+    font-family: 'Forum', serif;
+    font-size: 1.2rem;
+    color: var(--primary-sunset);
+    border-bottom: 1px solid var(--border-color);
+    text-align: center;
+    letter-spacing: 1px;
+    background: rgba(21, 94, 99, 0.1);
+    border-radius: 20px 20px 0 0;
+}
 
-/* --- RESPONSIVIDADE --- */
-@media (max-width: 1024px) {
-    .sidebar { width: 85px; min-width: 85px; padding: 20px 10px; }
-    .sidebar-logo, .nav-item span { display: none; }
-    .main-wrapper { padding: 20px; }
-    .kanban-container { grid-template-columns: 1fr; } /* Empilha no celular */
+.kanban-cards-area {
+    padding: 15px;
+    flex-grow: 1;
+    min-height: 200px;
+}
+
+.kanban-card {
+    background: var(--bg-input);
+    border: 1px solid var(--border-color);
+    padding: 15px;
+    border-radius: 12px;
+    margin-bottom: 15px;
+    cursor: grab;
+    transition: 0.2s;
+    border-left: 4px solid var(--primary-teal);
+}
+
+.kanban-card:active { cursor: grabbing; }
+
+.kanban-card:hover {
+    border-color: var(--primary-sunset);
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+
+.kanban-card h4 { 
+    font-size: 0.95rem; 
+    margin-bottom: 5px; 
+    color: var(--text-white);
+}
+
+.kanban-card p { 
+    font-size: 0.8rem; 
+    color: var(--text-muted); 
+}
+
+/* --- MÓDULO FINANCEIRO --- */
+.card-entrada p { color: var(--success) !important; }
+.card-saida p { color: var(--danger) !important; }
+.card-saldo p { color: var(--primary-sunset) !important; }
+
+.tipo-entrada { color: var(--success); font-weight: bold; }
+.tipo-saida { color: var(--danger); font-weight: bold; }
+
+/* --- BOTÕES DE AÇÃO (WHATSAPP, PDF, EDITAR) --- */
+.btn-action {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+    transition: 0.3s;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 5px;
+    font-size: 1rem;
+}
+
+/* Botão WhatsApp */
+.btn-whatsapp {
+    background: rgba(16, 185, 129, 0.1) !important;
+    color: #25D366 !important;
+    border: 1px solid rgba(37, 211, 102, 0.2) !important;
+}
+
+.btn-whatsapp:hover {
+    background: #25D366 !important;
+    color: white !important;
+    box-shadow: 0 0 12px rgba(37, 211, 102, 0.4);
+}
+
+/* Botão PDF */
+.btn-pdf {
+    background: rgba(239, 68, 68, 0.1) !important;
+    color: #ff4b4b !important;
+    border: 1px solid rgba(255, 75, 75, 0.2) !important;
+}
+
+.btn-pdf:hover {
+    background: #ff4b4b !important;
+    color: white !important;
+    box-shadow: 0 0 12px rgba(255, 75, 75, 0.4);
+}
+
+/* Botão Editar */
+.btn-edit-action {
+    background: rgba(255, 179, 138, 0.1) !important;
+    color: var(--primary-sunset) !important;
+    border: 1px solid var(--sunset-glow) !important;
+}
+
+.btn-edit-action:hover {
+    background: var(--primary-sunset) !important;
+    color: var(--bg-black) !important;
+}
+
+/* --- ESTILO PARA O RECIBO PDF (OFF-SCREEN) --- */
+#pdf-template {
+    background: white !important;
+    color: #000 !important;
+    padding: 40px;
+    font-family: Arial, sans-serif;
+}
+
+#pdf-template h1 {
+    color: #155e63;
+    border-bottom: 2px solid #ffb38a;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+}
+
+#pdf-template .pdf-row {
+    margin-bottom: 10px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 5px;
 }
