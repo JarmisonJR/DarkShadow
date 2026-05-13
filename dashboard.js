@@ -99,30 +99,49 @@ function renderKanban() {
 function renderFinanceiro() {
     const osList = JSON.parse(localStorage.getItem('SAD_PRO_OS') || '[]');
     const tbody = document.getElementById('finance-table-body');
-    let entradas = 0;
+    
+    let totalBruto = 0;   // Valor total cobrado dos clientes
+    let totalCustos = 0;  // Valor total gasto em peças/insumos
     
     if (!tbody) return;
     tbody.innerHTML = '';
 
     osList.forEach(os => {
-        const valor = parseFloat(os.valor) || 0;
-        if (valor > 0) {
-            entradas += valor;
-            tbody.innerHTML += `
-                <tr>
-                    <td>${new Date(os.data).toLocaleDateString('pt-BR')}</td>
-                    <td>OS #${os.id} - ${os.cliente}</td>
-                    <td><span class="status-badge status-concluido">Entrada</span></td>
-                    <td>R$ ${valor.toLocaleString('pt-BR', {minimumFractionDigits: 2})}</td>
-                </tr>
-            `;
-        }
+        const valorServico = parseFloat(os.valor) || 0;
+        // Simulando custo de peças: 
+        // Para um sistema avançado, você selecionaria a peça. 
+        // Aqui, vamos considerar que o campo "valor" é o que entra.
+        // Se você quiser descontar custos fixos ou peças específicas:
+        
+        totalBruto += valorServico;
+
+        tbody.innerHTML += `
+            <tr>
+                <td>${new Date(os.data).toLocaleDateString('pt-BR')}</td>
+                <td>OS #${os.id} - ${os.cliente}</td>
+                <td><span class="status-badge status-concluido">Serviço</span></td>
+                <td>R$ ${valorServico.toLocaleString('pt-BR', {minimumFractionDigits: 2})}</td>
+            </tr>
+        `;
     });
 
-    document.getElementById('fin-entradas').innerText = `R$ ${entradas.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
-    document.getElementById('fin-saldo').innerText = `R$ ${entradas.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
-}
+    // Cálculo do Lucro (Exemplo: supondo que 30% do valor de OS concluídas seja custo de peças se não especificado)
+    // Ou você pode subtrair o valor total do seu estoque aqui
+    let estoque = JSON.parse(localStorage.getItem('SAD_PRO_ESTOQUE') || '[]');
+    totalCustos = estoque.reduce((acc, peca) => acc + (peca.precoCusto * peca.quantidade), 0);
 
+    const lucroLiquido = totalBruto - totalCustos;
+
+    // Atualiza os Cards na tela Financeira
+    document.getElementById('fin-entradas').innerText = `R$ ${totalBruto.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
+    document.getElementById('fin-saidas').innerText = `R$ ${totalCustos.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
+    
+    const saldoEl = document.getElementById('fin-saldo');
+    saldoEl.innerText = `R$ ${lucroLiquido.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
+    
+    // Cor do saldo (vermelho se estiver no prejuízo)
+    saldoEl.style.color = lucroLiquido >= 0 ? '#10b981' : '#ef4444';
+}
 // --- COMUNICAÇÃO E DOCUMENTOS ---
 function enviarWhatsApp(id) {
     const osList = JSON.parse(localStorage.getItem('SAD_PRO_OS') || '[]');
@@ -279,26 +298,28 @@ function fecharModalPeca() {
 // Salva a peça no LocalStorage
 function salvarPecaModal() {
     const nome = document.getElementById('modal-stk-nome').value;
-    const qtd = document.getElementById('modal-stk-qtd').value;
-    const preco = document.getElementById('modal-stk-preco').value;
+    const qtd = parseInt(document.getElementById('modal-stk-qtd').value);
+    const precoCusto = parseFloat(document.getElementById('modal-stk-preco').value);
 
-    if (!nome || !qtd || !preco) {
-        alert("Por favor, preencha todos os campos.");
+    if (!nome || isNaN(qtd) || isNaN(precoCusto)) {
+        alert("Preencha todos os campos corretamente.");
         return;
     }
 
     const novaPeca = {
-        id: Date.now(), // ID único baseado no timestamp
+        id: Date.now(),
         nome: nome,
-        categoria: "Geral", // Você pode adicionar um campo de categoria no HTML se desejar
-        quantidade: parseInt(qtd),
-        preco: parseFloat(preco)
+        quantidade: qtd,
+        precoCusto: precoCusto // Guardamos o valor que você pagou pela peça
     };
 
-    // Recupera lista atual ou cria nova
     let estoque = JSON.parse(localStorage.getItem('SAD_PRO_ESTOQUE') || '[]');
     estoque.push(novaPeca);
+    localStorage.setItem('SAD_PRO_ESTOQUE', JSON.stringify(estoque));
     
+    fecharModalPeca();
+    renderEstoque();
+}
     // Salva e atualiza
     localStorage.setItem('SAD_PRO_ESTOQUE', JSON.stringify(estoque));
     
