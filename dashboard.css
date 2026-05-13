@@ -461,3 +461,25 @@ input:focus, textarea:focus {
     .stats-grid { grid-template-columns: 1fr; }
     .checklist-grid { grid-template-columns: 1fr; }
 }
+/* No seu arquivo style.css */
+
+.dashboard-container {
+    display: flex; /* Garante que sidebar e conteúdo fiquem lado a lado */
+    min-height: 100vh;
+}
+
+.main-wrapper {
+    flex: 1; /* Faz o conteúdo ocupar todo o espaço restante */
+    margin-left: 260px; /* Alinhado com a largura da sua .sidebar */
+    padding: 30px;
+    width: calc(100% - 260px); /* Garante que não haja estouro horizontal */
+    box-sizing: border-box;
+}
+
+/* Ajuste para telas menores */
+@media (max-width: 1024px) {
+    .main-wrapper {
+        margin-left: 80px;
+        width: calc(100% - 80px);
+    }
+}
