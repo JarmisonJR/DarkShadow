@@ -257,3 +257,94 @@ if (serviceForm) {
 document.addEventListener('DOMContentLoaded', () => {
     updateStats();
 });
+// --- SISTEMA DE ESTOQUE (PEÇAS) ---
+
+// Abre o modal de cadastro de peça
+function abrirModalPeca() {
+    const modal = document.getElementById('modal-peca');
+    if (modal) {
+        modal.classList.remove('hidden');
+        document.getElementById('pecaForm').reset();
+    }
+}
+
+// Fecha o modal de cadastro de peça
+function fecharModalPeca() {
+    const modal = document.getElementById('modal-peca');
+    if (modal) {
+        modal.classList.add('hidden');
+    }
+}
+
+// Salva a peça no LocalStorage
+function salvarPecaModal() {
+    const nome = document.getElementById('modal-stk-nome').value;
+    const qtd = document.getElementById('modal-stk-qtd').value;
+    const preco = document.getElementById('modal-stk-preco').value;
+
+    if (!nome || !qtd || !preco) {
+        alert("Por favor, preencha todos os campos.");
+        return;
+    }
+
+    const novaPeca = {
+        id: Date.now(), // ID único baseado no timestamp
+        nome: nome,
+        categoria: "Geral", // Você pode adicionar um campo de categoria no HTML se desejar
+        quantidade: parseInt(qtd),
+        preco: parseFloat(preco)
+    };
+
+    // Recupera lista atual ou cria nova
+    let estoque = JSON.parse(localStorage.getItem('SAD_PRO_ESTOQUE') || '[]');
+    estoque.push(novaPeca);
+    
+    // Salva e atualiza
+    localStorage.setItem('SAD_PRO_ESTOQUE', JSON.stringify(estoque));
+    
+    fecharModalPeca();
+    renderEstoque();
+}
+
+// Renderiza a tabela de estoque
+function renderEstoque() {
+    const tbody = document.getElementById('inventory-table-body');
+    if (!tbody) return;
+
+    let estoque = JSON.parse(localStorage.getItem('SAD_PRO_ESTOQUE') || '[]');
+
+    if (estoque.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">Nenhuma peça em estoque.</td></tr>';
+        return;
+    }
+
+    tbody.innerHTML = estoque.map(peca => `
+        <tr>
+            <td>${peca.nome}</td>
+            <td><span class="status-badge status-andamento">${peca.categoria}</span></td>
+            <td>${peca.quantidade} un</td>
+            <td>R$ ${peca.preco.toLocaleString('pt-BR', {minimumFractionDigits: 2})}</td>
+            <td>
+                <button onclick="excluirPeca(${peca.id})" class="btn-del" title="Excluir">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </td>
+        </tr>
+    `).join('');
+}
+
+// Exclui uma peça específica
+function excluirPeca(id) {
+    if (confirm("Deseja remover esta peça do estoque?")) {
+        let estoque = JSON.parse(localStorage.getItem('SAD_PRO_ESTOQUE') || '[]');
+        estoque = estoque.filter(peca => peca.id !== id);
+        localStorage.setItem('SAD_PRO_ESTOQUE', JSON.stringify(estoque));
+        renderEstoque();
+    }
+}
+
+// --- ATUALIZAÇÃO DA NAVEGAÇÃO PARA O ESTOQUE ---
+// Adicione esta verificação dentro da sua função showScreen existente:
+/*
+    if (screenId === 'estoque-screen') renderEstoque();
+*/
