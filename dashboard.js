@@ -285,6 +285,14 @@ function renderTable() {
     if (osList.length === 0) {
         tbody.innerHTML = '<tr><td colspan="6" style="text-align:center">Nenhuma ordem encontrada</td></tr>';
         return;
+        // Dentro do seu renderTable().map(os => { ... })
+// Adicione este botão junto aos outros (WhatsApp, PDF, Excluir):
+
+`
+<button onclick="alterarStatusOS(${os.id}, 'Concluído')" class="btn-action-dark" title="Concluir Serviço">
+    <i class="fas fa-check-circle" style="color: #10b981;"></i>
+</button>
+`
     }
 
     tbody.innerHTML = osList.slice().reverse().map(os => {
