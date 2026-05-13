@@ -382,3 +382,210 @@ function excluirOS(id) {
         appDashboard.updateStats();
     }
 }
+// --- CONFIGURAÇÃO INICIAL E DADOS ---
+let ordens = JSON.parse(localStorage.getItem('ordens')) || [];
+let estoque = JSON.parse(localStorage.getItem('estoque')) || [];
+
+// --- NAVEGAÇÃO (BOTÕES DA image_3c1775.png) ---
+function showScreen(screenId) {
+    // Esconde todas as seções
+    document.querySelectorAll('.content-section').forEach(section => {
+        section.classList.add('hidden');
+    });
+
+    // Remove a classe active de todos os botões da sidebar
+    document.querySelectorAll('.nav-item').forEach(btn => {
+        btn.classList.remove('active');
+    });
+
+    // Mostra a seção desejada
+    const targetSection = document.getElementById(screenId);
+    if (targetSection) {
+        targetSection.classList.remove('hidden');
+    }
+
+    // Adiciona classe active ao botão correspondente
+    const activeBtn = document.querySelector(`button[onclick*="${screenId}"]`);
+    if (activeBtn) {
+        activeBtn.classList.add('active');
+    }
+
+    // Atualiza os dados da tela específica ao abrir
+    renderizarDados(screenId);
+}
+
+// Função para decidir o que renderizar
+function renderizarDados(screenId) {
+    actualizarDashboard();
+    if (screenId === 'lista-screen') renderizarTabela();
+    if (screenId === 'kanban-screen') renderizarKanban();
+    if (screenId === 'estoque-screen') renderizarEstoque();
+    if (screenId === 'financeiro-screen') renderizarFinanceiro();
+    if (screenId === 'cadastro-screen') atualizarSelectPecas();
+}
+
+// --- FUNÇÃO SAIR (BOTÃO DE SAIR) ---
+function confirmarSair() {
+    if (confirm("Deseja realmente sair do sistema?")) {
+        // Aqui você pode redirecionar para uma tela de login ou apenas limpar o estado
+        alert("Sessão encerrada.");
+        location.reload(); 
+    }
+}
+
+// --- GESTÃO DE ORDENS (CADASTRO) ---
+document.getElementById('serviceForm')?.addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    const novaOS = {
+        id: Date.now(),
+        cliente: document.getElementById('cli-nome').value,
+        cpf: document.getElementById('cli-cpf').value,
+        aparelho: document.getElementById('apa-nome').value,
+        defeito: document.getElementById('apa-defeito').value,
+        data: document.getElementById('apa-data').value,
+        maodeobra: parseFloat(document.getElementById('os-maodeobra').value) || 0,
+        pagamento: document.getElementById('os-pagamento').value,
+        pecaId: document.getElementById('os-peca-usada').value,
+        status: 'pendente',
+        checklist: Array.from(document.querySelectorAll('.os-check:checked')).map(c => c.value)
+    };
+
+    // Baixa no estoque se houver peça selecionada
+    if (novaOS.pecaId) {
+        const pecaIndex = estoque.findIndex(p => p.id == novaOS.pecaId);
+        if (pecaIndex !== -1 && estoque[pecaIndex].qtd > 0) {
+            estoque[pecaIndex].qtd--;
+            novaOS.custoPeca = estoque[pecaIndex].preco;
+            localStorage.setItem('estoque', JSON.stringify(estoque));
+        }
+    }
+
+    ordens.push(novaOS);
+    localStorage.setItem('ordens', JSON.stringify(ordens));
+    
+    alert("Ordem de Serviço criada com sucesso!");
+    this.reset();
+    showScreen('lista-screen');
+});
+
+// --- RENDERIZAÇÃO DA LISTA ---
+function renderizarTabela() {
+    const tbody = document.getElementById('table-body');
+    if (!tbody) return;
+    
+    tbody.innerHTML = ordens.map(os => `
+        <tr class="animate-in">
+            <td>#${os.id.toString().slice(-4)}</td>
+            <td>${os.cliente}</td>
+            <td><b>${os.aparelho}</b><br><small>${os.defeito}</small></td>
+            <td><span class="status-badge status-${os.status}" onclick="alterarStatus(${os.id})">${os.status}</span></td>
+            <td>
+                <button class="btn-del" onclick="deletarOS(${os.id})"><i class="fas fa-trash"></i></button>
+            </td>
+        </tr>
+    `).join('');
+}
+
+// --- KANBAN ---
+function renderizarKanban() {
+    const colunas = {
+        pendente: document.getElementById('cards-pendente'),
+        analise: document.getElementById('cards-analise'),
+        concluido: document.getElementById('cards-concluido')
+    };
+
+    Object.values(colunas).forEach(c => { if(c) c.innerHTML = ''; });
+
+    ordens.forEach(os => {
+        const card = document.createElement('div');
+        card.className = 'kanban-card animate-in';
+        card.innerHTML = `
+            <b>${os.cliente}</b><br>
+            <small>${os.aparelho}</small>
+        `;
+        colunas[os.status]?.appendChild(card);
+    });
+}
+
+// --- ESTOQUE ---
+function abrirModalPeca() { document.getElementById('modal-peca').classList.remove('hidden'); }
+function fecharModalPeca() { document.getElementById('modal-peca').classList.add('hidden'); }
+
+function salvarPecaModal() {
+    const novaPeca = {
+        id: Date.now(),
+        nome: document.getElementById('modal-stk-nome').value,
+        qtd: parseInt(document.getElementById('modal-stk-qtd').value),
+        preco: parseFloat(document.getElementById('modal-stk-preco').value)
+    };
+    estoque.push(novaPeca);
+    localStorage.setItem('estoque', JSON.stringify(estoque));
+    fecharModalPeca();
+    renderizarEstoque();
+}
+
+function renderizarEstoque() {
+    const tbody = document.getElementById('inventory-table-body');
+    if (!tbody) return;
+    tbody.innerHTML = estoque.map(p => `
+        <tr>
+            <td>${p.nome}</td>
+            <td>${p.qtd} un</td>
+            <td>R$ ${p.preco.toFixed(2)}</td>
+            <td><button class="btn-del" onclick="removerPeca(${p.id})"><i class="fas fa-times"></i></button></td>
+        </tr>
+    `).join('');
+}
+
+// --- FINANCEIRO ---
+function renderizarFinanceiro() {
+    let bruto = 0;
+    let custo = 0;
+    const tbody = document.getElementById('fin-table-body');
+
+    ordens.forEach(os => {
+        bruto += os.maodeobra;
+        custo += (os.custoPeca || 0);
+    });
+
+    if(document.getElementById('fin-bruto')) document.getElementById('fin-bruto').innerText = `R$ ${bruto.toFixed(2)}`;
+    if(document.getElementById('fin-custo')) document.getElementById('fin-custo').innerText = `R$ ${custo.toFixed(2)}`;
+    if(document.getElementById('fin-lucro')) document.getElementById('fin-lucro').innerText = `R$ ${(bruto - custo).toFixed(2)}`;
+}
+
+// --- AUXILIARES ---
+function actualizarDashboard() {
+    if(document.getElementById('count-total')) document.getElementById('count-total').innerText = ordens.length;
+    if(document.getElementById('count-open')) document.getElementById('count-open').innerText = ordens.filter(o => o.status !== 'concluido').length;
+    if(document.getElementById('current-date')) document.getElementById('current-date').innerText = new Date().toLocaleDateString('pt-BR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+}
+
+function atualizarSelectPecas() {
+    const select = document.getElementById('os-peca-usada');
+    if(!select) return;
+    select.innerHTML = '<option value="">Selecione uma peça...</option>' + 
+        estoque.map(p => `<option value="${p.id}">${p.nome} (${p.qtd} disponíveis)</option>`).join('');
+}
+
+function alterarStatus(id) {
+    const index = ordens.findIndex(o => o.id === id);
+    const statusCiclo = ['pendente', 'analise', 'concluido'];
+    let atual = statusCiclo.indexOf(ordens[index].status);
+    ordens[index].status = statusCiclo[(atual + 1) % 3];
+    localStorage.setItem('ordens', JSON.stringify(ordens));
+    renderizarTabela();
+}
+
+function deletarOS(id) {
+    if(confirm("Excluir esta ordem permanentemente?")) {
+        ordens = ordens.filter(o => o.id !== id);
+        localStorage.setItem('ordens', JSON.stringify(ordens));
+        renderizarTabela();
+    }
+}
+
+// Inicialização
+window.onload = () => {
+    actualizarDashboard();
+};
