@@ -1,6 +1,6 @@
 /* 
     TECHNICIAN PRO - UNIFIED CORE 
-    Sistema de Gestão de Ordens de Serviço
+    Sistema de Gestão de Ordens de Serviço - Versão Horizon & Logs
 */
 
 // --- ESTADO GLOBAL DA APLICAÇÃO ---
@@ -50,16 +50,13 @@ class Dashboard {
 
     updateStats() {
         const total = ordens.length;
-        const pendentes = ordens.filter(os => os.status.toLowerCase() !== 'concluído').length;
+        const pendentes = ordens.filter(os => os.status.toLowerCase() !== 'concluído' && os.status.toLowerCase() !== 'concluido').length;
         
-        if (document.getElementById('stat-total') || document.getElementById('count-total')) {
-            const el = document.getElementById('stat-total') || document.getElementById('count-total');
-            el.innerText = total;
-        }
-        if (document.getElementById('stat-pendente') || document.getElementById('count-open')) {
-            const el = document.getElementById('stat-pendente') || document.getElementById('count-open');
-            el.innerText = pendentes;
-        }
+        const elTotal = document.getElementById('stat-total') || document.getElementById('count-total');
+        const elPend = document.getElementById('stat-pendente') || document.getElementById('count-open');
+        
+        if (elTotal) elTotal.innerText = total;
+        if (elPend) elPend.innerText = pendentes;
     }
 
     inicializarGrafico() {
@@ -107,11 +104,9 @@ const app = new Dashboard();
 
 // --- NAVEGAÇÃO ENTRE TELAS (CONTROLA OS BOTÕES DA SIDEBAR) ---
 function showScreen(screenId) {
-    // 1. Esconder todas as seções
-    const sections = document.querySelectorAll('.content-section, .table-container, .kanban-container');
+    const sections = document.querySelectorAll('.content-section, .table-container, .kanban-container, .inventory-container');
     sections.forEach(s => s.classList.add('hidden'));
 
-    // 2. Mostrar a seção alvo
     const target = document.getElementById(screenId);
     if (target) {
         target.classList.remove('hidden');
@@ -119,12 +114,10 @@ function showScreen(screenId) {
         console.error("Seção não encontrada:", screenId);
     }
 
-    // 3. Marcar botão ativo na sidebar
     document.querySelectorAll('.nav-item').forEach(btn => btn.classList.remove('active'));
     const activeBtn = document.querySelector(`button[onclick*="${screenId}"]`);
     if (activeBtn) activeBtn.classList.add('active');
 
-    // 4. Carregar dados específicos da tela
     renderizarDados(screenId);
 }
 
@@ -140,7 +133,7 @@ function renderizarDados(id) {
 // --- FUNÇÃO SAIR ---
 function confirmarSair() {
     if (confirm("Deseja realmente encerrar a sessão?")) {
-        localStorage.removeItem('SAD_USER_NAME'); // Opcional: manter ou não o nome
+        localStorage.removeItem('SAD_USER_NAME');
         location.reload();
     }
 }
@@ -191,36 +184,45 @@ if (serviceForm) {
 function renderizarTabela() {
     const tbody = document.getElementById('table-body');
     if (!tbody) return;
+
+    if (ordens.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:20px;">Nenhuma ordem encontrada.</td></tr>`;
+        return;
+    }
+
     tbody.innerHTML = ordens.slice().reverse().map(os => `
         <tr onclick="abrirDetalhes(${os.id})" style="cursor:pointer" class="animate-in">
             <td>#${os.id}</td>
             <td><b>${os.cliente}</b></td>
             <td>${os.aparelho}</td>
-            <td><span class="status-badge status-${os.status.toLowerCase()}">${os.status}</span></td>
+            <td><span class="status-badge status-${os.status.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")}">${os.status}</span></td>
             <td>
                 <button onclick="event.stopPropagation(); excluirOS(${os.id})" class="btn-del">
                     <i class="fas fa-trash"></i>
                 </button>
             </td>
         </tr>
-    `).join('') || '<tr><td colspan="5">Nenhuma ordem encontrada.</td></tr>';
+    `).join('');
 }
 
 function renderizarKanban() {
     const cols = {
-        'Pendente': document.getElementById('cards-pendente'),
-        'Análise': document.getElementById('cards-analise'),
-        'Concluído': document.getElementById('cards-concluido')
+        'pendente': document.getElementById('cards-pendente'),
+        'analise': document.getElementById('cards-analise'),
+        'concluido': document.getElementById('cards-concluido')
     };
     Object.values(cols).forEach(c => { if(c) c.innerHTML = ''; });
 
     ordens.forEach(os => {
+        // Normaliza o status para bater com o ID da coluna (sem acento)
+        const statusKey = os.status.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
         const card = document.createElement('div');
         card.className = 'kanban-card animate-in';
         card.dataset.id = os.id;
         card.innerHTML = `<b>#${os.id} - ${os.cliente}</b><br><small>${os.aparelho}</small>`;
         card.onclick = () => abrirDetalhes(os.id);
-        if (cols[os.status]) cols[os.status].appendChild(card);
+        
+        if (cols[statusKey]) cols[statusKey].appendChild(card);
     });
 }
 
@@ -238,28 +240,35 @@ function renderizarEstoque() {
 }
 
 function renderizarFinanceiro() {
-    let bruto = 0, custo = 0;
+    let bruto = 0, custoTotal = 0;
     const tbody = document.getElementById('fin-table-body');
-    const concluidos = ordens.filter(os => os.status === 'Concluído');
+    const concluidos = ordens.filter(os => os.status.toLowerCase() === 'concluído' || os.status.toLowerCase() === 'concluido');
 
-    tbody.innerHTML = concluidos.map(os => {
+    const html = concluidos.map(os => {
         const taxa = os.pagamento === 'credito' ? os.valor * 0.05 : (os.pagamento === 'debito' ? os.valor * 0.02 : 0);
-        const lucro = os.valor - os.custoPeca - taxa;
+        const custoOS = (os.custoPeca || 0) + taxa;
+        const lucro = os.valor - custoOS;
         bruto += os.valor;
-        custo += (os.custoPeca + taxa);
+        custoTotal += custoOS;
         
         return `<tr>
             <td>#${os.id}</td>
-            <td>${os.cliente}</td>
+            <td>${os.cliente} <br><small>${os.pagamento.toUpperCase()}</small></td>
             <td>R$ ${os.valor.toFixed(2)}</td>
-            <td style="color:red">- R$ ${(os.custoPeca + taxa).toFixed(2)}</td>
-            <td style="color:green; font-weight:bold">R$ ${lucro.toFixed(2)}</td>
+            <td style="color:#ef4444">- R$ ${custoOS.toFixed(2)}</td>
+            <td style="color:#10b981; font-weight:bold">R$ ${lucro.toFixed(2)}</td>
         </tr>`;
-    }).join('') || '<tr><td colspan="5">Nenhum serviço concluído.</td></tr>';
+    }).join('');
 
-    document.getElementById('fin-bruto').innerText = `R$ ${bruto.toFixed(2)}`;
-    document.getElementById('fin-custo').innerText = `R$ ${custo.toFixed(2)}`;
-    document.getElementById('fin-lucro').innerText = `R$ ${(bruto - custo).toFixed(2)}`;
+    if(tbody) tbody.innerHTML = html || '<tr><td colspan="5" style="text-align:center;">Nenhum serviço concluído.</td></tr>';
+
+    const elBruto = document.getElementById('fin-bruto');
+    const elCusto = document.getElementById('fin-custo');
+    const elLucro = document.getElementById('fin-lucro');
+
+    if(elBruto) elBruto.innerText = `R$ ${bruto.toFixed(2)}`;
+    if(elCusto) elCusto.innerText = `R$ ${custoTotal.toFixed(2)}`;
+    if(elLucro) elLucro.innerText = `R$ ${(bruto - custoTotal).toFixed(2)}`;
 }
 
 // --- FUNÇÕES DE APOIO ---
@@ -283,6 +292,15 @@ function excluirOS(id) {
     }
 }
 
+function esvaziarBanco() {
+    if (confirm("ATENÇÃO: Isso apagará todas as Ordens de Serviço. Continuar?")) {
+        ordens = [];
+        localStorage.setItem('SAD_PRO_OS', JSON.stringify(ordens));
+        renderizarTabela();
+        app.updateStats();
+    }
+}
+
 function atualizarSelectPecas() {
     const select = document.getElementById('os-peca-usada');
     if (!select) return;
@@ -294,4 +312,9 @@ function toggleTheme() {
     document.body.classList.toggle('light-theme');
     const isLight = document.body.classList.contains('light-theme');
     localStorage.setItem('SAD_PRO_THEME', isLight ? 'light' : 'dark');
+}
+
+function abrirDetalhes(id) {
+    // Implemente a lógica de abrir o modal de detalhes/logs aqui se necessário
+    console.log("Abrindo detalhes da OS:", id);
 }
