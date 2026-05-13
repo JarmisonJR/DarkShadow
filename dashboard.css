@@ -1,7 +1,6 @@
 /* 
     TECHNICIAN PRO - HORIZON EDITION 
-    VERSÃO DEFINITIVA UNIFICADA
-    ESTILIZAÇÃO: FINANCEIRO + KANBAN + CRM + ESTOQUE
+    VERSÃO DEFINITIVA UNIFICADA & CORRIGIDA (FULLSCREEN)
 */
 
 @import url('https://fonts.googleapis.com/css2?family=Forum&family=Inter:wght@400;600;700&display=swap');
@@ -132,103 +131,103 @@ h1, h2, h3, h4, .sidebar-logo {
     font-weight: 600; 
 }
 
-/* --- MAIN LAYOUT --- */
+/* --- MAIN LAYOUT (FULLSCREEN CORRIGIDO) --- */
 .main-wrapper {
     margin-left: 260px;
     width: calc(100% - 260px);
-    padding: 30px;
+    max-width: none !important;
+    padding: 40px;
     display: flex;
     flex-direction: column;
     gap: 30px;
-    min-width: 0; /* Impede quebra de layout em flex */
+    min-height: 100vh;
+    min-width: 0;
 }
 
+/* --- BANNER --- */
 .welcome-banner {
     background: linear-gradient(100deg, #050505 0%, var(--primary-teal) 100%);
-    padding: 40px;
+    padding: 60px; /* Alargado */
     border-radius: 24px;
     border: 1px solid var(--primary-teal);
     position: relative;
     overflow: hidden;
+    width: 100% !important;
 }
 
 .welcome-banner h1 { font-size: 2.5rem; margin-bottom: 5px; }
 #current-date { color: var(--primary-sunset); opacity: 0.9; font-weight: 600; }
 
-/* --- ESTATÍSTICAS (Cards) --- */
-/* --- CORREÇÃO DE LARGURA TOTAL (FULLSCREEN HORIZON) --- */
-
-/* 1. Ajuste do Container Principal: Remove o limite de largura e centralização */
-.main-wrapper {
-    margin-left: 260px; /* Mantém espaço para a sidebar */
-    width: calc(100% - 260px);
-    max-width: none !important; /* Remove qualquer limitação anterior */
-    padding: 40px; /* Aumenta o respiro interno */
-    display: flex;
-    flex-direction: column;
-    gap: 30px;
-    min-height: 100vh;
-}
-
-/* 2. Banner de Boas-Vindas (image_3874fa.png): Agora ocupa toda a largura */
-.welcome-banner {
-    width: 100% !important;
-    max-width: none !important;
-    padding: 60px; /* Mais imponente */
-    box-sizing: border-box;
-}
-
-/* 3. Grid de Estatísticas: Cards maiores e bem distribuídos */
+/* --- ESTATÍSTICAS (Cards que crescem) --- */
 .stats-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* Faz os cards crescerem sozinhos */
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: 25px;
     width: 100%;
 }
 
 .stat-card {
-    width: 100% !important;
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
     padding: 30px !important;
-}
-
-/* 4. Tabelas e Listas (image_3877e3.png e image_3877c4.png) */
-.table-container {
-    width: 100% !important;
-    max-width: none !important;
-}
-
-table {
-    width: 100%;
-}
-
-/* 5. Kanban (image_3874fa.png): Colunas que se expandem */
-.kanban-container {
+    border-radius: 20px;
     display: flex;
-    gap: 25px;
-    width: 100%;
-    align-items: flex-start;
-    overflow-x: auto; /* Scroll apenas se a tela for muito pequena */
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    transition: 0.3s ease;
+    width: 100% !important;
 }
 
-.kanban-column {
-    flex: 1; /* Faz as 3 colunas dividirem o espaço total da tela igualmente */
-    min-width: 350px; /* Largura mínima para não amassar o conteúdo */
-    max-width: none !important;
+.stat-card:hover { 
+    transform: translateY(-5px); 
+    border-color: var(--primary-sunset); 
 }
 
-/* 6. Formulários (image_387803.png): Centraliza e alarga levemente */
+.stat-card p, .stat-card span { 
+    font-size: 2.2rem; 
+    font-weight: bold; 
+    font-family: 'Forum'; 
+    color: var(--text-white);
+}
+
+/* --- TABELAS --- */
+.table-container {
+    background: var(--card-bg);
+    border-radius: 20px;
+    border: 1px solid var(--border-color);
+    overflow: hidden;
+    width: 100% !important;
+}
+
+table { 
+    width: 100%; 
+    border-collapse: collapse; 
+}
+
+th {
+    background: var(--primary-teal);
+    color: var(--primary-sunset);
+    padding: 18px;
+    text-align: left;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+}
+
+td { padding: 18px; border-bottom: 1px solid var(--border-color); }
+
+/* --- FORMULÁRIOS --- */
 .form-section {
+    background: var(--card-bg);
+    padding: 40px;
+    border-radius: 24px;
+    border: 1px solid var(--border-color);
     width: 100%;
-    max-width: 1000px; /* Formulários muito largos ficam ruins de ler, 1000px é o ideal */
-    margin: 0 auto; /* Centraliza o formulário na área grande */
+    max-width: 1000px; /* Limitado para leitura, mas centralizado na área larga */
+    margin: 0 auto;
 }
 
-/* 7. Ajuste para Telas Ultra-Wide */
-@media (min-width: 1800px) {
-    .main-wrapper {
-        padding: 60px 100px; /* Mais espaço em telas gigantes */
-    }
-}
 .input-group { margin-bottom: 20px; text-align: left; }
 .input-group label { display: block; margin-bottom: 8px; color: var(--primary-sunset); font-size: 0.9rem; font-weight: 600; }
 
@@ -241,99 +240,31 @@ input, textarea, select {
     border-radius: 12px;
     outline: none;
     transition: 0.3s;
-    font-family: 'Inter', sans-serif;
 }
 
-input:focus, textarea:focus { border-color: var(--primary-sunset); box-shadow: 0 0 0 2px var(--sunset-glow); }
-input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(1); cursor: pointer; }
-
-/* --- BOTÕES --- */
-.btn-primary, button[type="submit"] {
-    background: linear-gradient(to right, var(--primary-teal), var(--primary-sunset)) !important;
-    color: #000 !important;
-    padding: 14px 28px;
-    border-radius: 12px;
-    border: none !important;
-    font-weight: 700;
-    font-family: 'Forum', serif;
-    font-size: 1.1rem;
-    cursor: pointer;
-    transition: 0.3s;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-}
-
-.btn-primary:hover { filter: brightness(1.1); transform: translateY(-2px); box-shadow: 0 6px 20px var(--sunset-glow); }
-
-.btn-del {
-    background: rgba(255, 255, 255, 0.05);
-    color: var(--text-muted);
-    border: 1px solid var(--border-color);
-    width: 38px; height: 38px;
-    border-radius: 10px;
-    cursor: pointer;
-    transition: 0.3s;
-    display: inline-flex; align-items: center; justify-content: center;
-}
-
-.btn-del:hover { background: var(--danger) !important; color: white !important; border-color: var(--danger) !important; transform: scale(1.1); }
-
-/* --- MODAIS --- */
-.modal-overlay {
-    position: fixed;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    background: rgba(0, 0, 0, 0.85);
-    backdrop-filter: blur(10px);
-    display: flex; align-items: center; justify-content: center;
-    z-index: 10000;
-}
-
-.confirm-card, .form-card {
-    background: var(--card-bg);
-    padding: 40px;
-    border-radius: 28px;
-    border: 1px solid var(--primary-sunset);
-    width: 95%;
-    max-width: 500px;
-    text-align: center;
-}
-
-.modal-actions { display: flex; gap: 15px; width: 100%; justify-content: center; margin-top: 25px; }
-
-/* --- KANBAN --- */
+/* --- KANBAN (FULL WIDTH) --- */
 .kanban-container {
     display: flex;
     gap: 25px;
-    overflow-x: auto;
-    padding: 10px 5px 25px 5px;
+    width: 100%;
     align-items: flex-start;
+    overflow-x: auto;
+    padding-bottom: 20px;
 }
 
 .kanban-column {
     background: var(--sidebar-bg);
-    min-width: 320px;
-    max-width: 320px;
+    flex: 1; /* Faz as colunas dividirem o espaço total */
+    min-width: 350px;
     border-radius: 24px;
     padding: 20px;
     border: 1px solid var(--border-color);
-    flex-shrink: 0;
 }
 
 .kanban-column h4 { 
     text-align: center; margin-bottom: 20px; 
-    color: var(--primary-sunset); font-size: 1.25rem;
+    color: var(--primary-sunset); 
     border-bottom: 1px solid var(--border-color); padding-bottom: 15px;
-    text-transform: uppercase; letter-spacing: 2px;
-}
-
-.kanban-cards-area {
-    min-height: 400px;
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
 }
 
 .kanban-card {
@@ -341,75 +272,37 @@ input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(1); curso
     border: 1px solid var(--border-color);
     padding: 20px;
     border-radius: 18px;
-    transition: 0.3s ease;
+    margin-bottom: 15px;
     border-left: 4px solid var(--primary-teal);
+    transition: 0.3s ease;
 }
 
-.kanban-card:hover { 
-    border-color: var(--primary-sunset); 
-    transform: translateY(-5px); 
-    box-shadow: 0 8px 25px rgba(0,0,0,0.5); 
+/* --- BOTÕES --- */
+.btn-primary, button[type="submit"] {
+    background: linear-gradient(to right, var(--primary-teal), var(--primary-sunset)) !important;
+    color: #000 !important;
+    padding: 14px 28px;
+    border-radius: 12px;
+    border: none;
+    font-weight: 700;
+    font-family: 'Forum', serif;
+    cursor: pointer;
+    transition: 0.3s;
 }
+
+.btn-primary:hover { filter: brightness(1.1); transform: translateY(-2px); }
 
 /* --- FINANCEIRO --- */
-.finance-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-}
-
 .lucro-positivo { color: var(--success) !important; }
 .custo-negativo { color: var(--danger) !important; }
-
-/* --- CHECKLIST --- */
-.checklist-container { 
-    margin-top: 15px; 
-    padding: 20px; 
-    background: var(--bg-input); 
-    border-radius: 16px; 
-    border: 1px solid var(--border-color);
-}
-
-.checklist-grid { 
-    display: grid; 
-    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); 
-    gap: 12px; 
-    margin-top: 15px; 
-}
-
-.checklist-grid label { 
-    font-size: 0.85rem; 
-    color: var(--text-muted); 
-    cursor: pointer; 
-    display: flex; 
-    align-items: center; 
-    gap: 10px; 
-    padding: 8px;
-    border-radius: 8px;
-    transition: 0.2s;
-}
-
-.checklist-grid label:hover { background: rgba(255,255,255,0.05); color: white; }
-
-/* --- ANIMAÇÕES --- */
-.animate-in { animation: modalPop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); }
-
-@keyframes modalPop {
-    from { opacity: 0; transform: scale(0.9) translateY(30px); }
-    to { opacity: 1; transform: scale(1) translateY(0); }
-}
 
 /* --- RESPONSIVIDADE --- */
 @media (max-width: 1024px) {
     .sidebar { width: 85px; padding: 30px 10px; }
     .sidebar-logo, .nav-item span { display: none; }
     .main-wrapper { margin-left: 85px; width: calc(100% - 85px); padding: 20px; }
-    .stats-grid { grid-template-columns: 1fr; }
 }
 
-@media (max-width: 600px) {
-    .welcome-banner { padding: 25px; }
-    .welcome-banner h1 { font-size: 1.8rem; }
-    .kanban-column { min-width: 280px; }
+@media (min-width: 1800px) {
+    .main-wrapper { padding: 60px 100px; }
 }
