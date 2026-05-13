@@ -156,105 +156,79 @@ h1, h2, h3, h4, .sidebar-logo {
 #current-date { color: var(--primary-sunset); opacity: 0.9; font-weight: 600; }
 
 /* --- ESTATÍSTICAS (Cards) --- */
+/* --- CORREÇÃO DE LARGURA TOTAL (FULLSCREEN HORIZON) --- */
+
+/* 1. Ajuste do Container Principal: Remove o limite de largura e centralização */
+.main-wrapper {
+    margin-left: 260px; /* Mantém espaço para a sidebar */
+    width: calc(100% - 260px);
+    max-width: none !important; /* Remove qualquer limitação anterior */
+    padding: 40px; /* Aumenta o respiro interno */
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    min-height: 100vh;
+}
+
+/* 2. Banner de Boas-Vindas (image_3874fa.png): Agora ocupa toda a largura */
+.welcome-banner {
+    width: 100% !important;
+    max-width: none !important;
+    padding: 60px; /* Mais imponente */
+    box-sizing: border-box;
+}
+
+/* 3. Grid de Estatísticas: Cards maiores e bem distribuídos */
 .stats-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 20px;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* Faz os cards crescerem sozinhos */
+    gap: 25px;
     width: 100%;
 }
 
 .stat-card {
-    background: var(--card-bg) !important;
-    border: 1px solid var(--border-color) !important;
-    padding: 25px !important;
-    border-radius: 20px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    transition: 0.3s ease;
+    width: 100% !important;
+    padding: 30px !important;
 }
 
-.stat-card:hover { 
-    transform: translateY(-5px); 
-    border-color: var(--primary-sunset) !important; 
-}
-
-.stat-card:nth-child(1) { border-top: 4px solid var(--info) !important; }
-.stat-card:nth-child(2) { border-top: 4px solid var(--primary-sunset) !important; }
-.stat-card:nth-child(3) { border-top: 4px solid var(--success) !important; }
-
-.stat-card h3 { 
-    font-size: 0.85rem; 
-    color: var(--text-muted); 
-    margin-bottom: 10px; 
-    text-transform: uppercase; 
-    letter-spacing: 1px;
-}
-
-.stat-card p, .stat-card span { 
-    font-size: 2rem; 
-    font-weight: bold; 
-    font-family: 'Forum'; 
-    color: var(--text-white);
-}
-
-/* --- TABELAS --- */
+/* 4. Tabelas e Listas (image_3877e3.png e image_3877c4.png) */
 .table-container {
-    background: var(--card-bg);
-    border-radius: 20px;
-    border: 1px solid var(--border-color);
-    overflow: hidden;
+    width: 100% !important;
+    max-width: none !important;
+}
+
+table {
     width: 100%;
 }
 
-.table-scroll {
-    overflow-x: auto;
+/* 5. Kanban (image_3874fa.png): Colunas que se expandem */
+.kanban-container {
+    display: flex;
+    gap: 25px;
+    width: 100%;
+    align-items: flex-start;
+    overflow-x: auto; /* Scroll apenas se a tela for muito pequena */
 }
 
-table { width: 100%; border-collapse: collapse; min-width: 700px; }
-
-th {
-    background: var(--primary-teal);
-    color: var(--primary-sunset);
-    padding: 18px;
-    text-align: left;
-    font-size: 0.85rem;
-    text-transform: uppercase;
-    font-family: 'Forum', serif;
-    letter-spacing: 1px;
+.kanban-column {
+    flex: 1; /* Faz as 3 colunas dividirem o espaço total da tela igualmente */
+    min-width: 350px; /* Largura mínima para não amassar o conteúdo */
+    max-width: none !important;
 }
 
-td { padding: 18px; border-bottom: 1px solid var(--border-color); vertical-align: middle; }
-
-tr:last-child td { border-bottom: none; }
-
-/* --- BADGES & STATUS --- */
-.status-badge {
-    padding: 6px 14px;
-    border-radius: 20px;
-    font-size: 0.7rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    border: 1px solid transparent;
-    text-align: center;
-    display: inline-block;
-}
-
-.status-pendente { background: rgba(255, 179, 138, 0.1); color: var(--primary-sunset); border-color: rgba(255, 179, 138, 0.3); }
-.status-analise { background: rgba(59, 130, 246, 0.1); color: var(--info); border-color: rgba(59, 130, 246, 0.3); }
-.status-concluido { background: rgba(16, 185, 129, 0.1); color: var(--success); border-color: rgba(16, 185, 129, 0.3); }
-
-/* --- INPUTS & FORMULÁRIOS --- */
+/* 6. Formulários (image_387803.png): Centraliza e alarga levemente */
 .form-section {
-    background: var(--card-bg);
-    padding: 30px;
-    border-radius: 24px;
-    border: 1px solid var(--border-color);
-    max-width: 800px;
+    width: 100%;
+    max-width: 1000px; /* Formulários muito largos ficam ruins de ler, 1000px é o ideal */
+    margin: 0 auto; /* Centraliza o formulário na área grande */
 }
 
+/* 7. Ajuste para Telas Ultra-Wide */
+@media (min-width: 1800px) {
+    .main-wrapper {
+        padding: 60px 100px; /* Mais espaço em telas gigantes */
+    }
+}
 .input-group { margin-bottom: 20px; text-align: left; }
 .input-group label { display: block; margin-bottom: 8px; color: var(--primary-sunset); font-size: 0.9rem; font-weight: 600; }
 
