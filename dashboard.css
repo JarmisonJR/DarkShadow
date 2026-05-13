@@ -1,33 +1,27 @@
 /* 
     TECHNICIAN PRO - HORIZON EDITION 
-    VERSÃO SUPREMA UNIFICADA (FINANCEIRO + KANBAN + CRM + ESTOQUE)
-    FOCO: LARGURA TOTAL, ALINHAMENTO PRECISO E MODO CLARO/ESCURO
+    VERSÃO FINAL CORRIGIDA - AJUSTE DE ENCAIXE TOTAL
 */
 
 @import url('https://fonts.googleapis.com/css2?family=Forum&family=Inter:wght@400;600;700&display=swap');
 
 :root {
-    /* Tema Escuro (Padrão) */
     --bg-black: #000000;
     --sidebar-bg: #0a0a0b;
     --card-bg: #111114;
     --bg-input: #1a1a1e;
-    
-    --primary-sunset: #ffb38a;      /* Bege alaranjado */
-    --primary-teal: #155e63;        /* Teal profundo */
+    --primary-sunset: #ffb38a;
+    --primary-teal: #155e63;
     --sunset-glow: rgba(255, 179, 138, 0.3);
-    
     --text-white: #ffffff;
     --text-muted: #a1a1aa;
     --border-color: #262626;
-    
     --danger: #ef4444;
     --success: #10b981;
     --info: #3b82f6;
     --warning: #f59e0b;
 }
 
-/* Suporte para Modo Claro */
 body.light-theme {
     --bg-black: #f4f4f5;
     --sidebar-bg: #ffffff;
@@ -39,7 +33,7 @@ body.light-theme {
     --primary-teal: #2d5a5a;
 }
 
-/* --- RESET & GLOBAL (CORRIGIDO) --- */
+/* --- ESTRUTURA CRÍTICA DE ENCAIXE --- */
 * { 
     margin: 0; 
     padding: 0; 
@@ -51,25 +45,22 @@ body {
     color: var(--text-white);
     font-family: 'Inter', sans-serif; 
     min-height: 100vh;
-    overflow-x: hidden;
-    transition: background 0.3s, color 0.3s;
-    display: flex;
+    display: flex; /* Alinha Sidebar e Main lado a lado */
+    overflow-x: hidden; /* Impede a rolagem horizontal lateral */
 }
 
-h1, h2, h3, h4, .sidebar-logo { font-family: 'Forum', serif; }
-.hidden { display: none !important; }
-
-/* --- SIDEBAR --- */
+/* --- SIDEBAR FIXA --- */
 .sidebar {
     width: 260px;
+    min-width: 260px;
     background: var(--sidebar-bg);
     border-right: 1px solid var(--border-color);
     padding: 30px 20px;
     display: flex;
     flex-direction: column;
-    position: fixed;
     height: 100vh;
-    z-index: 1000;
+    position: sticky; /* Mantém a sidebar visível enquanto o main rola */
+    top: 0;
 }
 
 .sidebar-logo {
@@ -78,178 +69,59 @@ h1, h2, h3, h4, .sidebar-logo { font-family: 'Forum', serif; }
     margin-bottom: 40px;
     letter-spacing: 2px;
     text-align: center;
+    font-family: 'Forum', serif;
 }
-
 .sidebar-logo span { color: var(--primary-sunset); text-shadow: 0 0 10px var(--sunset-glow); }
 
-.nav-menu { flex-grow: 1; display: flex; flex-direction: column; gap: 8px; }
-
-.nav-item {
-    background: transparent;
-    border: none;
-    color: var(--text-muted);
-    padding: 14px 18px;
-    border-radius: 12px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    transition: 0.3s;
-    cursor: pointer;
-    width: 100%;
-    font-size: 0.95rem;
-}
-
-.nav-item:hover { background: rgba(255, 255, 255, 0.05); color: var(--text-white); }
-
-.nav-item.active {
-    background: linear-gradient(to right, var(--primary-teal), rgba(21, 94, 99, 0.1)) !important;
-    color: var(--primary-sunset) !important;
-    border-left: 3px solid var(--primary-sunset);
-}
-
-.btn-logout { color: var(--danger) !important; margin-top: auto; font-weight: 600; }
-
-/* --- MAIN LAYOUT (FULLSCREEN HORIZON) --- */
+/* --- MAIN WRAPPER (O CONSERTO) --- */
 .main-wrapper {
-    margin-left: 260px; /* Espaço fixo da sidebar */
-    flex-grow: 1;       /* Ocupa todo o espaço disponível sem ultrapassar */
-    min-width: 0;       /* Evita que conteúdos internos quebrem o layout */
+    flex: 1;            /* Ocupa 100% do espaço que a sidebar deixa livre */
+    min-width: 0;       /* Truque para evitar que o conteúdo interno force a largura */
     padding: 40px;
     display: flex;
     flex-direction: column;
     gap: 30px;
-    width: auto;        /* Deixa o flexbox controlar a largura */
+    background-color: var(--bg-black);
 }
 
-/* --- BANNER DE BOAS-VINDAS --- */
+/* --- BANNER LARGURA TOTAL --- */
 .welcome-banner {
-    width: 100%; /* Faz o banner ocupar toda a largura disponível */
-    box-sizing: border-box;
-    padding: 50px; /* Aumenta o preenchimento interno para ficar imponente */
+    width: 100%;
+    padding: 50px;
     background: linear-gradient(100deg, #050505 0%, var(--primary-teal) 100%);
     border-radius: 24px;
+    border: 1px solid var(--border-color);
 }
 
-.welcome-banner h1 { font-size: 2.8rem; margin-bottom: 8px; }
-#current-date { color: var(--primary-sunset); opacity: 0.9; font-weight: 600; }
+.welcome-banner h1 { font-family: 'Forum', serif; font-size: 2.8rem; margin-bottom: 8px; }
 
-/* --- ESTATÍSTICAS (GRID RESPONSIVO) --- */
+/* --- GRID DE CARDS --- */
 .stats-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
     gap: 25px;
     width: 100%;
 }
 
 .stat-card {
-    background: var(--card-bg) !important;
-    border: 1px solid var(--border-color) !important;
-    padding: 35px !important;
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    padding: 35px;
     border-radius: 20px;
     text-align: center;
-    transition: 0.3s ease;
 }
 
-.stat-card:hover { transform: translateY(-5px); border-color: var(--primary-sunset) !important; }
-
-.stat-card:nth-child(1) { border-top: 4px solid var(--info) !important; }
-.stat-card:nth-child(2) { border-top: 4px solid var(--primary-sunset) !important; }
-.stat-card:nth-child(3) { border-top: 4px solid var(--success) !important; }
-
-.stat-card h3 { font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
-
-.stat-card p, .stat-card span { 
-    font-size: 2.5rem; 
-    font-family: 'Forum'; 
-    color: var(--text-white);
-    margin-top: 10px;
-}
-
-/* --- TABELAS (CORREÇÃO BARRA VERDE) --- */
-.table-container {
-    background: var(--card-bg);
-    border-radius: 20px;
-    border: 1px solid var(--border-color);
-    width: 100%;
-    overflow: hidden;
-}
-
-.table-scroll { overflow-x: auto; }
-
-table { width: 100%; border-collapse: collapse; }
-
-th {
-    background: var(--primary-teal) !important;
-    color: var(--primary-sunset);
-    padding: 20px;
-    text-align: left;
-    font-size: 0.85rem;
-    text-transform: uppercase;
-    font-family: 'Forum', serif;
-    letter-spacing: 1px;
-}
-
-td { padding: 18px; border-bottom: 1px solid var(--border-color); }
-
-/* --- BADGES & STATUS --- */
-.status-badge {
-    padding: 6px 14px;
-    border-radius: 20px;
-    font-size: 0.7rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    border: 1px solid transparent;
-}
-
-.status-pendente { background: rgba(255, 179, 138, 0.1); color: var(--primary-sunset); border-color: rgba(255, 179, 138, 0.3); }
-.status-analise { background: rgba(59, 130, 246, 0.1); color: var(--info); border-color: rgba(59, 130, 246, 0.3); }
-.status-concluido { background: rgba(16, 185, 129, 0.1); color: var(--success); border-color: rgba(16, 185, 129, 0.3); }
-
-/* --- KANBAN --- */
-.kanban-container {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr); /* 3 colunas de tamanhos iguais */
-    gap: 20px;
-    width: 100%;
-    align-items: flex-start;
-}
-
-.kanban-column {
-    min-width: 0; /* Permite que a coluna encolha se necessário */
-    width: 100%;
-}
-
-.kanban-column h4 { 
-    text-align: center; margin-bottom: 20px; 
-    color: var(--primary-sunset); font-size: 1.25rem;
-    border-bottom: 1px solid var(--border-color); padding-bottom: 15px;
-    text-transform: uppercase; letter-spacing: 2px;
-}
-
-.kanban-card {
-    background: var(--card-bg);
-    border: 1px solid var(--border-color);
-    padding: 22px;
-    border-radius: 18px;
-    margin-bottom: 15px;
-    border-left: 4px solid var(--primary-teal);
-    transition: 0.3s ease;
-}
-
-.kanban-card:hover { border-color: var(--primary-sunset); transform: translateY(-5px); }
-
-/* --- INPUTS & FORMULÁRIOS --- */
+/* --- FORMULÁRIOS CENTRALIZADOS --- */
 .form-section {
     background: var(--card-bg);
     padding: 40px;
     border-radius: 24px;
     border: 1px solid var(--border-color);
-    width: 100%;       /* Ocupa a largura total do container */
-    max-width: 1200px; /* Limite elegante para não esticar demais em monitores UltraWide */
-    margin: 0 auto;    /* Centraliza o formulário na tela */
+    width: 100%;
+    max-width: 1100px; /* Não deixa o formulário ficar "infinito" em telas grandes */
+    margin: 0 auto;    /* Centraliza se sobrar espaço */
 }
 
-/* Ajuste das colunas de Mão de Obra e Data para ficarem lado a lado */
 .form-row {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -265,69 +137,42 @@ input, textarea, select {
     color: white;
     border-radius: 12px;
     outline: none;
-    transition: 0.3s;
 }
 
-input:focus, textarea:focus { border-color: var(--primary-sunset); box-shadow: 0 0 15px rgba(255, 179, 138, 0.1); }
-
-/* --- BOTÕES --- */
-.btn-primary, button[type="submit"] {
-    background: linear-gradient(to right, var(--primary-teal), var(--primary-sunset)) !important;
-    color: #000 !important;
-    padding: 16px 32px;
-    border-radius: 12px;
-    border: none;
-    font-weight: 700;
-    font-family: 'Forum', serif;
-    font-size: 1.1rem;
-    cursor: pointer;
-    transition: 0.3s;
+/* --- KANBAN INTELIGENTE --- */
+.kanban-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* 3 colunas perfeitas */
+    gap: 20px;
+    width: 100%;
+    align-items: flex-start;
 }
 
-.btn-primary:hover { filter: brightness(1.1); transform: translateY(-2px); box-shadow: 0 6px 20px var(--sunset-glow); }
-
-/* --- MODAIS --- */
-.modal-overlay {
-    position: fixed;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    background: rgba(0, 0, 0, 0.85);
-    backdrop-filter: blur(10px);
-    display: flex; align-items: center; justify-content: center;
-    z-index: 10000;
-}
-
-.confirm-card {
-    background: var(--card-bg);
-    padding: 40px;
-    border-radius: 28px;
-    border: 1px solid var(--primary-sunset);
-    text-align: center;
-    max-width: 450px;
-}
-
-/* --- CHECKLIST --- */
-.checklist-container { 
-    margin-top: 15px; 
-    padding: 20px; 
-    background: var(--bg-input); 
-    border-radius: 16px; 
+.kanban-column {
+    background: var(--sidebar-bg);
+    border-radius: 24px;
+    padding: 20px;
     border: 1px solid var(--border-color);
+    min-width: 0;
 }
 
-.checklist-grid { 
-    display: grid; 
-    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); 
-    gap: 12px; 
+/* --- TABELAS --- */
+.table-container {
+    background: var(--card-bg);
+    border-radius: 20px;
+    border: 1px solid var(--border-color);
+    width: 100%;
+    overflow-x: auto;
 }
+
+table { width: 100%; border-collapse: collapse; }
+th { background: var(--primary-teal); color: var(--primary-sunset); padding: 20px; text-align: left; }
+td { padding: 18px; border-bottom: 1px solid var(--border-color); }
 
 /* --- RESPONSIVIDADE --- */
 @media (max-width: 1024px) {
-    .sidebar { width: 85px; padding: 20px 10px; }
+    .sidebar { width: 85px; min-width: 85px; padding: 20px 10px; }
     .sidebar-logo, .nav-item span { display: none; }
-    .main-wrapper { margin-left: 85px; width: calc(100% - 85px); padding: 20px; }
-}
-
-@media (min-width: 1800px) {
-    .main-wrapper { padding: 60px 100px; }
+    .main-wrapper { padding: 20px; }
+    .kanban-container { grid-template-columns: 1fr; } /* Empilha no celular */
 }
