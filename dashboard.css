@@ -150,9 +150,10 @@ h1, h2, h3, h4, .sidebar-logo {
 /* --- ESTATÍSTICAS (Cards) --- */
 .stats-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /* Responsivo e flexível */
     gap: 20px;
     width: 100%;
+    margin-bottom: 30px;
 }
 
 .stat-card {
