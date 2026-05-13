@@ -364,7 +364,10 @@ button[type="submit"] {
     cursor: pointer;
     transition: 0.3s;
 }
-
+.btn-action-dark i.fa-check-circle:hover {
+    filter: brightness(1.5);
+    transform: scale(1.2);
+}
 .btn-action-dark:hover {
     background: #333;
 }
