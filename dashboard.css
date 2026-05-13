@@ -1,13 +1,13 @@
 /* 
     TECHNICIAN PRO - HORIZON EDITION 
-    VERSÃO DEFINITIVA UNIFICADA
-    ESTILIZAÇÃO: FINANCEIRO + KANBAN + CRM + ESTOQUE
+    VERSÃO DEFINITIVA UNIFICADA & CORRIGIDA
+    FOCO: LARGURA TOTAL, ALINHAMENTO E CORREÇÃO DE TABELAS
 */
 
 @import url('https://fonts.googleapis.com/css2?family=Forum&family=Inter:wght@400;600;700&display=swap');
 
 :root {
-    /* Tema Escuro (Padrão) */
+    /* Tema Escuro */
     --bg-black: #000000;
     --sidebar-bg: #0a0a0b;
     --card-bg: #111114;
@@ -27,21 +27,9 @@
     --warning: #f59e0b;
 }
 
-/* Suporte para Modo Claro */
-body.light-theme {
-    --bg-black: #f4f4f5;
-    --sidebar-bg: #ffffff;
-    --card-bg: #ffffff;
-    --bg-input: #f9f9fb;
-    --text-white: #18181b;
-    --text-muted: #71717a;
-    --border-color: #e4e4e7;
-    --primary-teal: #2d5a5a;
-}
-
-/* --- RESET & GLOBAL --- */
+/* --- RESET GLOBAL (CORRIGIDO) --- */
 * { 
-    margin: 4px; 
+    margin: 0; /* Removido o erro de 4px que quebrava o alinhamento */
     padding: 0; 
     box-sizing: border-box; 
 }
@@ -51,16 +39,11 @@ body {
     color: var(--text-white);
     font-family: 'Inter', sans-serif; 
     min-height: 100vh;
-    overflow-x: hidden;
-    transition: background 0.3s, color 0.3s;
     display: flex;
+    overflow-x: hidden;
 }
 
-h1, h2, h3, h4, .sidebar-logo { 
-    font-family: 'Forum', serif; 
-}
-
-.hidden { display: none !important; }
+h1, h2, h3, h4, .sidebar-logo { font-family: 'Forum', serif; }
 
 /* --- SIDEBAR --- */
 .sidebar {
@@ -73,8 +56,6 @@ h1, h2, h3, h4, .sidebar-logo {
     position: fixed;
     height: 100vh;
     z-index: 1000;
-    left: 0;
-    top: 0;
 }
 
 .sidebar-logo {
@@ -85,17 +66,9 @@ h1, h2, h3, h4, .sidebar-logo {
     text-align: center;
 }
 
-.sidebar-logo span { 
-    color: var(--primary-sunset); 
-    text-shadow: 0 0 10px var(--sunset-glow); 
-}
+.sidebar-logo span { color: var(--primary-sunset); text-shadow: 0 0 10px var(--sunset-glow); }
 
-.nav-menu { 
-    flex-grow: 1; 
-    display: flex; 
-    flex-direction: column; 
-    gap: 8px; 
-}
+.nav-menu { flex-grow: 1; display: flex; flex-direction: column; gap: 8px; }
 
 .nav-item {
     background: transparent;
@@ -108,17 +81,10 @@ h1, h2, h3, h4, .sidebar-logo {
     gap: 12px;
     transition: 0.3s;
     cursor: pointer;
-    text-align: left;
     width: 100%;
-    font-size: 0.95rem;
 }
 
-.nav-item i { width: 20px; text-align: center; }
-
-.nav-item:hover { 
-    background: rgba(255, 255, 255, 0.05); 
-    color: var(--text-white); 
-}
+.nav-item:hover { background: rgba(255, 255, 255, 0.05); color: var(--text-white); }
 
 .nav-item.active {
     background: linear-gradient(to right, var(--primary-teal), rgba(21, 94, 99, 0.1)) !important;
@@ -126,240 +92,98 @@ h1, h2, h3, h4, .sidebar-logo {
     border-left: 3px solid var(--primary-sunset);
 }
 
-.btn-logout { 
-    color: var(--danger) !important; 
-    margin-top: auto; 
-    font-weight: 600; 
-}
-
-/* --- MAIN LAYOUT --- */
+/* --- MAIN LAYOUT (OCUPA 100% DA TELA) --- */
 .main-wrapper {
     margin-left: 260px;
     width: calc(100% - 260px);
-    padding: 30px;
+    max-width: none !important;
+    padding: 40px;
     display: flex;
     flex-direction: column;
     gap: 30px;
-    min-width: 0; /* Impede quebra de layout em flex */
+    min-height: 100vh;
 }
 
+/* --- BANNER DE BOAS-VINDAS --- */
 .welcome-banner {
     background: linear-gradient(100deg, #050505 0%, var(--primary-teal) 100%);
-    padding: 10px;
+    padding: 50px;
     border-radius: 24px;
     border: 1px solid var(--primary-teal);
-    position: relative;
-    overflow: hidden;
+    width: 100%;
+    box-sizing: border-box;
 }
 
-.welcome-banner h1 { font-size: 2.5rem; margin-bottom: 5px; }
-#current-date { color: var(--primary-sunset); opacity: 0.9; font-weight: 600; }
+.welcome-banner h1 { font-size: 2.5rem; margin-bottom: 8px; }
 
-/* --- ESTATÍSTICAS (Cards) --- */
+/* --- GRID DE CARDS (DASHBOARD) --- */
 .stats-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 20px;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 25px;
     width: 100%;
 }
 
 .stat-card {
     background: var(--card-bg) !important;
     border: 1px solid var(--border-color) !important;
-    padding: 25px !important;
+    padding: 35px !important;
     border-radius: 20px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
     text-align: center;
     transition: 0.3s ease;
 }
 
-.stat-card:hover { 
-    transform: translateY(-5px); 
-    border-color: var(--primary-sunset) !important; 
-}
-
-.stat-card:nth-child(1) { border-top: 4px solid var(--info) !important; }
-.stat-card:nth-child(2) { border-top: 4px solid var(--primary-sunset) !important; }
-.stat-card:nth-child(3) { border-top: 4px solid var(--success) !important; }
-
-.stat-card h3 { 
-    font-size: 0.85rem; 
-    color: var(--text-muted); 
-    margin-bottom: 10px; 
-    text-transform: uppercase; 
-    letter-spacing: 1px;
-}
+.stat-card:hover { transform: translateY(-5px); border-color: var(--primary-sunset) !important; }
 
 .stat-card p, .stat-card span { 
-    font-size: 2rem; 
-    font-weight: bold; 
+    font-size: 2.5rem; 
     font-family: 'Forum'; 
     color: var(--text-white);
+    margin-top: 10px;
 }
 
-/* --- TABELAS --- */
+/* --- TABELAS E ESTOQUE (BARRA VERDE CORRIGIDA) --- */
 .table-container {
     background: var(--card-bg);
     border-radius: 20px;
     border: 1px solid var(--border-color);
-    overflow: hidden;
-    width: 100%;
+    width: 100% !important;
+    overflow: hidden; /* Mantém a barra verde dentro do arredondamento */
 }
 
-.table-scroll {
-    overflow-x: auto;
+table { 
+    width: 100% !important; 
+    border-collapse: collapse; 
 }
-
-table { width: 100%; border-collapse: collapse; min-width: 700px; }
 
 th {
-    background: var(--primary-teal);
+    background: var(--primary-teal) !important; /* Estende a barra verde */
     color: var(--primary-sunset);
-    padding: 18px;
+    padding: 20px;
     text-align: left;
     font-size: 0.85rem;
     text-transform: uppercase;
-    font-family: 'Forum', serif;
     letter-spacing: 1px;
 }
 
-td { padding: 18px; border-bottom: 1px solid var(--border-color); vertical-align: middle; }
+td { padding: 18px; border-bottom: 1px solid var(--border-color); }
 
-tr:last-child td { border-bottom: none; }
-
-/* --- BADGES & STATUS --- */
-.status-badge {
-    padding: 6px 14px;
-    border-radius: 20px;
-    font-size: 0.7rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    border: 1px solid transparent;
-    text-align: center;
-    display: inline-block;
-}
-
-.status-pendente { background: rgba(255, 179, 138, 0.1); color: var(--primary-sunset); border-color: rgba(255, 179, 138, 0.3); }
-.status-analise { background: rgba(59, 130, 246, 0.1); color: var(--info); border-color: rgba(59, 130, 246, 0.3); }
-.status-concluido { background: rgba(16, 185, 129, 0.1); color: var(--success); border-color: rgba(16, 185, 129, 0.3); }
-
-/* --- INPUTS & FORMULÁRIOS --- */
-.form-section {
-    background: var(--card-bg);
-    padding: 30px;
-    border-radius: 24px;
-    border: 1px solid var(--border-color);
-    max-width: 800px;
-}
-
-.input-group { margin-bottom: 20px; text-align: left; }
-.input-group label { display: block; margin-bottom: 8px; color: var(--primary-sunset); font-size: 0.9rem; font-weight: 600; }
-
-input, textarea, select {
-    width: 100%;
-    background: var(--bg-input) !important;
-    border: 1px solid var(--border-color);
-    padding: 14px;
-    color: white;
-    border-radius: 12px;
-    outline: none;
-    transition: 0.3s;
-    font-family: 'Inter', sans-serif;
-}
-
-input:focus, textarea:focus { border-color: var(--primary-sunset); box-shadow: 0 0 0 2px var(--sunset-glow); }
-input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(1); cursor: pointer; }
-
-/* --- BOTÕES --- */
-.btn-primary, button[type="submit"] {
-    background: linear-gradient(to right, var(--primary-teal), var(--primary-sunset)) !important;
-    color: #000 !important;
-    padding: 14px 28px;
-    border-radius: 12px;
-    border: none !important;
-    font-weight: 700;
-    font-family: 'Forum', serif;
-    font-size: 1.1rem;
-    cursor: pointer;
-    transition: 0.3s;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-}
-
-.btn-primary:hover { filter: brightness(1.1); transform: translateY(-2px); box-shadow: 0 6px 20px var(--sunset-glow); }
-
-.btn-del {
-    background: rgba(255, 255, 255, 0.05);
-    color: var(--text-muted);
-    border: 1px solid var(--border-color);
-    width: 38px; height: 38px;
-    border-radius: 10px;
-    cursor: pointer;
-    transition: 0.3s;
-    display: inline-flex; align-items: center; justify-content: center;
-}
-
-.btn-del:hover { background: var(--danger) !important; color: white !important; border-color: var(--danger) !important; transform: scale(1.1); }
-
-/* --- MODAIS --- */
-.modal-overlay {
-    position: fixed;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    background: rgba(0, 0, 0, 0.85);
-    backdrop-filter: blur(10px);
-    display: flex; align-items: center; justify-content: center;
-    z-index: 10000;
-}
-
-.confirm-card, .form-card {
-    background: var(--card-bg);
-    padding: 40px;
-    border-radius: 28px;
-    border: 1px solid var(--primary-sunset);
-    width: 95%;
-    max-width: 500px;
-    text-align: center;
-}
-
-.modal-actions { display: flex; gap: 15px; width: 100%; justify-content: center; margin-top: 25px; }
-
-/* --- KANBAN --- */
+/* --- KANBAN (ESTILO HORIZON) --- */
 .kanban-container {
     display: flex;
     gap: 25px;
-    overflow-x: auto;
-    padding: 10px 5px 25px 5px;
+    width: 100%;
     align-items: flex-start;
+    overflow-x: auto;
 }
 
 .kanban-column {
     background: var(--sidebar-bg);
-    min-width: 320px;
-    max-width: 320px;
+    flex: 1; /* Colunas dividem o espaço igualmente */
+    min-width: 350px;
     border-radius: 24px;
     padding: 20px;
     border: 1px solid var(--border-color);
-    flex-shrink: 0;
-}
-
-.kanban-column h4 { 
-    text-align: center; margin-bottom: 20px; 
-    color: var(--primary-sunset); font-size: 1.25rem;
-    border-bottom: 1px solid var(--border-color); padding-bottom: 15px;
-    text-transform: uppercase; letter-spacing: 2px;
-}
-
-.kanban-cards-area {
-    min-height: 400px;
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
 }
 
 .kanban-card {
@@ -367,75 +191,58 @@ input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(1); curso
     border: 1px solid var(--border-color);
     padding: 20px;
     border-radius: 18px;
-    transition: 0.3s ease;
+    margin-bottom: 15px;
     border-left: 4px solid var(--primary-teal);
+    transition: 0.3s ease;
 }
 
-.kanban-card:hover { 
-    border-color: var(--primary-sunset); 
-    transform: translateY(-5px); 
-    box-shadow: 0 8px 25px rgba(0,0,0,0.5); 
-}
-
-/* --- FINANCEIRO --- */
-.finance-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-}
-
-.lucro-positivo { color: var(--success) !important; }
-.custo-negativo { color: var(--danger) !important; }
-
-/* --- CHECKLIST --- */
-.checklist-container { 
-    margin-top: 15px; 
-    padding: 20px; 
-    background: var(--bg-input); 
-    border-radius: 16px; 
+/* --- FORMULÁRIOS CENTRALIZADOS --- */
+.form-section {
+    background: var(--card-bg);
+    padding: 40px;
+    border-radius: 24px;
     border: 1px solid var(--border-color);
+    width: 100%;
+    max-width: 1000px;
+    margin: 0 auto;
 }
 
-.checklist-grid { 
-    display: grid; 
-    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); 
-    gap: 12px; 
-    margin-top: 15px; 
+input, textarea, select {
+    width: 100%;
+    background: var(--bg-input) !important;
+    border: 1px solid var(--border-color);
+    padding: 15px;
+    color: white;
+    border-radius: 12px;
+    outline: none;
+    transition: 0.3s;
 }
 
-.checklist-grid label { 
-    font-size: 0.85rem; 
-    color: var(--text-muted); 
-    cursor: pointer; 
-    display: flex; 
-    align-items: center; 
-    gap: 10px; 
-    padding: 8px;
-    border-radius: 8px;
-    transition: 0.2s;
+input:focus { border-color: var(--primary-sunset); box-shadow: 0 0 15px rgba(255, 179, 138, 0.1); }
+
+/* --- BOTÕES --- */
+.btn-primary, button[type="submit"] {
+    background: linear-gradient(to right, var(--primary-teal), var(--primary-sunset)) !important;
+    color: #000 !important;
+    padding: 16px 32px;
+    border-radius: 12px;
+    border: none;
+    font-weight: 700;
+    font-family: 'Forum', serif;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: 0.3s;
 }
 
-.checklist-grid label:hover { background: rgba(255,255,255,0.05); color: white; }
-
-/* --- ANIMAÇÕES --- */
-.animate-in { animation: modalPop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); }
-
-@keyframes modalPop {
-    from { opacity: 0; transform: scale(0.9) translateY(30px); }
-    to { opacity: 1; transform: scale(1) translateY(0); }
-}
+.btn-primary:hover { filter: brightness(1.1); transform: translateY(-2px); }
 
 /* --- RESPONSIVIDADE --- */
 @media (max-width: 1024px) {
-    .sidebar { width: 85px; padding: 30px 10px; }
+    .sidebar { width: 85px; padding: 20px 10px; }
     .sidebar-logo, .nav-item span { display: none; }
     .main-wrapper { margin-left: 85px; width: calc(100% - 85px); padding: 20px; }
-    .stats-grid { grid-template-columns: 1fr; }
 }
 
-@media (max-width: 600px) {
-    .welcome-banner { padding: 25px; }
-    .welcome-banner h1 { font-size: 1.8rem; }
-    .kanban-column { min-width: 280px; }
+@media (min-width: 1800px) {
+    .main-wrapper { padding: 60px 100px; } /* Ultra-wide screens */
 }
