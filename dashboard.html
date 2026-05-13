@@ -52,173 +52,179 @@
         </aside>
 
         <!-- CONTEÚDO PRINCIPAL -->
-        <main class="main-wrapper">
+       <!-- CONTEÚDO PRINCIPAL -->
+<main class="main-wrapper">
 
-            <!-- HOME / DASHBOARD -->
-            <section id="home-screen" class="content-section">
-                <header class="welcome-banner">
-                    <div>
-                        <h1 id="welcome-text">Bem-vindo, Técnico!</h1>
-                        <p id="current-date"></p>
-                    </div>
-                </header>
+    <!-- HOME / DASHBOARD -->
+    <section id="home-screen" class="content-section">
+        <header class="welcome-banner">
+            <div>
+                <h1 id="welcome-text">Bem-vindo, Técnico!</h1>
+                <p id="current-date"></p>
+            </div>
+        </header>
 
-                <div class="stats-grid">
-                    <div class="stat-card" onclick="showScreen('lista-screen')" style="cursor:pointer">
-                        <h3>Ordens Abertas</h3>
-                        <span id="count-open">0</span>
-                    </div>
-                    <div class="stat-card">
-                        <h3>Registros Totais</h3>
-                        <span id="count-total">0</span>
-                    </div>
-                    <div class="stat-card">
-                        <h3>Urgentes</h3>
-                        <span id="count-urgent">0</span>
-                    </div>
-                </div>
-            </section>
+        <div class="stats-grid">
+            <div class="stat-card" onclick="showScreen('lista-screen')" style="cursor:pointer">
+                <h3>Ordens Abertas</h3>
+                <span id="stat-pendente">0</span>
+            </div>
+            <div class="stat-card">
+                <h3>Registros Totais</h3>
+                <span id="stat-total">0</span>
+            </div>
+            <div class="stat-card">
+                <h3>Concluídas</h3>
+                <span id="stat-concluido">0</span>
+            </div>
+        </div>
+    </section>
 
-            <!-- KANBAN (FLUXO DE TRABALHO) -->
-            <section id="kanban-screen" class="content-section hidden">
-                <div class="section-header">
-                    <h2>Fluxo Kanban</h2>
-                </div>
-                <div class="kanban-container">
-                    <div class="kanban-column" id="col-pendente" ondrop="drop(event)" ondragover="allowDrop(event)">
-                        <div class="kanban-title">PENDENTE</div>
-                        <div class="kanban-cards-area"></div>
-                    </div>
-                    <div class="kanban-column" id="col-andamento" ondrop="drop(event)" ondragover="allowDrop(event)">
-                        <div class="kanban-title">EM ANDAMENTO</div>
-                        <div class="kanban-cards-area"></div>
-                    </div>
-                    <div class="kanban-column" id="col-concluido" ondrop="drop(event)" ondragover="allowDrop(event)">
-                        <div class="kanban-title">CONCLUÍDO</div>
-                        <div class="kanban-cards-area"></div>
-                    </div>
-                </div>
-            </section>
+    <!-- KANBAN (FLUXO DE TRABALHO) -->
+    <section id="kanban-screen" class="content-section hidden">
+        <div class="section-header">
+            <h2>Fluxo Kanban</h2>
+        </div>
+        <div class="kanban-container">
+            <div class="kanban-column" id="col-pendente" ondrop="drop(event)" ondragover="allowDrop(event)">
+                <div class="kanban-header">PENDENTE</div>
+                <div class="kanban-cards"></div>
+            </div>
+            <div class="kanban-column" id="col-andamento" ondrop="drop(event)" ondragover="allowDrop(event)">
+                <div class="kanban-header">EM ANDAMENTO</div>
+                <div class="kanban-cards"></div>
+            </div>
+            <div class="kanban-column" id="col-concluido" ondrop="drop(event)" ondragover="allowDrop(event)">
+                <div class="kanban-header">CONCLUÍDO</div>
+                <div class="kanban-cards"></div>
+            </div>
+        </div>
+    </section>
 
-            <!-- LISTA DE ORDENS -->
-            <section id="lista-screen" class="content-section hidden">
-                <div class="section-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                    <h2>Ordens de Serviço</h2>
-                    <button class="btn-empty-db" onclick="limparBanco()">
-                        <i class="fas fa-trash-alt"></i> Limpar Banco
-                    </button>
-                </div>
-                <div class="table-container">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Cliente</th>
-                                <th>Aparelho / Defeito</th>
-                                <th>Status</th>
-                                <th>Ações</th>
-                            </tr>
-                        </thead>
-                        <tbody id="table-body"></tbody>
-                    </table>
-                </div>
-            </section>
+    <!-- LISTA DE ORDENS -->
+    <section id="lista-screen" class="content-section hidden">
+        <div class="section-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h2>Ordens de Serviço</h2>
+            <button class="btn-empty-db" onclick="limparBanco()">
+                <i class="fas fa-trash-alt"></i> Limpar Banco
+            </button>
+        </div>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Cliente</th>
+                        <th>Aparelho</th>
+                        <th>Data</th>
+                        <th>Status</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="table-body"></tbody>
+            </table>
+        </div>
+    </section>
 
-            <!-- FINANCEIRO -->
-            <section id="financeiro-screen" class="content-section hidden">
-                <div class="section-header">
-                    <h2>Fluxo Financeiro</h2>
-                </div>
-                <div class="stats-grid">
-                    <div class="stat-card card-entrada">
-                        <h3>Total Entradas</h3>
-                        <p id="fin-entradas">R$ 0,00</p>
-                    </div>
-                    <div class="stat-card card-saldo">
-                        <h3>Saldo em Caixa</h3>
-                        <p id="fin-saldo">R$ 0,00</p>
-                    </div>
-                </div>
-                <div class="table-container" style="margin-top: 20px;">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Data</th>
-                                <th>Descrição</th>
-                                <th>Tipo</th>
-                                <th>Valor</th>
-                            </tr>
-                        </thead>
-                        <tbody id="finance-table-body"></tbody>
-                    </table>
-                </div>
-            </section>
+    <!-- FINANCEIRO -->
+    <section id="financeiro-screen" class="content-section hidden">
+        <div class="section-header">
+            <h2>Fluxo Financeiro</h2>
+        </div>
+        <div class="stats-grid">
+            <div class="stat-card card-entrada">
+                <h3>Total Entradas</h3>
+                <p id="fin-entradas">R$ 0,00</p>
+            </div>
+            <div class="stat-card card-saida">
+                <h3>Total Custos (Peças)</h3>
+                <p id="fin-saidas">R$ 0,00</p>
+            </div>
+            <div class="stat-card card-saldo">
+                <h3>Saldo em Caixa</h3>
+                <p id="fin-saldo">R$ 0,00</p>
+            </div>
+        </div>
+        <div class="table-container" style="margin-top: 20px;">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Data</th>
+                        <th>Descrição</th>
+                        <th>Tipo</th>
+                        <th>Valor</th>
+                    </tr>
+                </thead>
+                <tbody id="finance-body"></tbody>
+            </table>
+        </div>
+    </section>
 
-            <!-- CADASTRO DE ORDEM -->
-            <section id="cadastro-screen" class="content-section hidden">
-                <div class="form-card animate-in">
-                    <div class="form-header">
-                        <h2><i class="far fa-edit"></i> Nova Ordem</h2>
+    <!-- CADASTRO DE ORDEM -->
+    <section id="cadastro-screen" class="content-section hidden">
+        <div class="form-card animate-in">
+            <div class="form-header">
+                <h2><i class="far fa-edit"></i> Nova Ordem</h2>
+            </div>
+            <form id="serviceForm">
+                <div class="input-group">
+                    <label>Cliente</label>
+                    <input type="text" id="cli-nome" placeholder="Nome completo" required>
+                </div>
+                <div class="input-group">
+                    <label>WhatsApp</label>
+                    <input type="number" id="cli-phone" placeholder="DDD + Número">
+                </div>
+                <div class="input-group">
+                    <label>Aparelho</label>
+                    <input type="text" id="apa-nome" placeholder="Marca e Modelo" required>
+                </div>
+                <div class="input-group">
+                    <label>Defeito</label>
+                    <textarea id="apa-defeito" placeholder="Relato do problema" required></textarea>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                    <div class="input-group">
+                        <label>Data</label>
+                        <input type="date" id="apa-data" required>
                     </div>
-                    <form id="serviceForm">
-                        <div class="input-group">
-                            <label>Cliente</label>
-                            <input type="text" id="cli-nome" placeholder="Nome completo" required>
-                        </div>
-                        <div class="input-group">
-                            <label>WhatsApp</label>
-                            <input type="number" id="cli-phone" placeholder="DDD + Número">
-                        </div>
-                        <div class="input-group">
-                            <label>Aparelho</label>
-                            <input type="text" id="apa-nome" placeholder="Marca e Modelo" required>
-                        </div>
-                        <div class="input-group">
-                            <label>Defeito</label>
-                            <textarea id="apa-defeito" placeholder="Relato do problema" required></textarea>
-                        </div>
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-                            <div class="input-group">
-                                <label>Data</label>
-                                <input type="date" id="apa-data" required>
-                            </div>
-                            <div class="input-group">
-                                <label>Valor (R$)</label>
-                                <input type="number" step="0.01" id="apa-valor" placeholder="0.00">
-                            </div>
-                        </div>
-                        <div class="form-buttons" style="margin-top: 20px; display: flex; gap: 10px;">
-                            <button type="button" onclick="showScreen('home-screen')" class="btn-no" style="background: transparent; border: 1px solid #444; color: #fff; padding: 10px 20px; border-radius: 8px; cursor: pointer;">Cancelar</button>
-                            <button type="submit" class="btn-primary">Salvar Ordem</button>
-                        </div>
-                    </form>
+                    <div class="input-group">
+                        <label>Valor (R$)</label>
+                        <input type="number" step="0.01" id="apa-valor" placeholder="0.00">
+                    </div>
                 </div>
-            </section>
+                <div class="form-buttons" style="margin-top: 20px; display: flex; gap: 10px;">
+                    <button type="button" onclick="showScreen('home-screen')" class="btn-no">Cancelar</button>
+                    <button type="submit" class="btn-primary">Salvar Ordem</button>
+                </div>
+            </form>
+        </div>
+    </section>
 
-            <!-- ESTOQUE -->
-            <section id="estoque-screen" class="content-section hidden">
-                <div class="section-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                    <h2>Estoque de Peças</h2>
-                    <button class="btn-primary" onclick="abrirModalPeca()">
-                        <i class="fas fa-plus"></i> Nova Peça
-                    </button>
-                </div>
-                <div class="table-container">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Peça</th>
-                                <th>Categoria</th>
-                                <th>Quantidade</th>
-                                <th>Preço Un.</th>
-                                <th>Ações</th>
-                            </tr>
-                        </thead>
-                        <tbody id="inventory-table-body"></tbody>
-                    </table>
-                </div>
-            </section>
-        </main>
+    <!-- ESTOQUE -->
+    <section id="estoque-screen" class="content-section hidden">
+        <div class="section-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h2>Estoque de Peças</h2>
+            <button class="btn-primary" onclick="abrirModalPeca()">
+                <i class="fas fa-plus"></i> Nova Peça
+            </button>
+        </div>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Peça</th>
+                        <th>Quantidade</th>
+                        <th>Preço Custo</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="stock-body"></tbody>
+            </table>
+        </div>
+    </section>
+
+</main>
     </div>
 
     <!-- MODAL PEÇA -->
