@@ -1,6 +1,6 @@
 /**
  * TECHNICIAN PRO - Core Engine
- * Versão Corrigida: Navegação, OS, Kanban, Financeiro, Estoque e WhatsApp
+ * Organizado por: Navegação, OS, Kanban, Financeiro, Estoque e WhatsApp
  */
 
 // --- NAVEGAÇÃO E ESTADO GLOBAL ---
@@ -27,19 +27,16 @@ function showScreen(screenId) {
         case 'kanban-screen':    renderKanban(); break;
         case 'lista-screen':     renderTable(); break;
         case 'financeiro-screen': renderFinanceiro(); break;
-        case 'estoque-screen':   renderEstoque(); break;
+        case 'estoque-screen':    renderEstoque(); break;
     }
 }
 
-// --- GESTÃO DE DADOS (LocalStorage) ---
+// --- GESTÃO DE ORDENS DE SERVIÇO (OS) ---
 const getOS = () => JSON.parse(localStorage.getItem('SAD_PRO_OS') || '[]');
 const saveOS = (data) => {
     localStorage.setItem('SAD_PRO_OS', JSON.stringify(data));
     updateStats();
 };
-
-const getEstoque = () => JSON.parse(localStorage.getItem('SAD_PRO_ESTOQUE') || '[]');
-const saveEstoque = (data) => localStorage.setItem('SAD_PRO_ESTOQUE', JSON.stringify(data));
 
 // --- FUNÇÃO WHATSAPP ---
 function enviarWhatsApp(id) {
@@ -60,7 +57,6 @@ function enviarWhatsApp(id) {
     window.open(url, '_blank');
 }
 
-// --- GESTÃO DE OS ---
 function handleFormSubmit(e) {
     e.preventDefault();
     const osList = getOS();
@@ -83,17 +79,24 @@ function handleFormSubmit(e) {
     showScreen('lista-screen');
 }
 
-// MODAL DE CONFIRMAÇÃO PERSONALIZADO (Substitui o confirm nativo)
+// --- CONFIRMAÇÃO DE EXCLUSÃO PERSONALIZADA ---
 function excluirOS(id) {
     const modal = document.getElementById('custom-confirm');
     const btnYes = document.getElementById('confirm-yes');
-    const btnNo = document.getElementById('confirm-no');
     const msg = document.getElementById('confirm-message');
     
+    if(!modal) { // Fallback caso não tenha o modal HTML
+        if(confirm("Deseja realmente excluir esta ordem?")) {
+            const filtrados = getOS().filter(os => os.id != id);
+            saveOS(filtrados);
+            renderTable();
+        }
+        return;
+    }
+
     msg.innerText = "Deseja realmente excluir esta ordem de serviço?";
     modal.classList.remove('hidden');
 
-    // Limpa eventos anteriores para evitar bugs de multiplas exclusões
     const newBtnYes = btnYes.cloneNode(true);
     btnYes.parentNode.replaceChild(newBtnYes, btnYes);
 
@@ -103,8 +106,6 @@ function excluirOS(id) {
         renderTable();
         closeConfirm();
     };
-
-    btnNo.onclick = closeConfirm;
 }
 
 function closeConfirm() {
@@ -112,7 +113,7 @@ function closeConfirm() {
     if(modal) modal.classList.add('hidden');
 }
 
-// --- SISTEMA KANBAN ---
+// --- SISTEMA KANBAN (DRAG & DROP) ---
 function allowDrop(ev) { ev.preventDefault(); }
 function drag(ev, id) { ev.dataTransfer.setData("osId", id); }
 
@@ -165,9 +166,17 @@ function renderKanban() {
     });
 }
 
-// --- ESTOQUE ---
-function abrirModalPeca() { document.getElementById('modal-peca').classList.remove('hidden'); }
-function fecharModalPeca() { document.getElementById('modal-peca').classList.add('hidden'); }
+// --- SISTEMA DE ESTOQUE ---
+const getEstoque = () => JSON.parse(localStorage.getItem('SAD_PRO_ESTOQUE') || '[]');
+const saveEstoque = (data) => localStorage.setItem('SAD_PRO_ESTOQUE', JSON.stringify(data));
+
+function abrirModalPeca() {
+    document.getElementById('modal-peca').classList.remove('hidden');
+}
+
+function fecharModalPeca() {
+    document.getElementById('modal-peca').classList.add('hidden');
+}
 
 function salvarPecaModal() {
     const nome = document.getElementById('modal-stk-nome').value;
@@ -177,7 +186,12 @@ function salvarPecaModal() {
     if (!nome || !qtd || !preco) return alert("Preencha todos os campos!");
 
     const estoque = getEstoque();
-    estoque.push({ id: Date.now(), nome, quantidade: parseInt(qtd), preco: parseFloat(preco) });
+    estoque.push({
+        id: Date.now(),
+        nome,
+        quantidade: parseInt(qtd),
+        preco: parseFloat(preco)
+    });
 
     saveEstoque(estoque);
     fecharModalPeca();
@@ -190,13 +204,19 @@ function renderEstoque() {
     if (!tbody) return;
 
     const data = getEstoque();
-    tbody.innerHTML = data.length === 0 ? '<tr><td colspan="4" style="text-align:center">Estoque vazio</td></tr>' : 
-    data.map(peca => `
+    if (data.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="4" style="text-align:center">Estoque vazio</td></tr>';
+        return;
+    }
+
+    tbody.innerHTML = data.map(peca => `
         <tr>
             <td>${peca.nome}</td>
             <td>${peca.quantidade} un</td>
             <td>R$ ${peca.preco.toLocaleString('pt-BR', {minimumFractionDigits: 2})}</td>
-            <td><button onclick="excluirPeca(${peca.id})" class="btn-del"><i class="fas fa-trash"></i></button></td>
+            <td>
+                <button onclick="excluirPeca(${peca.id})" class="btn-del"><i class="fas fa-trash"></i></button>
+            </td>
         </tr>
     `).join('');
 }
@@ -208,27 +228,36 @@ function excluirPeca(id) {
     }
 }
 
-// --- FINANCEIRO ---
+// --- FINANCEIRO E DASHBOARD ---
 function renderFinanceiro() {
     const osList = getOS();
     const estoque = getEstoque();
     const tbody = document.getElementById('finance-body');
-    let totalEntradas = 0, totalSaidas = 0;
+    
+    let totalEntradas = 0;
+    let totalSaidas = 0;
 
     const entradasHTML = osList.filter(os => os.valor > 0).map(os => {
         totalEntradas += os.valor;
-        return `<tr><td>${os.data}</td><td>OS #${os.id} - ${os.cliente}</td><td><span class="status-badge status-concluido">Entrada</span></td><td>R$ ${os.valor.toLocaleString('pt-BR', {minimumFractionDigits: 2})}</td></tr>`;
+        return `
+            <tr>
+                <td>${os.data}</td>
+                <td>OS #${os.id} - ${os.cliente}</td>
+                <td><span class="status-badge status-concluido">Entrada</span></td>
+                <td>R$ ${os.valor.toLocaleString('pt-BR', {minimumFractionDigits: 2})}</td>
+            </tr>
+        `;
     }).join('');
 
     estoque.forEach(p => { totalSaidas += (p.preco * p.quantidade); });
 
     if(tbody) tbody.innerHTML = entradasHTML || '<tr><td colspan="4" style="text-align:center">Sem movimentações</td></tr>';
-    document.getElementById('fin-entradas').innerText = `R$ ${totalEntradas.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
-    document.getElementById('fin-saidas').innerText = `R$ ${totalSaidas.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
-    document.getElementById('fin-saldo').innerText = `R$ ${(totalEntradas - totalSaidas).toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
+
+    if(document.getElementById('fin-entradas')) document.getElementById('fin-entradas').innerText = `R$ ${totalEntradas.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
+    if(document.getElementById('fin-saidas')) document.getElementById('fin-saidas').innerText = `R$ ${totalSaidas.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
+    if(document.getElementById('fin-saldo')) document.getElementById('fin-saldo').innerText = `R$ ${(totalEntradas - totalSaidas).toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
 }
 
-// --- LISTA DE ORDENS ---
 function renderTable() {
     const tbody = document.getElementById('table-body');
     if (!tbody) return;
@@ -270,7 +299,9 @@ function updateStats() {
     if(document.getElementById('stat-total')) document.getElementById('stat-total').innerText = osList.length;
     if(document.getElementById('stat-pendente')) document.getElementById('stat-pendente').innerText = abertas;
     if(document.getElementById('stat-concluido')) document.getElementById('stat-concluido').innerText = concluidas;
-    if(document.getElementById('current-date')) document.getElementById('current-date').innerText = new Date().toLocaleDateString('pt-BR');
+    
+    const dateEl = document.getElementById('current-date');
+    if(dateEl) dateEl.innerText = new Date().toLocaleDateString('pt-BR');
 }
 
 function gerarPDF(id) {
@@ -309,7 +340,6 @@ function gerarPDF(id) {
 }
 
 function limparBanco() {
-    // Usando modal personalizado para o Limpar Banco também (Opcional, mudei para o nativo para segurança extra)
     if(confirm("ATENÇÃO: Isso apagará TODAS as ordens e histórico. Deseja continuar?")) {
         localStorage.removeItem('SAD_PRO_OS');
         localStorage.removeItem('SAD_PRO_ESTOQUE');
@@ -321,6 +351,7 @@ function limparBanco() {
 document.addEventListener('DOMContentLoaded', () => {
     const form = document.getElementById('serviceForm');
     if(form) form.addEventListener('submit', handleFormSubmit);
+    
     showScreen('home-screen');
     updateStats();
 });
