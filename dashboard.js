@@ -203,24 +203,29 @@ function renderFinanceiro() {
     document.getElementById('fin-saldo').innerText = `R$ ${total.toLocaleString('pt-BR')}`;
 }
 
+// Dentro da função renderTable no seu JS:
 function renderTable() {
     const tbody = document.getElementById('table-body');
-    if (!tbody) return;
-
     const osList = getOS();
-    tbody.innerHTML = osList.reverse().map(os => `
-        <tr>
-            <td>#${os.id}</td>
-            <td>${os.cliente}</td>
-            <td>${os.aparelho}</td>
-            <td>${os.data}</td>
-            <td><span class="status-badge">${os.status}</span></td>
-            <td>
-                <button onclick="gerarPDF(${os.id})" class="btn-action"><i class="fas fa-file-pdf"></i></button>
-                <button onclick="excluirOS(${os.id})" class="btn-del"><i class="fas fa-trash"></i></button>
-            </td>
-        </tr>
-    `).join('');
+
+    tbody.innerHTML = osList.map(os => {
+        // Define a classe de cor baseada no status
+        const statusClass = os.status === 'Concluído' ? 'status-concluido' : 
+                           os.status === 'Em Andamento' ? 'status-andamento' : 'status-pendente';
+
+        return `
+            <tr>
+                <td>#${os.id}</td>
+                <td>${os.cliente}</td>
+                <td>${os.aparelho}</td>
+                <td><span class="status-badge ${statusClass}">${os.status}</span></td>
+                <td>
+                    <button onclick="gerarPDF(${os.id})" class="btn-action"><i class="fas fa-file-pdf"></i></button>
+                    <button onclick="excluirOS(${os.id})" class="btn-del"><i class="fas fa-trash"></i></button>
+                </td>
+            </tr>
+        `;
+    }).join('');
 }
 
 function updateStats() {
@@ -243,3 +248,89 @@ document.addEventListener('DOMContentLoaded', () => {
     
     updateStats();
 });
+function limparBanco() {
+    if(confirm("Isso apagará TODAS as ordens de serviço. Continuar?")) {
+        localStorage.removeItem('SAD_PRO_OS');
+        location.reload();
+    }
+}
+/* Layout Kanban */
+.kanban-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+    align-items: start;
+}
+
+.kanban-column {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    padding: 15px;
+    min-height: 500px;
+    border: 1px solid #333;
+}
+
+.kanban-header {
+    font-weight: 700;
+    text-transform: uppercase;
+    margin-bottom: 15px;
+    color: #155e63;
+    border-bottom: 2px solid #155e63;
+    padding-bottom: 5px;
+}
+
+.kanban-card {
+    background: #252525;
+    border-left: 4px solid #155e63;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    cursor: grab;
+    transition: transform 0.2s;
+}
+
+.kanban-card:active { cursor: grabbing; }
+
+.kanban-card h4 { margin: 0 0 5px 0; font-size: 1rem; }
+.kanban-card p { font-size: 0.85rem; color: #aaa; margin: 0; }
+
+/* Status Badges */
+.status-badge {
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.status-pendente { background: #ff980033; color: #ff9800; }
+.status-andamento { background: #2196f333; color: #2196f3; }
+.status-concluido { background: #4caf5033; color: #4caf50; }
+
+/* Financeiro Cards */
+.card-entrada { border-bottom: 4px solid #4caf50; }
+.card-saida { border-bottom: 4px solid #f44336; }
+.card-saldo { border-bottom: 4px solid #2196f3; }
+
+/* Utilitários */
+.hidden { display: none !important; }
+function gerarPDF(id) {
+    const os = getOS().find(o => o.id == id);
+    if (!os) return;
+
+    const element = document.getElementById('pdf-template');
+    const content = document.getElementById('pdf-content');
+    
+    content.innerHTML = `
+        <p><strong>Ordem de Serviço:</strong> #${os.id}</p>
+        <p><strong>Cliente:</strong> ${os.cliente}</p>
+        <p><strong>Aparelho:</strong> ${os.aparelho}</p>
+        <p><strong>Defeito:</strong> ${os.defeito}</p>
+        <p><strong>Valor:</strong> R$ ${os.valor.toFixed(2)}</p>
+        <p><strong>Data:</strong> ${os.data}</p>
+    `;
+
+    element.style.display = 'block';
+    html2pdf().from(element).save(`OS_${os.id}.pdf`).then(() => {
+        element.style.display = 'none';
+    });
+}
