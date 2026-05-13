@@ -132,37 +132,50 @@ h1, h2, h3, h4, .sidebar-logo {
     font-weight: 600; 
 }
 
+/* --- MAIN LAYOUT --- */
 .main-wrapper {
-    margin-left: 260px; /* Mantém o espaço da sidebar */
+    margin-left: 260px;
     width: calc(100% - 260px);
-    padding: 30px 50px; /* Aumentei o padding lateral para respirar melhor */
+    padding: 30px;
     display: flex;
     flex-direction: column;
     gap: 30px;
-    max-width: 100%; /* Garante que ele possa expandir ao máximo */
+    min-width: 0; /* Impede quebra de layout em flex */
 }
 
 .welcome-banner {
-    width: 100%; /* Força a ocupação total da largura */
     background: linear-gradient(100deg, #050505 0%, var(--primary-teal) 100%);
-    padding: 50px; /* Aumentado para dar mais imponência */
+    padding: 40px;
     border-radius: 24px;
     border: 1px solid var(--primary-teal);
+    position: relative;
+    overflow: hidden;
 }
+
 .welcome-banner h1 { font-size: 2.5rem; margin-bottom: 5px; }
 #current-date { color: var(--primary-sunset); opacity: 0.9; font-weight: 600; }
 
+/* --- ESTATÍSTICAS (Cards) --- */
 .stats-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr); /* Mantém 3 colunas, mas elas agora crescem */
-    gap: 25px;
-    width: 100%; /* Crucial para alargar */
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    width: 100%;
 }
 
 .stat-card {
-    min-height: 140px; /* Um pouco mais altos para preencher o visual */
-    width: 100%; /* Faz o card ocupar sua fração da grid */
+    background: var(--card-bg) !important;
+    border: 1px solid var(--border-color) !important;
+    padding: 25px !important;
+    border-radius: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    transition: 0.3s ease;
 }
+
 .stat-card:hover { 
     transform: translateY(-5px); 
     border-color: var(--primary-sunset) !important; 
@@ -316,16 +329,25 @@ input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(1); curso
 
 .modal-actions { display: flex; gap: 15px; width: 100%; justify-content: center; margin-top: 25px; }
 
-.table-container, .kanban-container {
-    width: 100%;
-    max-width: 100%;
+/* --- KANBAN --- */
+.kanban-container {
+    display: flex;
+    gap: 25px;
+    overflow-x: auto;
+    padding: 10px 5px 25px 5px;
+    align-items: flex-start;
 }
 
-/* No Kanban especificamente, podemos permitir que as colunas cresçam um pouco mais */
 .kanban-column {
-    flex: 1; /* Faz as colunas dividirem o espaço igualmente */
-    min-width: 300px; /* Impede que fiquem finas demais em telas menores */
+    background: var(--sidebar-bg);
+    min-width: 320px;
+    max-width: 320px;
+    border-radius: 24px;
+    padding: 20px;
+    border: 1px solid var(--border-color);
+    flex-shrink: 0;
 }
+
 .kanban-column h4 { 
     text-align: center; margin-bottom: 20px; 
     color: var(--primary-sunset); font-size: 1.25rem;
