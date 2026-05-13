@@ -4,25 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Technician PRO | Gestão de Manutenção</title>
-    
-    <!-- Fontes e Ícones -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Forum&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <!-- CSS Unificado -->
     <link rel="stylesheet" href="dashboard.css">
-    
-    <!-- Dependência para PDF -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 </head>
 <body class="dark-theme">
 
     <div id="main-layout" class="display-flex">
-        
         <!-- SIDEBAR -->
         <aside class="sidebar" id="sidebar">
             <div class="sidebar-logo">TECHNICIAN <span>PRO</span></div>
-            
             <nav class="nav-menu">
                 <button onclick="showScreen('home-screen')" class="nav-item active">
                     <i class="fas fa-th-large"></i> <span>Dashboard</span>
@@ -43,18 +35,16 @@
                     <i class="fas fa-wallet"></i> <span>Financeiro</span>
                 </button>
             </nav>
-
             <div class="sidebar-footer">
-                <button onclick="confirmarSair()" class="nav-item btn-logout">
-                    <span>SAIR</span> <i class="fas fa-power-off"></i>
+                <button onclick="limparBanco()" class="nav-item btn-logout">
+                    <span>LIMPAR TUDO</span> <i class="fas fa-trash"></i>
                 </button>
             </div>
         </aside>
 
         <!-- CONTEÚDO PRINCIPAL -->
         <main class="main-wrapper">
-            
-            <!-- HOME / DASHBOARD -->
+            <!-- HOME -->
             <section id="home-screen" class="content-section">
                 <header class="welcome-banner">
                     <div>
@@ -62,28 +52,16 @@
                         <p id="current-date"></p>
                     </div>
                 </header>
-
                 <div class="stats-grid">
-                    <div class="stat-card" onclick="showScreen('lista-screen')" style="cursor:pointer">
-                        <h3>Ordens Abertas</h3>
-                        <span id="count-open">0</span>
-                    </div>
-                    <div class="stat-card">
-                        <h3>Registros Totais</h3>
-                        <span id="count-total">0</span>
-                    </div>
-                    <div class="stat-card">
-                        <h3>Urgentes</h3>
-                        <span id="count-urgent">0</span>
-                    </div>
+                    <div class="stat-card"><h3>Ordens Abertas</h3><span id="count-open">0</span></div>
+                    <div class="stat-card"><h3>Registros Totais</h3><span id="count-total">0</span></div>
+                    <div class="stat-card"><h3>Investimento Estoque</h3><span id="home-stk-custo">R$ 0,00</span></div>
                 </div>
             </section>
 
-            <!-- KANBAN (FLUXO DE TRABALHO) -->
+            <!-- KANBAN -->
             <section id="kanban-screen" class="content-section hidden">
-                <div class="section-header">
-                    <h2>Fluxo Kanban</h2>
-                </div>
+                <div class="section-header"><h2>Fluxo Kanban</h2></div>
                 <div class="kanban-container">
                     <div class="kanban-column" id="col-pendente" ondrop="drop(event)" ondragover="allowDrop(event)">
                         <div class="kanban-title">PENDENTE</div>
@@ -100,183 +78,105 @@
                 </div>
             </section>
 
-            <!-- LISTA DE ORDENS -->
-            <section id="lista-screen" class="content-section hidden">
-                <div class="section-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                    <h2>Ordens de Serviço</h2>
-                    <button class="btn-empty-db" onclick="limparBanco()">
-                        <i class="fas fa-trash-alt"></i> Limpar Banco
-                    </button>
+            <!-- FINANCEIRO -->
+            <section id="financeiro-screen" class="content-section hidden">
+                <div class="section-header"><h2>Fluxo Financeiro</h2></div>
+                <div class="stats-grid">
+                    <div class="stat-card card-entrada">
+                        <h3>Faturamento Bruto</h3>
+                        <p id="fin-entradas">R$ 0,00</p>
+                    </div>
+                    <div class="stat-card card-saida">
+                        <h3>Custo de Estoque</h3>
+                        <p id="fin-saidas">R$ 0,00</p>
+                    </div>
+                    <div class="stat-card card-saldo">
+                        <h3>Lucro Real</h3>
+                        <p id="fin-saldo">R$ 0,00</p>
+                    </div>
                 </div>
                 <div class="table-container">
                     <table>
                         <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Cliente</th>
-                                <th>Aparelho / Defeito</th>
-                                <th>Status</th>
-                                <th>Ações</th>
-                            </tr>
-                        </thead>
-                        <tbody id="table-body"></tbody>
-                    </table>
-                </div>
-            </section>
-
-            <!-- FINANCEIRO -->
-            <section id="financeiro-screen" class="content-section hidden">
-                <div class="section-header">
-                    <h2>Fluxo Financeiro</h2>
-                </div>
-                <div class="stats-grid">
-                    <div class="stat-card card-entrada">
-                        <h3>Total Entradas</h3>
-                        <p id="fin-entradas">R$ 0,00</p>
-                    </div>
-                    <div class="stat-card card-saldo">
-                        <h3>Saldo em Caixa</h3>
-                        <p id="fin-saldo">R$ 0,00</p>
-                    </div>
-                </div>
-                <div class="table-container" style="margin-top: 20px;">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Data</th>
-                                <th>Descrição</th>
-                                <th>Tipo</th>
-                                <th>Valor</th>
-                            </tr>
+                            <tr><th>Data</th><th>Descrição</th><th>Tipo</th><th>Valor</th></tr>
                         </thead>
                         <tbody id="finance-table-body"></tbody>
                     </table>
                 </div>
             </section>
 
-            <!-- CADASTRO DE ORDEM -->
-            <section id="cadastro-screen" class="content-section hidden">
-                <div class="form-card animate-in">
-                    <div class="form-header">
-                        <h2><i class="far fa-edit"></i> Nova Ordem</h2>
-                    </div>
-                    <form id="serviceForm">
-                        <div class="input-group">
-                            <label>Cliente</label>
-                            <input type="text" id="cli-nome" placeholder="Nome completo" required>
-                        </div>
-                        <div class="input-group">
-                            <label>WhatsApp</label>
-                            <input type="number" id="cli-phone" placeholder="DDD + Número">
-                        </div>
-                        <div class="input-group">
-                            <label>Aparelho</label>
-                            <input type="text" id="apa-nome" placeholder="Marca e Modelo" required>
-                        </div>
-                        <div class="input-group">
-                            <label>Defeito</label>
-                            <textarea id="apa-defeito" placeholder="Relato do problema" required></textarea>
-                        </div>
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-                            <div class="input-group">
-                                <label>Data</label>
-                                <input type="date" id="apa-data" required>
-                            </div>
-                            <div class="input-group">
-                                <label>Valor (R$)</label>
-                                <input type="number" step="0.01" id="apa-valor" placeholder="0.00">
-                            </div>
-                        </div>
-                        <div class="form-buttons" style="margin-top: 20px; display: flex; gap: 10px;">
-                            <button type="button" onclick="showScreen('home-screen')" class="btn-no" style="background: transparent; border: 1px solid #444; color: #fff; padding: 10px 20px; border-radius: 8px; cursor: pointer;">Cancelar</button>
-                            <button type="submit" class="btn-primary">Salvar Ordem</button>
-                        </div>
-                    </form>
+            <!-- LISTA -->
+            <section id="lista-screen" class="content-section hidden">
+                <div class="section-header"><h2>Ordens de Serviço</h2></div>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr><th>ID</th><th>Cliente</th><th>Aparelho</th><th>Status</th><th>Ações</th></tr>
+                        </thead>
+                        <tbody id="table-body"></tbody>
+                    </table>
                 </div>
             </section>
 
             <!-- ESTOQUE -->
             <section id="estoque-screen" class="content-section hidden">
-                <div class="section-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <div class="section-header">
                     <h2>Estoque de Peças</h2>
-                    <button class="btn-primary" onclick="abrirModalPeca()">
-                        <i class="fas fa-plus"></i> Nova Peça
-                    </button>
+                    <button class="btn-primary" onclick="abrirModalPeca()"><i class="fas fa-plus"></i> Nova Peça</button>
                 </div>
                 <div class="table-container">
                     <table>
                         <thead>
-                            <tr>
-                                <th>Peça</th>
-                                <th>Categoria</th>
-                                <th>Quantidade</th>
-                                <th>Preço Un.</th>
-                                <th>Ações</th>
-                            </tr>
+                            <tr><th>Peça</th><th>Qtd</th><th>Custo Total</th><th>Ações</th></tr>
                         </thead>
                         <tbody id="inventory-table-body"></tbody>
                     </table>
                 </div>
             </section>
+
+            <!-- CADASTRO OS -->
+            <section id="cadastro-screen" class="content-section hidden">
+                <div class="form-card animate-in">
+                    <h2><i class="far fa-edit"></i> Nova Ordem</h2>
+                    <form id="serviceForm">
+                        <div class="input-group"><label>Cliente</label><input type="text" id="cli-nome" required></div>
+                        <div class="input-group"><label>WhatsApp</label><input type="number" id="cli-phone"></div>
+                        <div class="input-group"><label>Aparelho</label><input type="text" id="apa-nome" required></div>
+                        <div class="input-group"><label>Defeito</label><textarea id="apa-defeito" required></textarea></div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                            <div class="input-group"><label>Data</label><input type="date" id="apa-data" required></div>
+                            <div class="input-group"><label>Valor do Serviço (R$)</label><input type="number" step="0.01" id="apa-valor" required></div>
+                        </div>
+                        <button type="submit" class="btn-primary">Salvar Ordem</button>
+                    </form>
+                </div>
+            </section>
         </main>
     </div>
 
-    <!-- MODAL PEÇA -->
+    <!-- MODAIS -->
     <div id="modal-peca" class="modal-overlay hidden">
-        <div class="form-card animate-in" style="max-width: 450px;">
+        <div class="form-card" style="max-width: 400px;">
             <h2>Cadastrar Peça</h2>
             <form id="pecaForm" onsubmit="event.preventDefault(); salvarPecaModal();">
-                <div class="input-group">
-                    <label>Nome</label>
-                    <input type="text" id="modal-stk-nome" required>
-                </div>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-                    <div class="input-group">
-                        <label>Qtd</label>
-                        <input type="number" id="modal-stk-qtd" min="1" value="1" required>
-                    </div>
-                    <div class="input-group">
-                        <label>Preço Custo</label>
-                        <input type="number" step="0.01" id="modal-stk-preco" required>
-                    </div>
-                    <!-- No seu section id="financeiro-screen" -->
-<div class="stat-card card-saida">
-    <h3>Total Custos (Estoque)</h3>
-    <p id="fin-saidas">R$ 0,00</p>
-</div>
-                </div>
-                <div class="confirm-buttons">
-                    <button type="button" onclick="fecharModalPeca()" class="btn-no" style="background: transparent; border: 1px solid #444; color: #fff; padding: 10px 20px; border-radius: 8px; cursor: pointer;">Cancelar</button>
-                    <button type="submit" class="btn-primary">Salvar</button>
+                <div class="input-group"><label>Nome da Peça</label><input type="text" id="modal-stk-nome" required></div>
+                <div class="input-group"><label>Quantidade</label><input type="number" id="modal-stk-qtd" required></div>
+                <div class="input-group"><label>Preço de Custo (Unitário)</label><input type="number" step="0.01" id="modal-stk-preco" required></div>
+                <div class="form-buttons" style="display:flex; gap:10px;">
+                    <button type="button" onclick="fecharModalPeca()" class="btn-no">Voltar</button>
+                    <button type="submit" class="btn-primary">Salvar no Estoque</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- MODAL CONFIRMAÇÃO -->
-    <div id="custom-confirm" class="modal-overlay hidden">
-        <div class="confirm-card">
-            <h3 id="confirm-title">Atenção</h3>
-            <p id="confirm-message"></p>
-            <div class="confirm-buttons">
-                <button id="confirm-no" onclick="closeConfirm()">Cancelar</button>
-                <button id="confirm-yes">Confirmar</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- TEMPLATE PDF (OCULTO) -->
     <div id="pdf-template" style="display: none;">
-        <div id="pdf-inner" style="padding: 40px; color: #000; background: #fff; font-family: sans-serif;">
-            <h1 style="border-bottom: 2px solid #155e63; padding-bottom: 10px;">COMPROVANTE DE SERVIÇO</h1>
-            <div id="pdf-content" style="margin-top: 20px; line-height: 1.6;"></div>
-            <div style="margin-top: 40px; border-top: 1px solid #000; display: inline-block; width: 250px; text-align: center;">
-                <p>Assinatura Responsável</p>
-            </div>
+        <div id="pdf-inner" style="padding: 40px; color: #000; background: #fff;">
+            <h1>RECIBO DE SERVIÇO</h1>
+            <div id="pdf-content"></div>
         </div>
     </div>
 
-    <!-- JS Principal -->
     <script src="dashboard.js"></script>
 </body>
 </html>
