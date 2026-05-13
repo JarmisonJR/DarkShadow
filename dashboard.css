@@ -1,13 +1,13 @@
 /* 
     TECHNICIAN PRO - HORIZON EDITION 
-    VERSÃO DEFINITIVA UNIFICADA & CORRIGIDA
-    FOCO: LARGURA TOTAL, ALINHAMENTO E CORREÇÃO DE TABELAS
+    VERSÃO SUPREMA UNIFICADA (FINANCEIRO + KANBAN + CRM + ESTOQUE)
+    FOCO: LARGURA TOTAL, ALINHAMENTO PRECISO E MODO CLARO/ESCURO
 */
 
 @import url('https://fonts.googleapis.com/css2?family=Forum&family=Inter:wght@400;600;700&display=swap');
 
 :root {
-    /* Tema Escuro */
+    /* Tema Escuro (Padrão) */
     --bg-black: #000000;
     --sidebar-bg: #0a0a0b;
     --card-bg: #111114;
@@ -27,9 +27,21 @@
     --warning: #f59e0b;
 }
 
-/* --- RESET GLOBAL (CORRIGIDO) --- */
+/* Suporte para Modo Claro */
+body.light-theme {
+    --bg-black: #f4f4f5;
+    --sidebar-bg: #ffffff;
+    --card-bg: #ffffff;
+    --bg-input: #f9f9fb;
+    --text-white: #18181b;
+    --text-muted: #71717a;
+    --border-color: #e4e4e7;
+    --primary-teal: #2d5a5a;
+}
+
+/* --- RESET & GLOBAL (CORRIGIDO) --- */
 * { 
-    margin: 0; /* Removido o erro de 4px que quebrava o alinhamento */
+    margin: 0; 
     padding: 0; 
     box-sizing: border-box; 
 }
@@ -39,11 +51,13 @@ body {
     color: var(--text-white);
     font-family: 'Inter', sans-serif; 
     min-height: 100vh;
-    display: flex;
     overflow-x: hidden;
+    transition: background 0.3s, color 0.3s;
+    display: flex;
 }
 
 h1, h2, h3, h4, .sidebar-logo { font-family: 'Forum', serif; }
+.hidden { display: none !important; }
 
 /* --- SIDEBAR --- */
 .sidebar {
@@ -82,6 +96,7 @@ h1, h2, h3, h4, .sidebar-logo { font-family: 'Forum', serif; }
     transition: 0.3s;
     cursor: pointer;
     width: 100%;
+    font-size: 0.95rem;
 }
 
 .nav-item:hover { background: rgba(255, 255, 255, 0.05); color: var(--text-white); }
@@ -92,7 +107,9 @@ h1, h2, h3, h4, .sidebar-logo { font-family: 'Forum', serif; }
     border-left: 3px solid var(--primary-sunset);
 }
 
-/* --- MAIN LAYOUT (OCUPA 100% DA TELA) --- */
+.btn-logout { color: var(--danger) !important; margin-top: auto; font-weight: 600; }
+
+/* --- MAIN LAYOUT (FULLSCREEN HORIZON) --- */
 .main-wrapper {
     margin-left: 260px;
     width: calc(100% - 260px);
@@ -100,7 +117,7 @@ h1, h2, h3, h4, .sidebar-logo { font-family: 'Forum', serif; }
     padding: 40px;
     display: flex;
     flex-direction: column;
-    gap: 30px;
+    gap: 35px;
     min-height: 100vh;
 }
 
@@ -112,11 +129,13 @@ h1, h2, h3, h4, .sidebar-logo { font-family: 'Forum', serif; }
     border: 1px solid var(--primary-teal);
     width: 100%;
     box-sizing: border-box;
+    position: relative;
 }
 
-.welcome-banner h1 { font-size: 2.5rem; margin-bottom: 8px; }
+.welcome-banner h1 { font-size: 2.8rem; margin-bottom: 8px; }
+#current-date { color: var(--primary-sunset); opacity: 0.9; font-weight: 600; }
 
-/* --- GRID DE CARDS (DASHBOARD) --- */
+/* --- ESTATÍSTICAS (GRID RESPONSIVO) --- */
 .stats-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -135,6 +154,12 @@ h1, h2, h3, h4, .sidebar-logo { font-family: 'Forum', serif; }
 
 .stat-card:hover { transform: translateY(-5px); border-color: var(--primary-sunset) !important; }
 
+.stat-card:nth-child(1) { border-top: 4px solid var(--info) !important; }
+.stat-card:nth-child(2) { border-top: 4px solid var(--primary-sunset) !important; }
+.stat-card:nth-child(3) { border-top: 4px solid var(--success) !important; }
+
+.stat-card h3 { font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
+
 .stat-card p, .stat-card span { 
     font-size: 2.5rem; 
     font-family: 'Forum'; 
@@ -142,61 +167,85 @@ h1, h2, h3, h4, .sidebar-logo { font-family: 'Forum', serif; }
     margin-top: 10px;
 }
 
-/* --- TABELAS E ESTOQUE (BARRA VERDE CORRIGIDA) --- */
+/* --- TABELAS (CORREÇÃO BARRA VERDE) --- */
 .table-container {
     background: var(--card-bg);
     border-radius: 20px;
     border: 1px solid var(--border-color);
-    width: 100% !important;
-    overflow: hidden; /* Mantém a barra verde dentro do arredondamento */
+    width: 100%;
+    overflow: hidden;
 }
 
-table { 
-    width: 100% !important; 
-    border-collapse: collapse; 
-}
+.table-scroll { overflow-x: auto; }
+
+table { width: 100%; border-collapse: collapse; }
 
 th {
-    background: var(--primary-teal) !important; /* Estende a barra verde */
+    background: var(--primary-teal) !important;
     color: var(--primary-sunset);
     padding: 20px;
     text-align: left;
     font-size: 0.85rem;
     text-transform: uppercase;
+    font-family: 'Forum', serif;
     letter-spacing: 1px;
 }
 
 td { padding: 18px; border-bottom: 1px solid var(--border-color); }
 
-/* --- KANBAN (ESTILO HORIZON) --- */
+/* --- BADGES & STATUS --- */
+.status-badge {
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    border: 1px solid transparent;
+}
+
+.status-pendente { background: rgba(255, 179, 138, 0.1); color: var(--primary-sunset); border-color: rgba(255, 179, 138, 0.3); }
+.status-analise { background: rgba(59, 130, 246, 0.1); color: var(--info); border-color: rgba(59, 130, 246, 0.3); }
+.status-concluido { background: rgba(16, 185, 129, 0.1); color: var(--success); border-color: rgba(16, 185, 129, 0.3); }
+
+/* --- KANBAN --- */
 .kanban-container {
     display: flex;
     gap: 25px;
     width: 100%;
     align-items: flex-start;
     overflow-x: auto;
+    padding-bottom: 20px;
 }
 
 .kanban-column {
     background: var(--sidebar-bg);
-    flex: 1; /* Colunas dividem o espaço igualmente */
+    flex: 1;
     min-width: 350px;
     border-radius: 24px;
     padding: 20px;
     border: 1px solid var(--border-color);
 }
 
+.kanban-column h4 { 
+    text-align: center; margin-bottom: 20px; 
+    color: var(--primary-sunset); font-size: 1.25rem;
+    border-bottom: 1px solid var(--border-color); padding-bottom: 15px;
+    text-transform: uppercase; letter-spacing: 2px;
+}
+
 .kanban-card {
     background: var(--card-bg);
     border: 1px solid var(--border-color);
-    padding: 20px;
+    padding: 22px;
     border-radius: 18px;
     margin-bottom: 15px;
     border-left: 4px solid var(--primary-teal);
     transition: 0.3s ease;
 }
 
-/* --- FORMULÁRIOS CENTRALIZADOS --- */
+.kanban-card:hover { border-color: var(--primary-sunset); transform: translateY(-5px); }
+
+/* --- INPUTS & FORMULÁRIOS --- */
 .form-section {
     background: var(--card-bg);
     padding: 40px;
@@ -218,7 +267,7 @@ input, textarea, select {
     transition: 0.3s;
 }
 
-input:focus { border-color: var(--primary-sunset); box-shadow: 0 0 15px rgba(255, 179, 138, 0.1); }
+input:focus, textarea:focus { border-color: var(--primary-sunset); box-shadow: 0 0 15px rgba(255, 179, 138, 0.1); }
 
 /* --- BOTÕES --- */
 .btn-primary, button[type="submit"] {
@@ -234,7 +283,42 @@ input:focus { border-color: var(--primary-sunset); box-shadow: 0 0 15px rgba(255
     transition: 0.3s;
 }
 
-.btn-primary:hover { filter: brightness(1.1); transform: translateY(-2px); }
+.btn-primary:hover { filter: brightness(1.1); transform: translateY(-2px); box-shadow: 0 6px 20px var(--sunset-glow); }
+
+/* --- MODAIS --- */
+.modal-overlay {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(10px);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 10000;
+}
+
+.confirm-card {
+    background: var(--card-bg);
+    padding: 40px;
+    border-radius: 28px;
+    border: 1px solid var(--primary-sunset);
+    text-align: center;
+    max-width: 450px;
+}
+
+/* --- CHECKLIST --- */
+.checklist-container { 
+    margin-top: 15px; 
+    padding: 20px; 
+    background: var(--bg-input); 
+    border-radius: 16px; 
+    border: 1px solid var(--border-color);
+}
+
+.checklist-grid { 
+    display: grid; 
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); 
+    gap: 12px; 
+}
 
 /* --- RESPONSIVIDADE --- */
 @media (max-width: 1024px) {
@@ -244,5 +328,5 @@ input:focus { border-color: var(--primary-sunset); box-shadow: 0 0 15px rgba(255
 }
 
 @media (min-width: 1800px) {
-    .main-wrapper { padding: 60px 100px; } /* Ultra-wide screens */
+    .main-wrapper { padding: 60px 100px; }
 }
