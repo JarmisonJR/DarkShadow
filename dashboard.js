@@ -1,6 +1,6 @@
 /**
  * TECHNICIAN PRO - Core Engine
- * Organizado por: Navegação, OS, Kanban, Financeiro, Estoque e WhatsApp
+ * Versão Corrigida: Navegação, OS, Kanban, Financeiro, Estoque e WhatsApp
  */
 
 // --- NAVEGAÇÃO E ESTADO GLOBAL ---
@@ -27,16 +27,19 @@ function showScreen(screenId) {
         case 'kanban-screen':    renderKanban(); break;
         case 'lista-screen':     renderTable(); break;
         case 'financeiro-screen': renderFinanceiro(); break;
-        case 'estoque-screen':    renderEstoque(); break;
+        case 'estoque-screen':   renderEstoque(); break;
     }
 }
 
-// --- GESTÃO DE ORDENS DE SERVIÇO (OS) ---
+// --- GESTÃO DE DADOS (LocalStorage) ---
 const getOS = () => JSON.parse(localStorage.getItem('SAD_PRO_OS') || '[]');
 const saveOS = (data) => {
     localStorage.setItem('SAD_PRO_OS', JSON.stringify(data));
     updateStats();
 };
+
+const getEstoque = () => JSON.parse(localStorage.getItem('SAD_PRO_ESTOQUE') || '[]');
+const saveEstoque = (data) => localStorage.setItem('SAD_PRO_ESTOQUE', JSON.stringify(data));
 
 // --- FUNÇÃO WHATSAPP ---
 function enviarWhatsApp(id) {
@@ -46,21 +49,18 @@ function enviarWhatsApp(id) {
         return;
     }
 
-    // Limpa o número (remove tudo que não for dígito)
     const numeroLimpo = os.telefone.replace(/\D/g, '');
-    
-    // Mensagem formatada para o cliente
     const mensagem = `Olá ${os.cliente}! 👋%0A%0A` +
                      `Passando para informar o status do seu aparelho (*${os.aparelho}*).%0A` +
                      `Ordem de Serviço: *#${os.id}*%0A` +
                      `Status Atual: *${os.status}*%0A%0A` +
                      `Valor: R$ ${os.valor.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
 
-    // Abre o link oficial do WhatsApp
     const url = `https://wa.me/55${numeroLimpo}?text=${mensagem}`;
     window.open(url, '_blank');
 }
 
+// --- GESTÃO DE OS ---
 function handleFormSubmit(e) {
     e.preventDefault();
     const osList = getOS();
@@ -83,17 +83,37 @@ function handleFormSubmit(e) {
     showScreen('lista-screen');
 }
 
+// MODAL DE CONFIRMAÇÃO PERSONALIZADO (Substitui o confirm nativo)
 function excluirOS(id) {
-    if (confirm("Deseja realmente excluir esta ordem?")) {
+    const modal = document.getElementById('custom-confirm');
+    const btnYes = document.getElementById('confirm-yes');
+    const btnNo = document.getElementById('confirm-no');
+    const msg = document.getElementById('confirm-message');
+    
+    msg.innerText = "Deseja realmente excluir esta ordem de serviço?";
+    modal.classList.remove('hidden');
+
+    // Limpa eventos anteriores para evitar bugs de multiplas exclusões
+    const newBtnYes = btnYes.cloneNode(true);
+    btnYes.parentNode.replaceChild(newBtnYes, btnYes);
+
+    newBtnYes.onclick = () => {
         const filtrados = getOS().filter(os => os.id != id);
         saveOS(filtrados);
         renderTable();
-    }
+        closeConfirm();
+    };
+
+    btnNo.onclick = closeConfirm;
 }
 
-// --- SISTEMA KANBAN (DRAG & DROP) ---
-function allowDrop(ev) { ev.preventDefault(); }
+function closeConfirm() {
+    const modal = document.getElementById('custom-confirm');
+    if(modal) modal.classList.add('hidden');
+}
 
+// --- SISTEMA KANBAN ---
+function allowDrop(ev) { ev.preventDefault(); }
 function drag(ev, id) { ev.dataTransfer.setData("osId", id); }
 
 function drop(ev) {
@@ -145,17 +165,9 @@ function renderKanban() {
     });
 }
 
-// --- SISTEMA DE ESTOQUE ---
-const getEstoque = () => JSON.parse(localStorage.getItem('SAD_PRO_ESTOQUE') || '[]');
-const saveEstoque = (data) => localStorage.setItem('SAD_PRO_ESTOQUE', JSON.stringify(data));
-
-function abrirModalPeca() {
-    document.getElementById('modal-peca').classList.remove('hidden');
-}
-
-function fecharModalPeca() {
-    document.getElementById('modal-peca').classList.add('hidden');
-}
+// --- ESTOQUE ---
+function abrirModalPeca() { document.getElementById('modal-peca').classList.remove('hidden'); }
+function fecharModalPeca() { document.getElementById('modal-peca').classList.add('hidden'); }
 
 function salvarPecaModal() {
     const nome = document.getElementById('modal-stk-nome').value;
@@ -165,12 +177,7 @@ function salvarPecaModal() {
     if (!nome || !qtd || !preco) return alert("Preencha todos os campos!");
 
     const estoque = getEstoque();
-    estoque.push({
-        id: Date.now(),
-        nome,
-        quantidade: parseInt(qtd),
-        preco: parseFloat(preco)
-    });
+    estoque.push({ id: Date.now(), nome, quantidade: parseInt(qtd), preco: parseFloat(preco) });
 
     saveEstoque(estoque);
     fecharModalPeca();
@@ -183,19 +190,13 @@ function renderEstoque() {
     if (!tbody) return;
 
     const data = getEstoque();
-    if (data.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="4" style="text-align:center">Estoque vazio</td></tr>';
-        return;
-    }
-
-    tbody.innerHTML = data.map(peca => `
+    tbody.innerHTML = data.length === 0 ? '<tr><td colspan="4" style="text-align:center">Estoque vazio</td></tr>' : 
+    data.map(peca => `
         <tr>
             <td>${peca.nome}</td>
             <td>${peca.quantidade} un</td>
             <td>R$ ${peca.preco.toLocaleString('pt-BR', {minimumFractionDigits: 2})}</td>
-            <td>
-                <button onclick="excluirPeca(${peca.id})" class="btn-del"><i class="fas fa-trash"></i></button>
-            </td>
+            <td><button onclick="excluirPeca(${peca.id})" class="btn-del"><i class="fas fa-trash"></i></button></td>
         </tr>
     `).join('');
 }
@@ -207,36 +208,27 @@ function excluirPeca(id) {
     }
 }
 
-// --- FINANCEIRO E DASHBOARD ---
+// --- FINANCEIRO ---
 function renderFinanceiro() {
     const osList = getOS();
     const estoque = getEstoque();
     const tbody = document.getElementById('finance-body');
-    
-    let totalEntradas = 0;
-    let totalSaidas = 0;
+    let totalEntradas = 0, totalSaidas = 0;
 
     const entradasHTML = osList.filter(os => os.valor > 0).map(os => {
         totalEntradas += os.valor;
-        return `
-            <tr>
-                <td>${os.data}</td>
-                <td>OS #${os.id} - ${os.cliente}</td>
-                <td><span class="status-badge status-concluido">Entrada</span></td>
-                <td>R$ ${os.valor.toLocaleString('pt-BR', {minimumFractionDigits: 2})}</td>
-            </tr>
-        `;
+        return `<tr><td>${os.data}</td><td>OS #${os.id} - ${os.cliente}</td><td><span class="status-badge status-concluido">Entrada</span></td><td>R$ ${os.valor.toLocaleString('pt-BR', {minimumFractionDigits: 2})}</td></tr>`;
     }).join('');
 
     estoque.forEach(p => { totalSaidas += (p.preco * p.quantidade); });
 
     if(tbody) tbody.innerHTML = entradasHTML || '<tr><td colspan="4" style="text-align:center">Sem movimentações</td></tr>';
-
-    if(document.getElementById('fin-entradas')) document.getElementById('fin-entradas').innerText = `R$ ${totalEntradas.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
-    if(document.getElementById('fin-saidas')) document.getElementById('fin-saidas').innerText = `R$ ${totalSaidas.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
-    if(document.getElementById('fin-saldo')) document.getElementById('fin-saldo').innerText = `R$ ${(totalEntradas - totalSaidas).toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
+    document.getElementById('fin-entradas').innerText = `R$ ${totalEntradas.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
+    document.getElementById('fin-saidas').innerText = `R$ ${totalSaidas.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
+    document.getElementById('fin-saldo').innerText = `R$ ${(totalEntradas - totalSaidas).toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
 }
 
+// --- LISTA DE ORDENS ---
 function renderTable() {
     const tbody = document.getElementById('table-body');
     if (!tbody) return;
@@ -252,23 +244,21 @@ function renderTable() {
                            os.status === 'Em Andamento' ? 'status-andamento' : 'status-pendente';
 
         return `
-            // Dentro do seu renderTable no dashboard.js
-return `
-    <tr>
-        <td>#${os.id}</td>
-        <td>${os.cliente}</td>
-        <td>${os.aparelho}</td>
-        <td>${os.data}</td>
-        <td><span class="status-badge ${statusClass}">${os.status}</span></td>
-        <td>
-            <div style="display: flex; gap: 10px; align-items: center;">
-                <button onclick="enviarWhatsApp(${os.id})" class="btn-action" title="WhatsApp"><i class="fab fa-whatsapp"></i></button>
-                <button onclick="gerarPDF(${os.id})" class="btn-action" title="PDF"><i class="fas fa-file-pdf"></i></button>
-                <button onclick="excluirOS(${os.id})" class="btn-del" title="Excluir"><i class="fas fa-trash-alt"></i></button>
-            </div>
-        </td>
-    </tr>
-`;
+            <tr>
+                <td>#${os.id}</td>
+                <td>${os.cliente}</td>
+                <td>${os.aparelho}</td>
+                <td>${os.data}</td>
+                <td><span class="status-badge ${statusClass}">${os.status}</span></td>
+                <td>
+                    <div style="display: flex; gap: 10px; align-items: center;">
+                        <button onclick="enviarWhatsApp(${os.id})" class="btn-action" title="WhatsApp"><i class="fab fa-whatsapp"></i></button>
+                        <button onclick="gerarPDF(${os.id})" class="btn-action" title="PDF"><i class="fas fa-file-pdf"></i></button>
+                        <button onclick="excluirOS(${os.id})" class="btn-del" title="Excluir"><i class="fas fa-trash-alt"></i></button>
+                    </div>
+                </td>
+            </tr>
+        `;
     }).join('');
 }
 
@@ -280,9 +270,7 @@ function updateStats() {
     if(document.getElementById('stat-total')) document.getElementById('stat-total').innerText = osList.length;
     if(document.getElementById('stat-pendente')) document.getElementById('stat-pendente').innerText = abertas;
     if(document.getElementById('stat-concluido')) document.getElementById('stat-concluido').innerText = concluidas;
-    
-    const dateEl = document.getElementById('current-date');
-    if(dateEl) dateEl.innerText = new Date().toLocaleDateString('pt-BR');
+    if(document.getElementById('current-date')) document.getElementById('current-date').innerText = new Date().toLocaleDateString('pt-BR');
 }
 
 function gerarPDF(id) {
@@ -321,8 +309,10 @@ function gerarPDF(id) {
 }
 
 function limparBanco() {
+    // Usando modal personalizado para o Limpar Banco também (Opcional, mudei para o nativo para segurança extra)
     if(confirm("ATENÇÃO: Isso apagará TODAS as ordens e histórico. Deseja continuar?")) {
         localStorage.removeItem('SAD_PRO_OS');
+        localStorage.removeItem('SAD_PRO_ESTOQUE');
         location.reload();
     }
 }
@@ -331,33 +321,6 @@ function limparBanco() {
 document.addEventListener('DOMContentLoaded', () => {
     const form = document.getElementById('serviceForm');
     if(form) form.addEventListener('submit', handleFormSubmit);
-    
-    // Inicia na home
     showScreen('home-screen');
     updateStats();
 });
-function excluirOS(id) {
-    // Pegamos o modal personalizado do seu HTML
-    const modal = document.getElementById('custom-confirm');
-    const btnYes = document.getElementById('confirm-yes');
-    const msg = document.getElementById('confirm-message');
-    
-    msg.innerText = "Deseja realmente excluir esta ordem de serviço?";
-    modal.classList.remove('hidden');
-
-    // Remove ouvintes antigos para não duplicar a ação
-    const newBtnYes = btnYes.cloneNode(true);
-    btnYes.parentNode.replaceChild(newBtnYes, btnYes);
-
-    newBtnYes.onclick = () => {
-        const filtrados = getOS().filter(os => os.id != id);
-        saveOS(filtrados);
-        renderTable();
-        closeConfirm(); // Função que adiciona 'hidden' ao modal
-    };
-}
-
-// Função para fechar o modal personalizado
-function closeConfirm() {
-    document.getElementById('custom-confirm').classList.add('hidden');
-}
