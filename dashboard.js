@@ -252,19 +252,23 @@ function renderTable() {
                            os.status === 'Em Andamento' ? 'status-andamento' : 'status-pendente';
 
         return `
-            <tr>
-                <td>#${os.id}</td>
-                <td>${os.cliente}</td>
-                <td>${os.aparelho}</td>
-                <td>${os.data}</td>
-                <td><span class="status-badge ${statusClass}">${os.status}</span></td>
-                <td style="display: flex; gap: 5px;">
-                    <button onclick="enviarWhatsApp(${os.id})" class="btn-action" style="color: #25D366" title="Enviar WhatsApp"><i class="fab fa-whatsapp"></i></button>
-                    <button onclick="gerarPDF(${os.id})" class="btn-action" title="Gerar PDF"><i class="fas fa-file-pdf"></i></button>
-                    <button onclick="excluirOS(${os.id})" class="btn-del" title="Excluir"><i class="fas fa-trash"></i></button>
-                </td>
-            </tr>
-        `;
+            // Dentro do seu renderTable no dashboard.js
+return `
+    <tr>
+        <td>#${os.id}</td>
+        <td>${os.cliente}</td>
+        <td>${os.aparelho}</td>
+        <td>${os.data}</td>
+        <td><span class="status-badge ${statusClass}">${os.status}</span></td>
+        <td>
+            <div style="display: flex; gap: 10px; align-items: center;">
+                <button onclick="enviarWhatsApp(${os.id})" class="btn-action" title="WhatsApp"><i class="fab fa-whatsapp"></i></button>
+                <button onclick="gerarPDF(${os.id})" class="btn-action" title="PDF"><i class="fas fa-file-pdf"></i></button>
+                <button onclick="excluirOS(${os.id})" class="btn-del" title="Excluir"><i class="fas fa-trash-alt"></i></button>
+            </div>
+        </td>
+    </tr>
+`;
     }).join('');
 }
 
@@ -332,3 +336,28 @@ document.addEventListener('DOMContentLoaded', () => {
     showScreen('home-screen');
     updateStats();
 });
+function excluirOS(id) {
+    // Pegamos o modal personalizado do seu HTML
+    const modal = document.getElementById('custom-confirm');
+    const btnYes = document.getElementById('confirm-yes');
+    const msg = document.getElementById('confirm-message');
+    
+    msg.innerText = "Deseja realmente excluir esta ordem de serviço?";
+    modal.classList.remove('hidden');
+
+    // Remove ouvintes antigos para não duplicar a ação
+    const newBtnYes = btnYes.cloneNode(true);
+    btnYes.parentNode.replaceChild(newBtnYes, btnYes);
+
+    newBtnYes.onclick = () => {
+        const filtrados = getOS().filter(os => os.id != id);
+        saveOS(filtrados);
+        renderTable();
+        closeConfirm(); // Função que adiciona 'hidden' ao modal
+    };
+}
+
+// Função para fechar o modal personalizado
+function closeConfirm() {
+    document.getElementById('custom-confirm').classList.add('hidden');
+}
