@@ -303,3 +303,126 @@ button[type="submit"] {
     width: 90%;
     max-width: 500px;
 }
+/* --- BOTÕES GLOBAIS E ESPECÍFICOS --- */
+
+/* Botão Limpar Banco (image_ea545d.png) */
+.btn-limpar-banco {
+    background: #1a1a1a;
+    color: #ffffff;
+    border: 1px solid #333;
+    padding: 5px 15px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    transition: all 0.3s ease;
+}
+
+.btn-limpar-banco:hover {
+    background: #cc0000;
+    border-color: #ff4d4d;
+}
+
+/* Botão Nova Peça e Salvar (image_ea547b.png e image_ea5435.png) */
+.btn-primary-gradient {
+    background: linear-gradient(90deg, #155e63 0%, #e9a680 100%);
+    color: #000;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-weight: bold;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.btn-primary-gradient:hover {
+    transform: scale(1.02);
+    filter: brightness(1.1);
+}
+
+/* Botões de Ação na Tabela (WhatsApp, PDF, Lixo) */
+.btn-action-dark {
+    background: #1a1a1b;
+    border: 1px solid #333;
+    color: #fff;
+    padding: 8px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.btn-action-dark:hover {
+    background: #333;
+}
+
+.btn-del-mini {
+    background: #1a1a1b;
+    color: #fff;
+    border: 1px solid #333;
+    padding: 8px;
+    border-radius: 6px;
+}
+
+.btn-del-mini:hover {
+    background: #441111;
+    color: #ff4d4d;
+}
+
+/* --- CARDS DE DASHBOARD (image_ea5435.png) --- */
+.stat-card {
+    background: #111112;
+    border: 1px solid #1f1f21;
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+}
+
+.stat-card h3 {
+    color: #666;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.stat-card .value {
+    color: #e9a680; /* Cor pêssego das imagens */
+    font-size: 2.5rem;
+    font-weight: bold;
+    margin-top: 10px;
+}
+
+/* --- TABELAS DARK (image_ea545d.png) --- */
+.table-container {
+    background: #0a0a0a;
+    border-radius: 15px;
+    overflow: hidden;
+    border: 1px solid #1a1a1a;
+}
+
+.table-header {
+    background: #155e63; /* Tom petróleo da imagem */
+    color: #e9a680;
+    padding: 15px;
+    font-weight: bold;
+}
+
+/* --- MODAIS --- */
+.modal-content {
+    background: #000000;
+    border: 1px solid #333;
+    color: white;
+    padding: 30px;
+    border-radius: 15px;
+}
+
+.input-dark {
+    background: #1a1a1b;
+    border: 1px solid #333;
+    color: white;
+    padding: 12px;
+    border-radius: 8px;
+    width: 100%;
+}
