@@ -1,6 +1,6 @@
 /**
  * TECHNICIAN PRO - Core Engine
- * Organizado por: Navegação, OS, Kanban, Financeiro e Estoque
+ * Organizado por: Navegação, OS, Kanban, Financeiro, Estoque e WhatsApp
  */
 
 // --- NAVEGAÇÃO E ESTADO GLOBAL ---
@@ -10,7 +10,7 @@ function showScreen(screenId) {
         section.classList.add('hidden');
     });
 
-    // 2. Remove destaque de todos os itens do menu (Ajustado para bater com seu HTML)
+    // 2. Remove destaque de todos os itens do menu
     document.querySelectorAll('.nav-item').forEach(item => {
         item.classList.remove('active');
     });
@@ -37,6 +37,29 @@ const saveOS = (data) => {
     localStorage.setItem('SAD_PRO_OS', JSON.stringify(data));
     updateStats();
 };
+
+// --- FUNÇÃO WHATSAPP ---
+function enviarWhatsApp(id) {
+    const os = getOS().find(o => o.id == id);
+    if (!os || !os.telefone) {
+        alert("Número de telefone não encontrado para este cliente!");
+        return;
+    }
+
+    // Limpa o número (remove tudo que não for dígito)
+    const numeroLimpo = os.telefone.replace(/\D/g, '');
+    
+    // Mensagem formatada para o cliente
+    const mensagem = `Olá ${os.cliente}! 👋%0A%0A` +
+                     `Passando para informar o status do seu aparelho (*${os.aparelho}*).%0A` +
+                     `Ordem de Serviço: *#${os.id}*%0A` +
+                     `Status Atual: *${os.status}*%0A%0A` +
+                     `Valor: R$ ${os.valor.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
+
+    // Abre o link oficial do WhatsApp
+    const url = `https://wa.me/55${numeroLimpo}?text=${mensagem}`;
+    window.open(url, '_blank');
+}
 
 function handleFormSubmit(e) {
     e.preventDefault();
@@ -92,14 +115,12 @@ function drop(ev) {
 }
 
 function renderKanban() {
-    // Busca pelas áreas de cards dentro das colunas
     const columns = {
         'Pendente': document.querySelector('#col-pendente .kanban-cards'),
         'Em Andamento': document.querySelector('#col-andamento .kanban-cards'),
         'Concluído': document.querySelector('#col-concluido .kanban-cards')
     };
 
-    // Limpa as colunas
     Object.values(columns).forEach(col => { if(col) col.innerHTML = ''; });
 
     getOS().forEach(os => {
@@ -108,7 +129,12 @@ function renderKanban() {
         card.draggable = true;
         card.ondragstart = (e) => drag(e, os.id);
         card.innerHTML = `
-            <h4>${os.cliente}</h4>
+            <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                <h4>${os.cliente}</h4>
+                <button onclick="enviarWhatsApp(${os.id})" style="background:none; border:none; color:#25D366; cursor:pointer; font-size: 1.1rem;">
+                    <i class="fab fa-whatsapp"></i>
+                </button>
+            </div>
             <p>${os.aparelho}</p>
             <div class="kanban-card-footer" style="display:flex; justify-content:space-between; margin-top:10px; font-size:0.8rem;">
                 <small>#${os.id}</small>
@@ -190,7 +216,6 @@ function renderFinanceiro() {
     let totalEntradas = 0;
     let totalSaidas = 0;
 
-    // Cálculo Entradas (OS Concluídas)
     const entradasHTML = osList.filter(os => os.valor > 0).map(os => {
         totalEntradas += os.valor;
         return `
@@ -203,12 +228,10 @@ function renderFinanceiro() {
         `;
     }).join('');
 
-    // Cálculo Saídas (Custo de Estoque)
     estoque.forEach(p => { totalSaidas += (p.preco * p.quantidade); });
 
     if(tbody) tbody.innerHTML = entradasHTML || '<tr><td colspan="4" style="text-align:center">Sem movimentações</td></tr>';
 
-    // Atualiza cards financeiros
     if(document.getElementById('fin-entradas')) document.getElementById('fin-entradas').innerText = `R$ ${totalEntradas.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
     if(document.getElementById('fin-saidas')) document.getElementById('fin-saidas').innerText = `R$ ${totalSaidas.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
     if(document.getElementById('fin-saldo')) document.getElementById('fin-saldo').innerText = `R$ ${(totalEntradas - totalSaidas).toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
@@ -235,7 +258,8 @@ function renderTable() {
                 <td>${os.aparelho}</td>
                 <td>${os.data}</td>
                 <td><span class="status-badge ${statusClass}">${os.status}</span></td>
-                <td>
+                <td style="display: flex; gap: 5px;">
+                    <button onclick="enviarWhatsApp(${os.id})" class="btn-action" style="color: #25D366" title="Enviar WhatsApp"><i class="fab fa-whatsapp"></i></button>
                     <button onclick="gerarPDF(${os.id})" class="btn-action" title="Gerar PDF"><i class="fas fa-file-pdf"></i></button>
                     <button onclick="excluirOS(${os.id})" class="btn-del" title="Excluir"><i class="fas fa-trash"></i></button>
                 </td>
