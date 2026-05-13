@@ -47,7 +47,7 @@ function showScreen(id) {
     if (id === 'estoque-screen') renderInventory();
     if (id === 'financeiro-screen') renderFinanceiro();
     if (id === 'kanban-screen') renderKanban();
-    if (id === 'cadastro-screen') popularSelectPecas(); // Popular peças ao abrir cadastro
+    if (id === 'cadastro-screen') popularSelectPecas();
 
     updateStats();
 }
@@ -58,21 +58,20 @@ if (serviceForm) {
     serviceForm.addEventListener('submit', function(e) {
         e.preventDefault();
 
-        // Captura do Checklist (Ideia 4)
         const checklist = [];
         document.querySelectorAll('.os-check:checked').forEach(el => checklist.push(el.value));
 
         const pecaId = document.getElementById('os-peca-usada').value;
         let custoPecaSelecionada = 0;
 
-        // Lógica de Baixa no Estoque e Captura de Custo
+        // Lógica de Baixa no Estoque
         if (pecaId) {
             let estoque = JSON.parse(localStorage.getItem('SAD_PRO_STOCK') || '[]');
             const index = estoque.findIndex(p => p.id == pecaId);
             
             if (index !== -1 && estoque[index].qtd > 0) {
                 custoPecaSelecionada = parseFloat(estoque[index].preco);
-                estoque[index].qtd -= 1; // Baixa automática
+                estoque[index].qtd -= 1; 
                 localStorage.setItem('SAD_PRO_STOCK', JSON.stringify(estoque));
             }
         }
@@ -83,7 +82,7 @@ if (serviceForm) {
             aparelho: document.getElementById('apa-nome').value,
             defeito: document.getElementById('apa-defeito').value,
             data: document.getElementById('apa-data').value,
-            maodeobra: document.getElementById('os-maodeobra').value || 0,
+            maodeobra: parseFloat(document.getElementById('os-maodeobra').value) || 0,
             idPeca: pecaId,
             custoPeca: custoPecaSelecionada,
             checklist: checklist,
@@ -98,11 +97,10 @@ if (serviceForm) {
         
         openConfirm(
             "Ordem Registrada", 
-            "A ordem de serviço foi salva com sucesso!", 
+            "A ordem foi salva e o estoque atualizado!", 
             () => showScreen('lista-screen'),
             "Ver Lista"
         );
-        openConfirm("Ordem Registrada", "A ordem foi salva e o estoque atualizado!", () => showScreen('lista-screen'), "Ver Lista");
     });
 }
 
@@ -129,15 +127,6 @@ function renderTable() {
             </td>
             <td>
                 <div style="display: flex; gap: 8px;">
-                    <button onclick="notificarWhatsApp('${os.cliente}', '${os.aparelho}', '${os.id}')" class="btn-del" style="color: #25d366; border-color: #25d366;" title="WhatsApp">
-                        <i class="fab fa-whatsapp"></i>
-                    </button>
-                    <button onclick="gerarRecibo(${os.id})" class="btn-del" style="color: #3b82f6; border-color: #3b82f6;" title="PDF">
-                        <i class="fas fa-file-pdf"></i>
-                    </button>
-                    <button onclick="confirmarExclusao(${os.id})" class="btn-del">
-                        <i class="fas fa-trash"></i>
-                    </button>
                     <button onclick="notificarWhatsApp('${os.cliente}', '${os.aparelho}', '${os.id}')" class="btn-del" style="color: #25d366; border-color: #25d366;" title="WhatsApp"><i class="fab fa-whatsapp"></i></button>
                     <button onclick="gerarRecibo(${os.id})" class="btn-del" style="color: #3b82f6; border-color: #3b82f6;" title="PDF"><i class="fas fa-file-pdf"></i></button>
                     <button onclick="confirmarExclusao(${os.id})" class="btn-del"><i class="fas fa-trash"></i></button>
@@ -147,24 +136,21 @@ function renderTable() {
     `).join('');
 }
 
-// --- IDEIA 1: FINANCEIRO ---
-// --- FINANCEIRO (CÁLCULO DE LUCRO LÍQUIDO) ---
+// --- FINANCEIRO ---
 function renderFinanceiro() {
     const osList = JSON.parse(localStorage.getItem('SAD_PRO_OS') || '[]');
     const tbody = document.getElementById('fin-table-body');
     if (!tbody) return;
 
-    let bruto = 0;
     let faturamentoBruto = 0;
     let custoTotalPecas = 0;
 
-    const concluídos = osList.filter(os => os.status === 'Concluído');
+    const concluidos = osList.filter(os => os.status === 'Concluído');
 
-    tbody.innerHTML = concluídos.map(os => {
-        const valor = parseFloat(os.maodeobra || 0);
-        bruto += valor;
+    tbody.innerHTML = concluidos.map(os => {
         const maoDeObra = parseFloat(os.maodeobra || 0);
         const custoPeca = parseFloat(os.custoPeca || 0);
+        const totalOS = maoDeObra; // O lucro aqui é baseado na mão de obra cobrada
         
         faturamentoBruto += maoDeObra;
         custoTotalPecas += custoPeca;
@@ -173,25 +159,19 @@ function renderFinanceiro() {
             <tr>
                 <td>#${os.id}</td>
                 <td>${os.cliente}</td>
-                <td>R$ ${valor.toFixed(2)}</td>
-                <td>R$ 0,00</td>
-                <td style="color: #10b981; font-weight: bold;">R$ ${valor.toFixed(2)}</td>
                 <td>R$ ${maoDeObra.toFixed(2)}</td>
                 <td style="color: #ef4444;">R$ ${custoPeca.toFixed(2)}</td>
-                <td style="color: #10b981; font-weight: bold;">R$ ${maoDeObra.toFixed(2)}</td>
+                <td style="color: #10b981; font-weight: bold;">R$ ${(maoDeObra - custoPeca).toFixed(2)}</td>
             </tr>
         `;
     }).join('') || '<tr><td colspan="5" style="text-align:center; padding:20px;">Nenhum serviço faturado.</td></tr>';
 
-    document.getElementById('fin-bruto').innerText = `R$ ${bruto.toFixed(2)}`;
-    document.getElementById('fin-lucro').innerText = `R$ ${bruto.toFixed(2)}`;
     const lucroLiquido = faturamentoBruto - custoTotalPecas;
     document.getElementById('fin-bruto').innerText = `R$ ${faturamentoBruto.toFixed(2)}`;
     document.getElementById('fin-custo').innerText = `R$ ${custoTotalPecas.toFixed(2)}`;
     document.getElementById('fin-lucro').innerText = `R$ ${lucroLiquido.toFixed(2)}`;
 }
 
-// --- IDEIA 5: KANBAN ---
 // --- KANBAN ---
 function renderKanban() {
     const osList = JSON.parse(localStorage.getItem('SAD_PRO_OS') || '[]');
@@ -201,7 +181,6 @@ function renderKanban() {
         'Concluído': document.getElementById('cards-concluido')
     };
 
-    Object.values(areas).forEach(a => a.innerHTML = '');
     Object.values(areas).forEach(a => { if(a) a.innerHTML = ''; });
 
     osList.forEach(os => {
@@ -231,122 +210,24 @@ function mudarStatusKanban(id, novoStatus) {
     });
     localStorage.setItem('SAD_PRO_OS', JSON.stringify(osList));
     
-    // Atualiza a tela atual que o usuário está vendo
     const activeScreen = document.querySelector('.content-section:not(.hidden)').id;
     if (activeScreen === 'kanban-screen') renderKanban();
     if (activeScreen === 'lista-screen') renderTable();
     updateStats();
 }
 
-// --- IDEIA 2 & 3: CRM E RECIBO ---
-function notificarWhatsApp(nome, aparelho, id) {
-    const msg = window.encodeURIComponent(`Olá ${nome}, a manutenção do seu ${aparelho} (OS #${id}) foi atualizada.`);
-    window.open(`https://api.whatsapp.com/send?text=${msg}`, '_blank');
-}
-
-function gerarRecibo(id) {
-    const os = JSON.parse(localStorage.getItem('SAD_PRO_OS')).find(o => o.id == id);
-    const win = window.open('', 'PRINT', 'height=600,width=800');
-    win.document.write(`<html><body style="font-family:sans-serif; padding:20px;">
-        <h2>RECIBO DE SERVIÇO - #${os.id}</h2>
-        <hr><p><b>Cliente:</b> ${os.cliente}</p>
-        <p><b>Aparelho:</b> ${os.aparelho}</p>
-        <p><b>Defeito:</b> ${os.defeito}</p>
-        <p><b>Checklist:</b> ${os.checklist.join(', ') || 'Nenhum'}</p>
-        <p><b>Valor:</b> R$ ${parseFloat(os.maodeobra).toFixed(2)}</p>
-        <hr><center>Technician PRO - Horizon Edition</center>
-    </body></html>`);
-    win.print();
-    win.close();
-    showScreen(document.querySelector('.content-section:not(.hidden)')?.id);
-}
-
 // --- ESTOQUE ---
-function renderInventory() {
-    const tbody = document.getElementById('inventory-table-body');
-    if (!tbody) return;
-// --- GESTÃO DE ESTOQUE ---
 function popularSelectPecas() {
     const select = document.getElementById('os-peca-usada');
     if (!select) return;
     const estoque = JSON.parse(localStorage.getItem('SAD_PRO_STOCK') || '[]');
     
-    tbody.innerHTML = estoque.map(peca => `
-        <tr>
-            <td><b>${peca.nome}</b></td>
-            <td>${peca.categoria}</td>
-            <td><span class="status-badge ${peca.qtd <= 2 ? 'status-pendente' : 'status-concluido'}">${peca.qtd} un.</span></td>
-            <td style="color: #ffb38a;">R$ ${parseFloat(peca.preco).toFixed(2)}</td>
-            <td style="display: flex; gap: 5px;">
-                <button onclick="ajustarEstoque(${peca.id}, 1)" class="btn-del">+</button>
-                <button onclick="ajustarEstoque(${peca.id}, -1)" class="btn-del">-</button>
-                <button onclick="confirmarExclusaoPeca(${peca.id})" class="btn-del"><i class="fas fa-trash"></i></button>
-            </td>
-        </tr>
-    `).join('') || '<tr><td colspan="5" style="text-align:center;">Estoque vazio.</td></tr>';
-}
-
-function ajustarEstoque(id, mudanca) {
-    let estoque = JSON.parse(localStorage.getItem('SAD_PRO_STOCK') || '[]');
-    estoque = estoque.map(p => {
-        if (p.id === id) p.qtd = Math.max(0, (parseInt(p.qtd) || 0) + mudanca);
-        return p;
     select.innerHTML = '<option value="">Nenhuma peça (Apenas serviço)</option>';
     estoque.forEach(p => {
-        if (p.qtd > 0) select.innerHTML += `<option value="${p.id}">${p.nome} (Estoque: ${p.qtd})</option>`;
+        if (p.qtd > 0) select.innerHTML += `<option value="${p.id}">${p.nome} (Qtd: ${p.qtd})</option>`;
     });
-    localStorage.setItem('SAD_PRO_STOCK', JSON.stringify(estoque));
-    renderInventory();
 }
 
-// --- GESTÃO DE ESTOQUE ---
-
-// 1. Abre o modal de cadastro
-function abrirModalPeca() {
-    const modal = document.getElementById('modal-peca');
-    if (modal) {
-        modal.classList.remove('hidden');
-        document.getElementById('modal-stk-nome').focus();
-    }
-    document.getElementById('modal-peca')?.classList.remove('hidden');
-}
-
-// 2. Fecha o modal de cadastro
-function fecharModalPeca() {
-    const modal = document.getElementById('modal-peca');
-    if (modal) {
-        modal.classList.add('hidden');
-        document.getElementById('pecaForm').reset();
-    }
-    document.getElementById('modal-peca')?.classList.add('hidden');
-    document.getElementById('pecaForm')?.reset();
-}
-
-// 3. Salva a peça no LocalStorage
-function salvarPecaModal() {
-    const nome = document.getElementById('modal-stk-nome').value;
-    const qtd = parseInt(document.getElementById('modal-stk-qtd').value) || 0;
-    const preco = parseFloat(document.getElementById('modal-stk-preco').value) || 0;
-
-    const novaPeca = {
-        id: Date.now(),
-        nome,
-        categoria: "Geral",
-        qtd,
-        preco
-    };
-
-    const novaPeca = { id: Date.now(), nome, categoria: "Geral", qtd, preco };
-    let estoque = JSON.parse(localStorage.getItem('SAD_PRO_STOCK') || '[]');
-    estoque.push(novaPeca);
-    localStorage.setItem('SAD_PRO_STOCK', JSON.stringify(estoque));
-
-    fecharModalPeca();
-    renderInventory();
-    openConfirm("Sucesso", "Item adicionado ao estoque!", null);
-}
-
-// 4. Renderiza a tabela na tela
 function renderInventory() {
     const tbody = document.getElementById('inventory-table-body');
     if (!tbody) return;
@@ -367,15 +248,8 @@ function renderInventory() {
                     ${peca.qtd} un.
                 </span>
             </td>
-            <td><span class="status-badge ${peca.qtd <= 2 ? 'status-pendente' : 'status-concluido'}">${peca.qtd} un.</span></td>
-            <td style="color: #ffb38a;">R$ ${parseFloat(peca.preco).toLocaleString('pt-BR', {minimumFractionDigits: 2})}</td>
+            <td style="color: #ffb38a;">R$ ${parseFloat(peca.preco).toFixed(2)}</td>
             <td>
-                <div style="display: flex; gap: 8px; align-items: center;">
-                    <button onclick="ajustarEstoque(${peca.id}, 1)" class="btn-del" style="color: #10b981; border-color: rgba(16, 185, 129, 0.3);">+</button>
-                    <button onclick="ajustarEstoque(${peca.id}, -1)" class="btn-del" style="color: #fff;">-</button>
-                    <button onclick="confirmarExclusaoPeca(${peca.id})" class="btn-del">
-                        <i class="fas fa-trash"></i>
-                    </button>
                 <div style="display: flex; gap: 8px;">
                     <button onclick="ajustarEstoque(${peca.id}, 1)" class="btn-del" style="color:#10b981">+</button>
                     <button onclick="ajustarEstoque(${peca.id}, -1)" class="btn-del">-</button>
@@ -384,25 +258,42 @@ function renderInventory() {
             </td>
         </tr>
     `).join('');
-    `).join('') || '<tr><td colspan="5" style="text-align:center;">Vazio.</td></tr>';
 }
 
-// 5. Ajusta quantidade (+ ou -)
+function abrirModalPeca() {
+    document.getElementById('modal-peca')?.classList.remove('hidden');
+}
+
+function fecharModalPeca() {
+    document.getElementById('modal-peca')?.classList.add('hidden');
+    document.getElementById('pecaForm')?.reset();
+}
+
+function salvarPecaModal() {
+    const nome = document.getElementById('modal-stk-nome').value;
+    const qtd = parseInt(document.getElementById('modal-stk-qtd').value) || 0;
+    const preco = parseFloat(document.getElementById('modal-stk-preco').value) || 0;
+
+    const novaPeca = { id: Date.now(), nome, categoria: "Geral", qtd, preco };
+    let estoque = JSON.parse(localStorage.getItem('SAD_PRO_STOCK') || '[]');
+    estoque.push(novaPeca);
+    localStorage.setItem('SAD_PRO_STOCK', JSON.stringify(estoque));
+
+    fecharModalPeca();
+    renderInventory();
+}
+
 function ajustarEstoque(id, mudanca) {
     let estoque = JSON.parse(localStorage.getItem('SAD_PRO_STOCK') || '[]');
-    estoque = estoque.map(p => {
-        if (p.id === id) {
-            p.qtd = Math.max(0, (parseInt(p.qtd) || 0) + mudanca);
-        }
-        return p;
+    estoque = estoque.map(p => { 
+        if (p.id === id) p.qtd = Math.max(0, p.qtd + mudanca); 
+        return p; 
     });
-    estoque = estoque.map(p => { if (p.id === id) p.qtd = Math.max(0, p.qtd + mudanca); return p; });
     localStorage.setItem('SAD_PRO_STOCK', JSON.stringify(estoque));
     renderInventory();
 }
 
-// 6. Confirmação de exclusão
-// --- UTILITÁRIOS ---
+// --- UTILITÁRIOS & AUXILIARES ---
 function notificarWhatsApp(nome, aparelho, id) {
     const msg = window.encodeURIComponent(`Olá ${nome}, a manutenção do seu ${aparelho} (OS #${id}) foi atualizada.`);
     window.open(`https://api.whatsapp.com/send?text=${msg}`, '_blank');
@@ -412,12 +303,16 @@ function gerarRecibo(id) {
     const os = JSON.parse(localStorage.getItem('SAD_PRO_OS')).find(o => o.id == id);
     const win = window.open('', 'PRINT', 'height=600,width=800');
     win.document.write(`<html><body style="font-family:sans-serif; padding:20px;">
-        <h2>RECIBO - #${os.id}</h2><hr>
-        <p><b>Cliente:</b> ${os.cliente}</p><p><b>Aparelho:</b> ${os.aparelho}</p>
-        <p><b>Valor Mão de Obra:</b> R$ ${parseFloat(os.maodeobra).toFixed(2)}</p>
+        <h2>RECIBO DE SERVIÇO - #${os.id}</h2><hr>
+        <p><b>Cliente:</b> ${os.cliente}</p>
+        <p><b>Aparelho:</b> ${os.aparelho}</p>
+        <p><b>Defeito:</b> ${os.defeito}</p>
         <p><b>Checklist:</b> ${os.checklist.join(', ') || 'Nenhum'}</p>
-        <hr><center>Technician PRO</center></body></html>`);
-    win.print(); win.close();
+        <p><b>Valor:</b> R$ ${parseFloat(os.maodeobra).toFixed(2)}</p>
+        <hr><center>Technician PRO - Horizon Edition</center>
+    </body></html>`);
+    win.print();
+    win.close();
 }
 
 function updateStats() {
@@ -435,38 +330,43 @@ function openConfirm(titulo, msg, acao, textoBtn = "Confirmar") {
     document.getElementById('confirm-message').innerText = msg;
     btnSim.innerText = textoBtn;
     modal.classList.remove('hidden');
+    
     const novoBtn = btnSim.cloneNode(true);
     btnSim.parentNode.replaceChild(novoBtn, btnSim);
-    novoBtn.onclick = () => { acao(); closeConfirm(); };
+    novoBtn.onclick = () => { if(acao) acao(); closeConfirm(); };
 }
 
 function closeConfirm() { document.getElementById('custom-confirm').classList.add('hidden'); }
+
 function atualizarData() { 
     const el = document.getElementById('current-date');
     if(el) el.innerText = new Date().toLocaleDateString('pt-br', {weekday: 'long', day:'numeric', month:'long'}); 
 }
-function aplicarTemaSalvo() { if(localStorage.getItem('SAD_PRO_THEME') === 'light') document.body.classList.replace('dark-theme', 'light-theme'); }
+
+function aplicarTemaSalvo() { 
+    if(localStorage.getItem('SAD_PRO_THEME') === 'light') document.body.classList.replace('dark-theme', 'light-theme'); 
+}
+
 function confirmarSair() { openConfirm("Sair", "Deseja encerrar a sessão?", () => window.location.href = "index.html"); }
+
 function confirmarExclusao(id) {
-    openConfirm("Excluir", "Tem certeza?", () => {
+    openConfirm("Excluir", "Tem certeza que deseja apagar esta OS?", () => {
         let os = JSON.parse(localStorage.getItem('SAD_PRO_OS')).filter(o => o.id !== id);
         localStorage.setItem('SAD_PRO_OS', JSON.stringify(os));
         renderTable(); updateStats();
     });
 }
+
 function confirmarExclusaoPeca(id) {
-    openConfirm("Remover Peça?", "Deseja excluir permanentemente este item?", () => {
-        let estoque = JSON.parse(localStorage.getItem('SAD_PRO_STOCK') || '[]');
-        estoque = estoque.filter(p => p.id !== id);
-        localStorage.setItem('SAD_PRO_STOCK', JSON.stringify(estoque));
-    openConfirm("Excluir Peça", "Remover do estoque?", () => {
+    openConfirm("Excluir Peça", "Remover este item permanentemente do estoque?", () => {
         let e = JSON.parse(localStorage.getItem('SAD_PRO_STOCK')).filter(p => p.id !== id);
         localStorage.setItem('SAD_PRO_STOCK', JSON.stringify(e));
         renderInventory();
     });
 }
+
 function limparBanco() {
-    openConfirm("Limpar Tudo", "Apagar todas as ordens?", () => {
+    openConfirm("Limpar Tudo", "Apagar todas as ordens registradas?", () => {
         localStorage.removeItem('SAD_PRO_OS');
         renderTable(); updateStats();
     });
