@@ -62,7 +62,16 @@ if (serviceForm) {
 
         const pecaId = document.getElementById('os-peca-usada').value;
         let custoPecaSelecionada = 0;
+// Dentro do objeto novaOS
+const dataConclusao = new Date(); // Data de hoje
+const dataGarantia = new Date();
+dataGarantia.setDate(dataConclusao.getDate() + 90); // Soma 90 dias
 
+const novaOS = {
+    // ... campos existentes ...
+    garantiaAte: dataGarantia.toLocaleDateString('pt-BR'),
+    // ...
+};
         // Lógica de Baixa no Estoque e Captura de Custo
         if (pecaId) {
             let estoque = JSON.parse(localStorage.getItem('SAD_PRO_STOCK') || '[]');
