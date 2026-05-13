@@ -243,27 +243,40 @@ function renderFinanceiro() {
     let totalEntradas = 0;
     let totalSaidas = 0;
 
-    const entradasHTML = osList.filter(os => os.valor > 0).map(os => {
-        totalEntradas += os.valor;
-        return `
-            <tr>
-                <td>${os.data}</td>
-                <td>OS #${os.id} - ${os.cliente}</td>
-                <td><span class="status-badge status-concluido">Entrada</span></td>
-                <td>R$ ${os.valor.toLocaleString('pt-BR', {minimumFractionDigits: 2})}</td>
-            </tr>
-        `;
-    }).join('');
+    // SÓ CONTABILIZA ENTRADA SE O STATUS FOR "CONCLUÍDO"
+    const entradasHTML = osList
+        .filter(os => os.status === 'Concluído' && os.valor > 0)
+        .map(os => {
+            totalEntradas += os.valor;
+            return `
+                <tr>
+                    <td>${os.data}</td>
+                    <td>OS #${os.id} - ${os.cliente}</td>
+                    <td><span class="status-badge status-concluido">Recebido</span></td>
+                    <td>R$ ${os.valor.toLocaleString('pt-BR', {minimumFractionDigits: 2})}</td>
+                </tr>
+            `;
+        }).join('');
 
-    estoque.forEach(p => { totalSaidas += (p.preco * p.quantidade); });
+    // Cálculo de saídas (Estoque)
+    estoque.forEach(p => { 
+        totalSaidas += (p.preco * p.quantidade); 
+    });
 
-    if(tbody) tbody.innerHTML = entradasHTML || '<tr><td colspan="4" style="text-align:center">Sem movimentações</td></tr>';
+    // Atualização da Tabela Financeira
+    if(tbody) {
+        tbody.innerHTML = entradasHTML || '<tr><td colspan="4" style="text-align:center">Nenhuma entrada (OS Concluída) encontrada</td></tr>';
+    }
 
-    if(document.getElementById('fin-entradas')) document.getElementById('fin-entradas').innerText = `R$ ${totalEntradas.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
-    if(document.getElementById('fin-saidas')) document.getElementById('fin-saidas').innerText = `R$ ${totalSaidas.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
-    if(document.getElementById('fin-saldo')) document.getElementById('fin-saldo').innerText = `R$ ${(totalEntradas - totalSaidas).toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
+    // Atualização dos Cards de Valores
+    const elEntradas = document.getElementById('fin-entradas');
+    const elSaidas = document.getElementById('fin-saidas');
+    const elSaldo = document.getElementById('fin-saldo');
+
+    if(elEntradas) elEntradas.innerText = `R$ ${totalEntradas.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
+    if(elSaidas) elSaidas.innerText = `R$ ${totalSaidas.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
+    if(elSaldo) elSaldo.innerText = `R$ ${(totalEntradas - totalSaidas).toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
 }
-
 function renderTable() {
     const tbody = document.getElementById('table-body');
     if (!tbody) return;
@@ -361,3 +374,19 @@ document.addEventListener('DOMContentLoaded', () => {
     showScreen('home-screen');
     updateStats();
 });
+// Função para alterar o status manualmente (ex: via botão ou select na tabela)
+function alterarStatusOS(id, novoStatus) {
+    const osList = getOS().map(os => {
+        if (os.id == id) {
+            os.status = novoStatus;
+        }
+        return os;
+    });
+
+    saveOS(osList);
+    
+    // Atualiza as telas abertas para refletir a mudança
+    renderTable(); 
+    renderFinanceiro(); 
+    updateStats();
+}
