@@ -5,7 +5,11 @@
 
 // --- NAVEGAÇÃO E ESTADO GLOBAL ---
 function showScreen(screenId) {
-    // 1. Esconde todas as seções
+    // ... sua lógica de esconder/mostrar telas ...
+    
+    if (screenId === 'nova-ordem-screen') {
+        carregarSelectPecas(); // Atualiza a lista sempre que você for criar uma OS
+    }
     document.querySelectorAll('.content-section').forEach(section => {
         section.classList.add('hidden');
     });
@@ -108,10 +112,6 @@ function excluirOS(id) {
     };
 }
 
-function closeConfirm() {
-    const modal = document.getElementById('custom-confirm');
-    if(modal) modal.classList.add('hidden');
-}
 
 // --- SISTEMA KANBAN (DRAG & DROP) ---
 function allowDrop(ev) { ev.preventDefault(); }
@@ -126,30 +126,34 @@ function drop(ev) {
     if (targetCol === 'col-andamento') novoStatus = 'Em Andamento';
     if (targetCol === 'col-concluido') novoStatus = 'Concluído';
 
-    const osList = getOS().map(os => {
-        if (os.id == id) os.status = novoStatus;
-        return os;
-    });
-
+   // FORMA SEGURA (Converta ambos para String na comparação)
+const osList = getOS().map(os => {
+    if (String(os.id) === String(id)) { 
+        os.status = novoStatus; 
+    }
+    return os;
+});
     saveOS(osList);
     renderKanban();
 }
 
 function renderKanban() {
-    const columns = {
-        'Pendente': document.querySelector('#col-pendente .kanban-cards'),
-        'Em Andamento': document.querySelector('#col-andamento .kanban-cards'),
-        'Concluído': document.querySelector('#col-concluido .kanban-cards')
-    };
+    const colPendente = document.querySelector('#col-pendente .kanban-cards');
+    const colAndamento = document.querySelector('#col-andamento .kanban-cards');
+    const colConcluido = document.querySelector('#col-concluido .kanban-cards');
 
-    Object.values(columns).forEach(col => { if(col) col.innerHTML = ''; });
+    // Limpa as colunas para evitar duplicatas ou erros de renderização
+    if(colPendente) colPendente.innerHTML = '';
+    if(colAndamento) colAndamento.innerHTML = '';
+    if(colConcluido) colConcluido.innerHTML = '';
 
     getOS().forEach(os => {
         const card = document.createElement('div');
         card.className = 'kanban-card';
         card.draggable = true;
         card.ondragstart = (e) => drag(e, os.id);
-        card.innerHTML = `
+        
+         card.innerHTML = `
             <div style="display: flex; justify-content: space-between; align-items: flex-start;">
                 <h4>${os.cliente}</h4>
                 <button onclick="enviarWhatsApp(${os.id})" style="background:none; border:none; color:#25D366; cursor:pointer; font-size: 1.1rem;">
@@ -162,10 +166,13 @@ function renderKanban() {
                 <strong>R$ ${os.valor.toFixed(2)}</strong>
             </div>
         `;
-        if (columns[os.status]) columns[os.status].appendChild(card);
+
+        // Lógica de distribuição
+        if (os.status === 'Pendente' && colPendente) colPendente.appendChild(card);
+        else if (os.status === 'Em Andamento' && colAndamento) colAndamento.appendChild(card);
+        else if (os.status === 'Concluído' && colConcluido) colConcluido.appendChild(card);
     });
 }
-
 // --- SISTEMA DE ESTOQUE ---
 const getEstoque = () => JSON.parse(localStorage.getItem('SAD_PRO_ESTOQUE') || '[]');
 const saveEstoque = (data) => localStorage.setItem('SAD_PRO_ESTOQUE', JSON.stringify(data));
@@ -183,57 +190,112 @@ function salvarPecaModal() {
     const nome = document.getElementById('modal-stk-nome').value;
     const qtd = document.getElementById('modal-stk-qtd').value;
     const preco = document.getElementById('modal-stk-preco').value;
+    const fone = document.getElementById('modal-stk-fone').value; // Novo campo
 
-    if (!nome || !qtd || !preco) {
-        alert("Preencha todos os campos!");
-        return;
-    }
+    if (!nome || !qtd || !preco) return alert("Preencha os campos obrigatórios!");
 
     const estoque = getEstoque();
     estoque.push({
         id: Date.now(),
         nome,
         quantidade: parseInt(qtd),
-        preco: parseFloat(preco)
+        preco: parseFloat(preco),
+        foneFornecedor: fone.replace(/\D/g, '') // Salva apenas os números
     });
 
     saveEstoque(estoque);
     fecharModalPeca();
     renderEstoque();
-    
-    // Limpa o formulário após salvar
     document.getElementById('pecaForm').reset();
 }
 
+// --- CONFIGURAÇÃO DE ESTOQUE BAIXO ---
+const LIMITE_ESTOQUE_BAIXO = 3; 
+const TELEFONE_FORNECEDOR = "21999999999"; // Substitua pelo número do seu fornecedor
+
+// Funções para ajuste rápido de unidades
+function ajustarUnidade(id, delta) {
+    const estoque = getEstoque().map(p => {
+        if (p.id === id) {
+            p.quantidade = Math.max(0, p.quantidade + delta);
+        }
+        return p;
+    });
+    saveEstoque(estoque);
+    renderEstoque();
+}
+
+// Atualização da renderEstoque para incluir os novos botões
 function renderEstoque() {
     const tbody = document.getElementById('stock-body'); 
+    const data = getEstoque();
     if (!tbody) return;
 
-    const data = getEstoque();
-    if (data.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="4" style="text-align:center">Estoque vazio</td></tr>';
+    tbody.innerHTML = data.map(peca => {
+        const isBaixo = peca.quantidade <= 3;
+        const alertaClass = isBaixo ? 'estoque-critico' : '';
+        
+        return `
+            <tr class="${alertaClass}">
+                <td>${peca.nome}</td>
+                <td>
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <button onclick="ajustarUnidade(${peca.id}, -1)" class="btn-mini">-</button>
+                        <strong>${peca.quantidade} un</strong>
+                        <button onclick="ajustarUnidade(${peca.id}, 1)" class="btn-mini">+</button>
+                    </div>
+                </td>
+                <td>R$ ${peca.preco.toLocaleString('pt-BR', {minimumFractionDigits: 2})}</td>
+                <td>
+                    <div style="display: flex; gap: 8px;">
+                        ${isBaixo ? `
+                            <button onclick="pedirReposicao('${peca.nome}', '${peca.foneFornecedor}')" class="btn-action-dark">
+                                <i class="fas fa-truck-loading" style="color: #e9a680;"></i>
+                            </button>
+                        ` : ''}
+                        <button onclick="excluirPeca(${peca.id})" class="btn-del-mini"><i class="fas fa-trash"></i></button>
+                    </div>
+                </td>
+            </tr>
+        `;
+    }).join('');
+}
+function pedirReposicao(nomePeca, telefone) {
+    if (!telefone) {
+        alert("Nenhum telefone de fornecedor cadastrado para esta peça!");
         return;
     }
-
-    tbody.innerHTML = data.map(peca => `
-        <tr>
-            <td>${peca.nome}</td>
-            <td>${peca.quantidade} un</td>
-            <td>R$ ${peca.preco.toLocaleString('pt-BR', {minimumFractionDigits: 2})}</td>
-            <td>
-                <button onclick="excluirPeca(${peca.id})" class="btn-del"><i class="fas fa-trash"></i></button>
-            </td>
-        </tr>
-    `).join('');
+    
+    const mensagem = `Olá! Verifiquei que meu estoque de *${nomePeca}* está baixo. Gostaria de solicitar uma reposição.`;
+    const url = `https://wa.me/55${telefone}?text=${mensagem}`;
+    window.open(url, '_blank');
 }
-
 function excluirPeca(id) {
-    if(confirm("Remover peça do estoque?")) {
+    const modal = document.getElementById('custom-confirm');
+    const msg = document.getElementById('confirm-message');
+    const title = document.getElementById('confirm-title');
+    const btnYes = document.getElementById('confirm-yes');
+    const icon = modal.querySelector('i');
+
+    title.innerText = "Remover do Estoque";
+    msg.innerText = "Tem certeza que deseja excluir esta peça? Esta ação não pode ser desfeita.";
+    
+    // Customização visual
+    icon.className = "fas fa-box-open warning-icon"; 
+    btnYes.className = "btn-confirm-warning";
+    btnYes.innerText = "Excluir Peça";
+
+    modal.classList.remove('hidden');
+
+    const newBtnYes = btnYes.cloneNode(true);
+    btnYes.parentNode.replaceChild(newBtnYes, btnYes);
+
+    newBtnYes.onclick = () => {
         saveEstoque(getEstoque().filter(p => p.id !== id));
         renderEstoque();
-    }
+        closeConfirm();
+    };
 }
-
 // --- FINANCEIRO E DASHBOARD ---
 function renderFinanceiro() {
     const osList = getOS();
@@ -287,7 +349,14 @@ function renderTable() {
         return;
         // Dentro do seu renderTable().map(os => { ... })
 // Adicione este botão junto aos outros (WhatsApp, PDF, Excluir):
+// Dentro do seu renderTable().map(os => { ... })
+// Adicione este botão junto aos outros (WhatsApp, PDF, Concluir):
 
+`
+<button onclick="gerarEtiqueta(${os.id})" class="btn-action-dark" title="Gerar Etiqueta">
+    <i class="fas fa-tag" style="color: #e9a680;"></i>
+</button>
+`
 `
 <button onclick="alterarStatusOS(${os.id}, 'Concluído')" class="btn-action-dark" title="Concluir Serviço">
     <i class="fas fa-check-circle" style="color: #10b981;"></i>
@@ -367,11 +436,30 @@ function gerarPDF(id) {
 }
 
 function limparBanco() {
-    if(confirm("ATENÇÃO: Isso apagará TODAS as ordens e histórico. Deseja continuar?")) {
+    const modal = document.getElementById('custom-confirm');
+    const msg = document.getElementById('confirm-message');
+    const title = document.getElementById('confirm-title');
+    const btnYes = document.getElementById('confirm-yes');
+    const icon = modal.querySelector('i');
+
+    title.innerText = "Zerar Sistema";
+    msg.innerHTML = "<strong style='color:#ff4d4d'>ATENÇÃO:</strong> Isso apagará todas as Ordens de Serviço e o Estoque permanentemente!";
+    
+    // Customização visual
+    icon.className = "fas fa-radiation-alt danger-icon"; 
+    btnYes.className = "btn-confirm-danger";
+    btnYes.innerText = "Apagar Tudo";
+
+    modal.classList.remove('hidden');
+
+    const newBtnYes = btnYes.cloneNode(true);
+    btnYes.parentNode.replaceChild(newBtnYes, btnYes);
+
+    newBtnYes.onclick = () => {
         localStorage.removeItem('SAD_PRO_OS');
         localStorage.removeItem('SAD_PRO_ESTOQUE');
         location.reload();
-    }
+    };
 }
 
 // --- INICIALIZAÇÃO ---
@@ -397,4 +485,199 @@ function alterarStatusOS(id, novoStatus) {
     renderTable(); 
     renderFinanceiro(); 
     updateStats();
+}
+// Função para carregar peças no select da OS sempre que abrir a tela
+function carregarSelectPecas() {
+    const select = document.getElementById('os-peca-select');
+    if (!select) return;
+    
+    const estoque = getEstoque();
+    
+    // Limpa e repopula
+    select.innerHTML = '<option value="">-- Selecione uma peça (Opcional) --</option>';
+    
+    estoque.forEach(peca => {
+        const option = document.createElement('option');
+        option.value = peca.id; // Importante: o ID deve ser o valor
+        option.textContent = `${peca.nome} (Estoque: ${peca.quantidade})`;
+        select.appendChild(option);
+    });
+}
+// Modificação da handleFormSubmit para dar baixa no estoque
+function handleFormSubmit(e) {
+    e.preventDefault();
+   // Dentro da sua função de salvar a OS (handleFormSubmit)
+const selectPeca = document.getElementById('os-peca-select');
+const pecaId = selectPeca.value;
+
+if (pecaId && pecaId !== "") {
+    const estoque = getEstoque();
+    // Usamos == para comparar string com número ou convertemos explicitamente
+    const index = estoque.findIndex(p => String(p.id) === String(pecaId));
+
+    if (index !== -1) {
+        if (estoque[index].quantidade > 0) {
+            estoque[index].quantidade -= 1;
+            saveEstoque(estoque);
+            console.log(`Baixa efetuada: ${estoque[index].nome}`);
+        } else {
+            alert("Atenção: Esta peça está com estoque zerado!");
+        }
+    } else {
+        console.error("Peça selecionada não encontrada no banco de dados.");
+    }
+}
+
+    const novaOS = {
+        id: Math.floor(1000 + Math.random() * 8999),
+        cliente: document.getElementById('cli-nome').value,
+        telefone: document.getElementById('cli-phone').value,
+        aparelho: document.getElementById('apa-nome').value,
+        defeito: document.getElementById('apa-defeito').value,
+        data: document.getElementById('apa-data').value,
+        valor: parseFloat(document.getElementById('apa-valor').value || 0),
+        status: 'Pendente',
+        pecaUtilizada: pecaId // Guardamos o ID da peça usada
+    };
+
+    osList.push(novaOS);
+    saveOS(osList);
+    
+    e.target.reset();
+    showScreen('lista-screen');
+}
+console.log("ID selecionado no Select:", pecaId);
+console.log("Banco de Estoque Atual:", getEstoque());
+function gerarEtiqueta(id) {
+    const os = getOS().find(o => o.id == id);
+    if (!os) return;
+
+    const content = document.getElementById('etiqueta-content');
+    const dataEl = document.getElementById('etiqueta-data');
+    const template = document.getElementById('etiqueta-template');
+
+    // Preenche o conteúdo da etiqueta
+    content.innerHTML = `
+        <strong>OS: #${os.id}</strong><br>
+        <strong>CLIENTE:</strong> ${os.cliente.toUpperCase()}<br>
+        <strong>APARELHO:</strong> ${os.aparelho}<br>
+        <strong>DEFEITO:</strong> ${os.defeito.substring(0, 30)}${os.defeito.length > 30 ? '...' : ''}<br>
+        <strong>STATUS:</strong> ${os.status.toUpperCase()}
+    `;
+    dataEl.innerText = `Entrada: ${os.data}`;
+
+    // Lógica de Impressão
+    const janelaImpressao = window.open('', '', 'width=600,height=600');
+    janelaImpressao.document.write(`
+        <html>
+            <head>
+                <title>Imprimir Etiqueta - OS #${os.id}</title>
+                <style>
+                    body { margin: 0; display: flex; justify-content: center; }
+                    @media print {
+                        body { margin: 0; }
+                    }
+                </style>
+            </head>
+            <body>
+                ${template.innerHTML}
+            </body>
+        </html>
+    `);
+
+    janelaImpressao.document.close();
+    janelaImpressao.focus();
+    
+    // Pequeno delay para garantir que o conteúdo carregou antes de imprimir
+    setTimeout(() => {
+        janelaImpressao.print();
+        janelaImpressao.close();
+    }, 250);
+}
+function atualizarWelcomeBanner() {
+    // 1. Referências dos elementos
+    const nameEl = document.getElementById('user-name');
+    const timeEl = document.getElementById('current-time');
+    const dateEl = document.getElementById('current-date');
+    const messageEl = document.getElementById('welcome-message');
+    
+    const now = new Date();
+
+    // 2. Atualiza o Nome do Técnico
+    const nomeSalvo = localStorage.getItem('SAD_PRO_USER_NAME');
+    if (nameEl) {
+        nameEl.innerText = nomeSalvo ? nomeSalvo : "Técnico";
+    }
+
+    // 3. Atualiza Relógio (apenas se o elemento existir)
+    if (timeEl) {
+        timeEl.innerText = now.toLocaleTimeString('pt-BR');
+    }
+    
+    // 4. Atualiza Data
+    if (dateEl) {
+        const options = { day: 'numeric', month: 'long', year: 'numeric' };
+        dateEl.innerText = now.toLocaleDateString('pt-BR', options);
+    }
+    
+    // 5. Atualiza Mensagem de Saudação
+    if (messageEl) {
+        const hora = now.getHours();
+        if (hora < 12) messageEl.innerText = "Bom dia! Café na mão e foco nos reparos. ☕";
+        else if (hora < 18) messageEl.innerText = "Boa tarde! Metas do dia quase batidas. 💪";
+        else messageEl.innerText = "Boa noite! Finalizando os últimos detalhes por hoje? 🌙";
+    }
+}
+
+// --- INICIALIZAÇÃO ---
+// Garante que o código rode assim que a página carregar
+document.addEventListener('DOMContentLoaded', () => {
+    // Chama a função imediatamente para não esperar 1 segundo
+    atualizarWelcomeBanner();
+    
+    // Inicia o relógio em tempo real
+    setInterval(atualizarWelcomeBanner, 1000);
+});
+
+// Inicia o relógio
+setInterval(updateWelcomeBanner, 1000);
+updateWelcomeBanner();
+
+function confirmarSair() {
+    // 1. Abre o seu modal de confirmação personalizado
+    // Certifique-se de que a função openConfirm ou o seu sistema de modal esteja assim:
+    
+    const modal = document.getElementById('custom-confirm');
+    const msg = document.getElementById('confirm-message');
+    const btnYes = document.getElementById('confirm-yes');
+
+    if (modal) {
+        msg.innerText = "Deseja realmente encerrar sua sessão e voltar ao login?";
+        modal.classList.remove('hidden');
+
+        // Resetamos o evento do botão para não acumular cliques
+        const newBtnYes = btnYes.cloneNode(true);
+        btnYes.parentNode.replaceChild(newBtnYes, btnYes);
+
+        newBtnYes.onclick = () => {
+            // Ação ao confirmar:
+            
+            // OPÇÃO A: Se o seu login for uma página separada
+            window.location.href = "index.html"; 
+
+            // OPÇÃO B: Se o seu login for uma DIV no mesmo arquivo
+            // showScreen('login-screen');
+            // closeConfirm();
+        };
+    } else {
+        // Fallback caso o modal falhe
+        if(confirm("Deseja sair do sistema?")) {
+            window.location.href = "index.html";
+        }
+    }
+}
+
+// Função para fechar o modal
+function closeConfirm() {
+    document.getElementById('custom-confirm').classList.add('hidden');
 }
