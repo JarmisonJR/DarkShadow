@@ -18,38 +18,35 @@
 <body class="dark-theme">
 
     <div id="main-layout" class="display-flex">
+<aside class="sidebar">
+    <div class="sidebar-logo">
+        <h2>TECHNICIAN PRO</h2>
+    </div>
+    
+    <nav class="nav-menu">
+        <div class="nav-item active" onclick="showScreen('home-screen')">
+            <i class="fas fa-home"></i> Dashboard
+        </div>
+        <div class="nav-item" onclick="showScreen('lista-screen')">
+            <i class="fas fa-list"></i> Ordens
+        </div>
+        <div class="nav-item" onclick="showScreen('kanban-screen')">
+            <i class="fas fa-columns"></i> Kanban
+        </div>
+        <div class="nav-item" onclick="showScreen('estoque-screen')">
+            <i class="fas fa-boxes"></i> Estoque
+        </div>
+        <div class="nav-item" onclick="showScreen('financeiro-screen')">
+            <i class="fas fa-chart-line"></i> Financeiro
+        </div>
+    </nav>
 
-        <!-- SIDEBAR -->
-        <aside class="sidebar" id="sidebar">
-            <div class="sidebar-logo">TECHNICIAN <span>PRO</span></div>
-
-            <nav class="nav-menu">
-                <button onclick="showScreen('home-screen')" class="nav-item active">
-                    <i class="fas fa-th-large"></i> <span>Dashboard</span>
-                </button>
-                <button onclick="showScreen('cadastro-screen')" class="nav-item">
-                    <i class="far fa-edit"></i> <span>Nova Ordem</span>
-                </button>
-                <button onclick="showScreen('kanban-screen')" class="nav-item">
-                    <i class="fas fa-columns"></i> <span>Fluxo Kanban</span>
-                </button>
-                <button onclick="showScreen('lista-screen')" class="nav-item">
-                    <i class="fas fa-list-ul"></i> <span>Lista de Ordens</span>
-                </button>
-                <button onclick="showScreen('estoque-screen')" class="nav-item">
-                    <i class="fas fa-boxes"></i> <span>Estoque / Peças</span>
-                </button>
-                <button onclick="showScreen('financeiro-screen')" class="nav-item">
-                    <i class="fas fa-wallet"></i> <span>Financeiro</span>
-                </button>
-            </nav>
-
-            <div class="sidebar-footer">
-                <button onclick="confirmarSair()" class="nav-item btn-logout">
-                    <span>SAIR</span> <i class="fas fa-power-off"></i>
-                </button>
-            </div>
-        </aside>
+    <div class="sidebar-footer">
+        <button onclick="confirmarSair()" class="btn-logout">
+            <span>SAIR</span> <i class="fas fa-power-off"></i>
+        </button>
+    </div>
+</aside>
 
         <!-- CONTEÚDO PRINCIPAL -->
        <!-- CONTEÚDO PRINCIPAL -->
@@ -57,13 +54,20 @@
 
     <!-- HOME / DASHBOARD -->
     <section id="home-screen" class="content-section">
-        <header class="welcome-banner">
-            <div>
-                <h1 id="welcome-text">Bem-vindo, Técnico!</h1>
-                <p id="current-date"></p>
+    <section class="welcome-banner">
+    <div class="welcome-content">
+        <div class="welcome-text">
+    <h1>Olá, <span id="user-name">Técnico</span>! 👋</h1>
+    <p id="welcome-message">Pronto para organizar os reparos de hoje?</p>
+</div>
+        <div class="welcome-stats">
+            <div class="clock-container">
+                <span id="current-time">00:00:00</span>
+                <span id="current-date">14 de Maio, 2026</span>
             </div>
-        </header>
-
+        </div>
+    </div>
+</section>
         <div class="stats-grid">
             <div class="stat-card" onclick="showScreen('lista-screen')" style="cursor:pointer">
                 <h3>Ordens Abertas</h3>
@@ -193,6 +197,13 @@
                         <input type="number" step="0.01" id="apa-valor" placeholder="0.00">
                     </div>
                 </div>
+                <div style="margin-top: 15px;">
+    <label>Peça Utilizada</label>
+    <select id="os-peca-select" class="input-dark">
+        <option value="">Nenhuma peça selecionada</option>
+        <!-- Populado via JS -->
+    </select>
+</div>
                 <div class="form-buttons" style="margin-top: 20px; display: flex; gap: 10px;">
                     <button type="button" onclick="showScreen('home-screen')" class="btn-cancel">Cancelar</button>
                     <button type="submit" class="btn-primary-gradient">Salvar Ordem</button>
@@ -246,6 +257,11 @@
                         <input type="number" step="0.01" id="modal-stk-preco" required>
                     </div>
                 </div>
+                <!-- Dentro do modal-content de Cadastro de Peça -->
+<div style="margin-top: 15px;">
+    <label>WhatsApp do Fornecedor</label>
+    <input type="text" id="modal-stk-fone" class="input-dark" placeholder="Ex: 21999999999">
+</div>
                 <div class="confirm-buttons">
                     <button type="button" onclick="fecharModalPeca()" class="btn-no" style="background: transparent; border: 1px solid #444; color: #fff; padding: 10px 20px; border-radius: 8px; cursor: pointer;">Cancelar</button>
                     <button type="submit" class="btn-primary">Salvar</button>
@@ -256,15 +272,18 @@
 
     <!-- MODAL CONFIRMAÇÃO -->
     <div id="custom-confirm" class="modal-overlay hidden">
-        <div class="confirm-card">
-            <h3 id="confirm-title">Atenção</h3>
-            <p id="confirm-message"></p>
-            <div class="confirm-buttons">
-                <button id="confirm-no" onclick="closeConfirm()">Cancelar</button>
-                <button id="confirm-yes">Confirmar</button>
-            </div>
+    <div class="confirm-card">
+        <i class="fas fa-exclamation-circle" style="font-size: 3rem; margin-bottom: 20px;"></i>
+        <h3 id="confirm-title">Confirmação</h3>
+        <p id="confirm-message"></p>
+        
+        <div class="confirm-buttons">
+            <button id="confirm-no" onclick="closeConfirm()">Cancelar</button>
+            <button id="confirm-yes">Confirmar</button>
         </div>
     </div>
+</div>
+            
 
     <!-- TEMPLATE PDF (OCULTO) -->
     <div id="pdf-template" style="display: none;">
@@ -276,7 +295,19 @@
             </div>
         </div>
     </div>
-
+<!-- Template para Impressão de Etiqueta (Invisível na tela) -->
+<div id="etiqueta-template" style="display: none; width: 80mm; font-family: 'Courier New', Courier, monospace; padding: 10px; border: 1px solid #000; color: #000; background: #fff;">
+    <div style="text-align: center; border-bottom: 1px dashed #000; padding-bottom: 5px;">
+        <strong style="font-size: 1.2rem;">TECHNICIAN PRO</strong><br>
+        <span>Identificação de Aparelho</span>
+    </div>
+    <div id="etiqueta-content" style="margin-top: 10px; font-size: 0.9rem; line-height: 1.4;">
+        <!-- Preenchido via JS -->
+    </div>
+    <div style="text-align: center; margin-top: 10px; border-top: 1px dashed #000; padding-top: 5px;">
+        <small id="etiqueta-data"></small>
+    </div>
+</div>
     <!-- JS Principal -->
     <script src="dashboard.js"></script>
 </body>
