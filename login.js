@@ -18,3 +18,17 @@ formLogin.addEventListener('submit', (e) => {
         alert('Erro: Email ou senha não conferem com o cadastro!');
     }
 });
+// Localize a função que faz o login ou que entra no dashboard
+function entrarNoSistema() {
+    const nomeInput = document.getElementById('nome-tecnico-login').value;
+
+    if (nomeInput) {
+        // ESSA LINHA É A CHAVE: Ela guarda o nome para o Dashboard ler depois
+        localStorage.setItem('SAD_PRO_USER_NAME', nomeInput);
+        
+        // Depois de salvar, ele vai para o dashboard
+        window.location.href = "dashboard.html"; 
+    } else {
+        alert("Por favor, digite seu nome.");
+    }
+}
