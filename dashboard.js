@@ -18,12 +18,7 @@ function showScreen(screenId) {
     document.querySelectorAll('.nav-item').forEach(item => {
         item.classList.remove('active');
     });
-if (screenId === 'cadastro-screen') {
-        if (typeof carregarSelectPecas === 'function') {
-            carregarSelectPecas(); // Alimenta o select com as peças do estoque atualizado
-        }
-    }
-}
+
     // 3. Mostra a seção alvo
     const target = document.getElementById(screenId);
     if (target) {
