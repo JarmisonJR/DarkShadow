@@ -6,16 +6,20 @@
     --sidebar-bg: #0a0a0b;
     --card-bg: #111114;
     --bg-input: #1a1a1e;
-    
-    --primary-sunset: #ffb38a;      /* Bege alaranjado */
-    --primary-teal: #155e63;        /* Teal profundo */
+
+    --primary-sunset: #ffb38a;      /* Bege alaranjado original */
+    --pessego-ref: #e9a680;         /* Tom pêssego das imagens de referência */
+    --primary-teal: #155e63;        /* Teal/Petróleo profundo */
     --sunset-glow: rgba(255, 179, 138, 0.3);
-    
+
     --text-white: #ffffff;
     --text-muted: #a1a1aa;
+    --text-muted-lux: #a0aec0;      /* Cinza elegante para itens inativos */
     --border-color: #262626;
-    
+    --border-light: #1f1f21;
+
     --danger: #ef4444;
+    --danger-intense: #ff4d4d;
     --success: #10b981;
     --info: #3b82f6;
 
@@ -44,24 +48,33 @@ h1, h2, h3, .sidebar-logo, .kanban-title {
 .hidden { display: none !important; }
 
 /* --- SIDEBAR --- */
-/* --- ESTILIZAÇÃO DA SIDEBAR E SEUS BOTÕES --- */
-
 .sidebar {
+    width: 250px;
+    background-color: var(--sidebar-bg);
+    border-right: 1px solid var(--border-light);
+    padding: 30px 20px;
     display: flex;
     flex-direction: column;
-    height: 100vh;
-    background-color: #0a0a0a;
-    border-right: 1px solid #1f1f21;
     position: fixed;
-    width: 250px;
+    height: 100vh;
     top: 0;
     left: 0;
-    z-index: 100;
+    z-index: 1000;
 }
 
 .sidebar-logo {
+    font-size: 1.6rem;
+    text-transform: uppercase;
+    margin-bottom: 40px;
+    letter-spacing: 2px;
+    color: var(--text-white);
     padding: 25px 20px;
     text-align: center;
+}
+
+.sidebar-logo span { 
+    color: var(--primary-sunset); 
+    text-shadow: 0 0 10px var(--sunset-glow); 
 }
 
 .sidebar-logo h2 {
@@ -71,21 +84,21 @@ h1, h2, h3, .sidebar-logo, .kanban-title {
     margin: 0;
 }
 
-.nav-menu {
-    flex-grow: 1;
-    padding: 10px 15px;
-    display: flex;
-    flex-direction: column;
-    gap: 8px; /* Espaçamento idêntico entre os botões */
+.nav-menu { 
+    flex-grow: 1; 
+    display: flex; 
+    flex-direction: column; 
+    gap: 8px; 
+    padding: 10px 0;
 }
 
-/* Base de todos os botões da Sidebar (Padrão Nova Ordem) */
+/* Base de todos os botões da Sidebar */
 .nav-item {
     width: 100%;
     background: transparent;
     border: none;
+    color: var(--text-muted-lux);
     border-left: 4px solid transparent;
-    color: #a0aec0; /* Cor cinza elegante para itens inativos */
     padding: 14px 18px;
     border-radius: 8px;
     font-size: 0.95rem;
@@ -101,54 +114,84 @@ h1, h2, h3, .sidebar-logo, .kanban-title {
 /* Ícones padrão dentro dos botões */
 .nav-item i {
     font-size: 1.1rem;
-    color: #a0aec0;
+    color: var(--text-muted-lux);
     transition: color 0.25s ease;
 }
 
-/* Efeito Hover Geral para todos os botões (Igual ao que fizemos no Nova Ordem) */
+/* Efeito Hover Geral para todos os botões */
 .nav-item:hover {
-    background: rgba(233, 166, 128, 0.08) !important; /* Fundo pêssego translúcido */
-    color: #e9a680 !important; /* Texto assume a cor pêssego */
-    border-left: 4px solid #e9a680; /* Barra lateral pêssego acende */
-    padding-left: 22px; /* Leve recuo para a direita no movimento */
+    background: rgba(233, 166, 128, 0.08) !important; 
+    color: var(--pessego-ref) !important; 
+    border-left: 4px solid var(--pessego-ref); 
+    padding-left: 22px; 
 }
 
 .nav-item:hover i {
-    color: #e9a680 !important;
+    color: var(--pessego-ref) !important;
 }
 
-/* Estado do botão que está selecionado/ativo no momento */
+/* Estado do botão que está selecionado/ativo */
 .nav-item.active {
-    background: rgba(21, 94, 99, 0.15) !important; /* Fundo petróleo suave */
+    background: rgba(21, 94, 99, 0.15) !important; 
     color: #ffffff !important;
-    border-left: 4px solid #155e63; /* Barra esquerda na cor petróleo */
+    border-left: 4px solid var(--primary-teal); 
     font-weight: 600;
 }
 
 .nav-item.active i {
-    color: #155e63 !important;
+    color: var(--primary-teal) !important;
 }
 
-/* Destaque fixo para a Nova Ordem (Ela já nasce na cor pêssego mesmo sem o mouse em cima) */
-.btn-destaque-sidebar {
-    color: #e9a680 !important;
+/* Destaques fixos (Nova Ordem / Botões Específicos na Sidebar) */
+.btn-destaque-sidebar,
+.btn-nova-ordem-sidebar {
+    color: var(--pessego-ref) !important;
     font-weight: 600;
 }
 
-.btn-destaque-sidebar i {
-    color: #e9a680 !important;
+.btn-destaque-sidebar i,
+.btn-nova-ordem-sidebar i {
+    color: var(--pessego-ref) !important;
 }
 
-/* Rodapé */
-.sidebar-footer {
-    padding: 20px 15px;
-    border-top: 1px solid rgba(255, 255, 255, 0.03);
+.btn-nova-ordem-sidebar:hover {
+    background: rgba(233, 166, 128, 0.1) !important; 
+    border-left: 4px solid var(--pessego-ref);
 }
+
+/* Rodapé da Sidebar */
+.sidebar-footer {
+    padding: 20px 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* Botão SAIR */
+.btn-logout {
+    width: 100%;
+    background: rgba(255, 77, 77, 0.05) !important;
+    color: var(--danger-intense) !important;
+    border: 1px solid rgba(255, 77, 77, 0.2) !important;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 15px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: 0.3s;
+    font-weight: bold;
+}
+
+.btn-logout:hover {
+    background: var(--danger-intense) !important;
+    color: #ffffff !important;
+    box-shadow: 0 0 15px rgba(255, 77, 77, 0.3);
+}
+
 /* --- MAIN LAYOUT --- */
 .main-wrapper {
-    margin-left: 260px;
+    margin-left: 250px;
     padding: 30px;
-    width: calc(100% - 260px);
+    width: calc(100% - 250px);
 }
 
 .content-section {
@@ -160,7 +203,74 @@ h1, h2, h3, .sidebar-logo, .kanban-title {
     to { opacity: 1; transform: translateY(0); }
 }
 
-/* --- CARDS DE ESTATÍSTICA --- */
+/* --- WELCOME BANNER --- */
+.welcome-banner {
+    background: linear-gradient(135deg, rgba(21, 94, 99, 0.2) 0%, rgba(233, 166, 128, 0.1) 100%);
+    border: 1px solid var(--border-light);
+    border-radius: 16px;
+    padding: 30px;
+    margin-bottom: 30px;
+    position: relative;
+    overflow: hidden;
+    backdrop-filter: blur(10px);
+}
+
+.welcome-banner::before {
+    content: '';
+    position: absolute;
+    top: -50px;
+    right: -50px;
+    width: 150px;
+    height: 150px;
+    background: var(--pessego-ref);
+    filter: blur(80px);
+    opacity: 0.15;
+}
+
+.welcome-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.welcome-text h1 {
+    font-size: 1.8rem;
+    color: #ffffff;
+    margin: 0;
+}
+
+.welcome-text h1 span {
+    color: var(--pessego-ref); 
+}
+
+.welcome-text p {
+    color: #888;
+    margin-top: 5px;
+    font-size: 1rem;
+}
+
+.clock-container {
+    text-align: right;
+    display: flex;
+    flex-direction: column;
+}
+
+#current-time {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #ffffff;
+    font-family: 'Courier New', monospace;
+}
+
+#current-date {
+    color: var(--primary-teal); 
+    font-size: 0.85rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* --- CARDS DE ESTATÍSTICA (DASHBOARD) --- */
 .stats-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -169,24 +279,29 @@ h1, h2, h3, .sidebar-logo, .kanban-title {
 }
 
 .stat-card {
-    background: var(--card-bg);
-    border: 1px solid var(--border-color);
+    background: #111112;
+    border: 1px solid var(--border-light);
     padding: 25px;
-    border-radius: 20px;
+    border-radius: 12px;
     text-align: center;
     transition: 0.3s;
 }
 
 .stat-card h3 { 
-    font-size: 0.85rem; 
-    color: var(--text-muted); 
+    font-size: 0.7rem; 
+    color: #666; 
     text-transform: uppercase; 
+    letter-spacing: 1px;
     margin-bottom: 10px;
 }
 
-.stat-card p, .stat-card span { 
-    font-size: 2rem; 
-    color: var(--primary-sunset); 
+.stat-card p, 
+.stat-card span,
+.stat-card .value { 
+    font-size: 2.5rem; 
+    color: var(--pessego-ref); 
+    font-weight: bold;
+    margin-top: 10px;
 }
 
 /* --- KANBAN --- */
@@ -240,28 +355,55 @@ h1, h2, h3, .sidebar-logo, .kanban-title {
     box-shadow: var(--shadow);
 }
 
+.os-urgente {
+    border-left: 5px solid var(--danger-intense) !important;
+    background: linear-gradient(to right, #1a1a1b, #2d1111) !important;
+}
+
 /* --- TABELAS --- */
 .table-container { 
-    background: var(--card-bg); 
+    background: #0a0a0a; 
     border-radius: 15px; 
-    border: 1px solid var(--border-color); 
+    border: 1px solid #1a1a1a; 
     overflow-x: auto; 
 }
 
 table { width: 100%; border-collapse: collapse; }
 
-th { 
+th, .table-header { 
     background: var(--primary-teal); 
-    color: var(--primary-sunset); 
+    color: var(--pessego-ref); 
     padding: 18px; 
     text-align: left; 
     font-size: 0.9rem; 
+    font-weight: bold;
 }
 
 td { 
     padding: 18px; 
     border-bottom: 1px solid var(--border-color); 
     color: var(--text-white);
+}
+
+/* Alertas de Estoque */
+.estoque-critico {
+    background-color: rgba(233, 166, 128, 0.1) !important; 
+}
+
+.estoque-critico td {
+    color: var(--pessego-ref) !important; 
+}
+
+.estoque-critico i.fa-exclamation-triangle {
+    margin-left: 10px;
+    color: var(--danger-intense);
+    animation: blink 1.5s infinite;
+}
+
+@keyframes blink {
+    0% { opacity: 1; }
+    50% { opacity: 0.3; }
+    100% { opacity: 1; }
 }
 
 /* --- BOTÕES DE AÇÃO --- */
@@ -282,6 +424,122 @@ td {
 .btn-action:hover { background: var(--primary-teal); color: var(--primary-sunset); }
 .btn-del:hover { background: var(--danger); color: white; }
 
+.btn-action-dark {
+    background: #1a1a1b;
+    border: 1px solid #333;
+    color: #fff;
+    padding: 8px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.btn-action-dark:hover {
+    background: #333;
+}
+
+.btn-action-dark i.fa-check-circle:hover {
+    filter: brightness(1.5);
+    transform: scale(1.2);
+}
+
+.btn-del-mini {
+    background: #1a1a1b;
+    color: #fff;
+    border: 1px solid #333;
+    padding: 8px;
+    border-radius: 6px;
+}
+
+.btn-del-mini:hover {
+    background: #441111;
+    color: var(--danger-intense);
+}
+
+.btn-mini {
+    background: #1a1a1b;
+    border: 1px solid #333;
+    color: var(--pessego-ref);
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    transition: 0.2s;
+}
+
+.btn-mini:hover {
+    background: var(--pessego-ref);
+    color: #000;
+}
+
+/* Botão Limpar Banco */
+.btn-limpar-banco {
+    background-color: #1a1a1a;
+    color: #ffffff;
+    border: 1px solid #333;
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s ease;
+}
+
+.btn-limpar-banco:hover {
+    background-color: #3d0000;
+    border-color: var(--danger-intense);
+    color: var(--danger-intense);
+}
+
+.btn-limpar-banco i { font-size: 0.9rem; }
+
+/* Botões com Gradiente */
+.btn-primary-gradient {
+    background: linear-gradient(90deg, #155e63 0%, #e9a680 100%);
+    color: #000000;
+    border: none;
+    padding: 10px 18px;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    transition: transform 0.2s ease, filter 0.2s ease;
+}
+
+.btn-primary-gradient:hover {
+    transform: translateY(-1px);
+    filter: brightness(1.1);
+}
+
+.btn-primary-gradient:active {
+    transform: translateY(0);
+}
+
+.btn-cancel {
+    background-color: #000000;
+    color: #ffffff;
+    border: 1px solid #333;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.3s ease, border-color 0.3s ease;
+}
+
+.btn-cancel:hover {
+    background-color: #1a1a1a;
+    border-color: var(--pessego-ref); 
+}
+
 /* --- FORMULÁRIOS --- */
 .form-group { margin-bottom: 20px; }
 
@@ -299,6 +557,20 @@ input, textarea, select {
 }
 
 input:focus { border-color: var(--primary-sunset); }
+
+.input-dark {
+    background: #1a1a1b;
+    border: 1px solid #333;
+    color: white;
+    padding: 12px;
+    border-radius: 8px;
+    width: 100%;
+}
+
+select.input-dark option {
+    background: #000;
+    color: #fff;
+}
 
 button[type="submit"] {
     background: linear-gradient(to right, var(--primary-teal), var(--primary-sunset));
@@ -324,203 +596,30 @@ button[type="submit"] {
 .status-andamento { background: rgba(59, 130, 246, 0.1); color: #3b82f6; }
 .status-concluido { background: rgba(16, 185, 129, 0.1); color: #10b981; }
 
-/* --- MODAIS --- */
+/* --- MODAIS & OVERLAYS --- */
 .modal-overlay {
     position: fixed;
     top: 0; left: 0;
     width: 100%; height: 100%;
-    background: rgba(0, 0, 0, 0.8);
-    backdrop-filter: blur(5px);
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(8px);
     display: flex;
     align-items: center;
     justify-content: center;
-    z-index: 2000;
-}
-
-.modal-content {
-    background: var(--card-bg);
-    padding: 30px;
-    border-radius: 20px;
-    border: 1px solid var(--border-color);
-    width: 90%;
-    max-width: 500px;
-}
-/* --- BOTÕES GLOBAIS E ESPECÍFICOS --- */
-
-/* Botão Limpar Banco (image_ea545d.png) */
-/* Botão Limpar Banco */
-.btn-limpar-banco {
-    background-color: #1a1a1a;
-    color: #ffffff;
-    border: 1px solid #333;
-    padding: 6px 12px;
-    border-radius: 4px;
-    font-size: 0.75rem;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 8px;
+    z-index: 9999;
     transition: all 0.3s ease;
 }
 
-.btn-limpar-banco:hover {
-    background-color: #3d0000;
-    border-color: #ff4d4d;
-    color: #ff4d4d;
-}
-
-.btn-limpar-banco i {
-    font-size: 0.9rem;
-}
-/* Botão Nova Peça e Salvar (image_ea547b.png e image_ea5435.png) */
-/* Botão Principal com Gradiente (Nova Peça / Salvar) */
-.btn-primary-gradient {
-    background: linear-gradient(90deg, #155e63 0%, #e9a680 100%);
-    color: #000000;
-    border: none;
-    padding: 10px 18px;
-    border-radius: 8px;
-    font-weight: 700;
-    font-size: 0.85rem;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    cursor: pointer;
-    transition: transform 0.2s ease, filter 0.2s ease;
-}
-
-.btn-primary-gradient:hover {
-    transform: translateY(-1px);
-    filter: brightness(1.1);
-}
-
-.btn-primary-gradient:active {
-    transform: translateY(0);
-}
-/* Botões de Ação na Tabela (WhatsApp, PDF, Lixo) */
-.btn-action-dark {
-    background: #1a1a1b;
-    border: 1px solid #333;
-    color: #fff;
-    padding: 8px;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: 0.3s;
-}
-.btn-action-dark i.fa-check-circle:hover {
-    filter: brightness(1.5);
-    transform: scale(1.2);
-}
-.btn-action-dark:hover {
-    background: #333;
-}
-
-.btn-del-mini {
-    background: #1a1a1b;
-    color: #fff;
-    border: 1px solid #333;
-    padding: 8px;
-    border-radius: 6px;
-}
-
-.btn-del-mini:hover {
-    background: #441111;
-    color: #ff4d4d;
-}
-
-/* --- CARDS DE DASHBOARD (image_ea5435.png) --- */
-.stat-card {
-    background: #111112;
-    border: 1px solid #1f1f21;
-    border-radius: 12px;
-    padding: 20px;
-    text-align: center;
-}
-
-.stat-card h3 {
-    color: #666;
-    font-size: 0.7rem;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-}
-
-.stat-card .value {
-    color: #e9a680; /* Cor pêssego das imagens */
-    font-size: 2.5rem;
-    font-weight: bold;
-    margin-top: 10px;
-}
-
-/* --- TABELAS DARK (image_ea545d.png) --- */
-.table-container {
-    background: #0a0a0a;
-    border-radius: 15px;
-    overflow: hidden;
-    border: 1px solid #1a1a1a;
-}
-
-.table-header {
-    background: #155e63; /* Tom petróleo da imagem */
-    color: #e9a680;
-    padding: 15px;
-    font-weight: bold;
-}
-
-/* --- MODAIS --- */
 .modal-content {
     background: #000000;
     border: 1px solid #333;
     color: white;
     padding: 30px;
     border-radius: 15px;
+    width: 90%;
+    max-width: 500px;
 }
 
-.input-dark {
-    background: #1a1a1b;
-    border: 1px solid #333;
-    color: white;
-    padding: 12px;
-    border-radius: 8px;
-    width: 100%;
-}
-/* Botão Cancelar */
-.btn-cancel {
-    background-color: #000000;
-    color: #ffffff;
-    border: 1px solid #333;
-    padding: 8px 16px;
-    border-radius: 8px;
-    font-size: 0.85rem;
-    font-weight: 500;
-    cursor: pointer;
-    transition: background 0.3s ease, border-color 0.3s ease;
-}
-
-.btn-cancel:hover {
-    background-color: #1a1a1a;
-    border-color: #e9a680; /* Destaque sutil com a cor pêssego */
-}
-/* Estilo para linha de estoque baixo */
-.estoque-critico {
-    background-color: rgba(233, 166, 128, 0.1) !important; /* Cor pêssego bem suave no fundo */
-}
-
-.estoque-critico td {
-    color: #e9a680 !important; /* Texto em pêssego para destacar */
-}
-
-.estoque-critico i.fa-exclamation-triangle {
-    margin-left: 10px;
-    color: #ff4d4d;
-    animation: blink 1.5s infinite;
-}
-
-/* Animação de piscar para o alerta */
-@keyframes blink {
-    0% { opacity: 1; }
-    50% { opacity: 0.3; }
-    100% { opacity: 1; }
-}
-/* Estilo unificado para os botões do modal */
 .modal-buttons {
     display: flex;
     gap: 12px;
@@ -538,175 +637,13 @@ button[type="submit"] {
 }
 
 .modal-buttons .btn-primary-gradient {
-    flex: 2; /* O botão Salvar ganha mais destaque */
-    background: linear-gradient(90deg, #155e63 0%, #e9a680 100%);
-    color: #000;
-    font-weight: bold;
-    border: none;
-    padding: 12px;
-    border-radius: 8px;
-    cursor: pointer;
-}
-.btn-mini {
-    background: #1a1a1b;
-    border: 1px solid #333;
-    color: #e9a680;
-    width: 24px;
-    height: 24px;
-    border-radius: 50%;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: bold;
-    transition: 0.2s;
+    flex: 2; 
 }
 
-.btn-mini:hover {
-    background: #e9a680;
-    color: #000;
-}
-
-/* Estilo para o select na Nova Ordem */
-select.input-dark option {
-    background: #000;
-    color: #fff;
-}
-/* Destaque para OS que precisa de atenção (mais de 48h) */
-.os-urgente {
-    border-left: 5px solid #ff4d4d !important;
-    background: linear-gradient(to right, #1a1a1b, #2d1111) !important;
-}
-.welcome-banner {
-    background: linear-gradient(135deg, rgba(21, 94, 99, 0.2) 0%, rgba(233, 166, 128, 0.1) 100%);
-    border: 1px solid #1f1f21;
-    border-radius: 16px;
-    padding: 30px;
-    margin-bottom: 30px;
-    position: relative;
-    overflow: hidden;
-    backdrop-filter: blur(10px);
-}
-
-/* Detalhe decorativo sutil ao fundo */
-.welcome-banner::before {
-    content: '';
-    position: absolute;
-    top: -50px;
-    right: -50px;
-    width: 150px;
-    height: 150px;
-    background: #e9a680;
-    filter: blur(80px);
-    opacity: 0.15;
-}
-
-.welcome-content {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.welcome-text h1 {
-    font-size: 1.8rem;
-    color: #ffffff;
-    margin: 0;
-}
-
-.welcome-text h1 span {
-    color: #e9a680; /* Tom pêssego da referência */
-}
-
-.welcome-text p {
-    color: #888;
-    margin-top: 5px;
-    font-size: 1rem;
-}
-
-.clock-container {
-    text-align: right;
-    display: flex;
-    flex-direction: column;
-}
-
-#current-time {
-    font-size: 1.5rem;
-    font-weight: bold;
-    color: #ffffff;
-    font-family: 'Courier New', monospace;
-}
-
-#current-date {
-    color: #155e63; /* Tom petróleo */
-    font-size: 0.85rem;
-    font-weight: bold;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-}
-/* Container da Sidebar */
-.sidebar {
-    display: flex;
-    flex-direction: column;
-    height: 100vh; /* Ocupa a altura total da tela */
-    background-color: #0a0a0a;
-    border-right: 1px solid #1f1f21;
-    position: fixed;
-    width: 250px;
-}
-
-/* O menu ocupa todo o espaço central */
-.nav-menu {
-    flex-grow: 1; 
-    padding: 20px 0;
-}
-
-/* O rodapé fica sempre no final */
-.sidebar-footer {
-    padding: 20px;
-    border-top: 1px solid rgba(255, 255, 255, 0.05); /* Linha divisória sutil */
-}
-
-/* Estilização do Botão SAIR */
-.btn-logout {
-    width: 100%;
-    background: rgba(255, 77, 77, 0.05) !important;
-    color: #ff4d4d !important;
-    border: 1px solid rgba(255, 77, 77, 0.2) !important;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 12px 15px;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: 0.3s;
-    font-weight: bold;
-}
-
-.btn-logout:hover {
-    background: #ff4d4d !important;
-    color: #ffffff !important;
-    box-shadow: 0 0 15px rgba(255, 77, 77, 0.3);
-}
-/* Overlay que escurece o fundo */
-.modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.85); /* Fundo bem escuro */
-    backdrop-filter: blur(8px); /* Efeito de desfoque no dashboard ao fundo */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 9999;
-    transition: all 0.3s ease;
-}
-
-/* O card de confirmação propriamente dito */
+/* Card de Confirmação de Ações */
 .confirm-card {
     background: #111112;
-    border: 1px solid #1f1f21;
+    border: 1px solid var(--border-light);
     padding: 30px;
     border-radius: 16px;
     max-width: 400px;
@@ -733,14 +670,12 @@ select.input-dark option {
     line-height: 1.5;
 }
 
-/* Container dos botões */
 .confirm-buttons {
     display: flex;
     gap: 12px;
     justify-content: center;
 }
 
-/* Botão "Cancelar" (Não sair) */
 #confirm-no {
     background: #1a1a1b;
     color: #ffffff;
@@ -758,9 +693,8 @@ select.input-dark option {
     border-color: #444;
 }
 
-/* Botão "Confirmar" (Sair) */
 #confirm-yes {
-    background: #ff4d4d; /* Vermelho de alerta */
+    background: var(--danger-intense);
     color: #ffffff;
     border: none;
     padding: 12px 25px;
@@ -778,36 +712,17 @@ select.input-dark option {
     box-shadow: 0 6px 20px rgba(255, 77, 77, 0.5);
 }
 
-.hidden {
-    display: none !important;
-}
-/* Cores dinâmicas para o modal */
-.confirm-card i.warning-icon { color: #e9a680; } /* Cor pêssego para exclusão simples */
-.confirm-card i.danger-icon { color: #ff4d4d; }  /* Cor vermelha para limpar banco */
+/* Modificadores Dinâmicos para Modais */
+.confirm-card i.warning-icon { color: var(--pessego-ref); } 
+.confirm-card i.danger-icon { color: var(--danger-intense); }  
 
-/* Estilo para o botão de confirmação quando for algo crítico */
 .btn-confirm-danger {
-    background: #ff4d4d !important;
+    background: var(--danger-intense) !important;
     box-shadow: 0 4px 15px rgba(255, 77, 77, 0.3);
 }
 
 .btn-confirm-warning {
-    background: #e9a680 !important;
+    background: var(--pessego-ref) !important;
     color: #000 !important;
     box-shadow: 0 4px 15px rgba(233, 166, 128, 0.3);
-}
-/* Estilo específico para o botão de Nova Ordem na Sidebar */
-.btn-nova-ordem-sidebar {
-    color: #e9a680 !important; /* Texto em pêssego para destacar a ação */
-    font-weight: 600;
-}
-
-.btn-nova-ordem-sidebar i {
-    color: #e9a680 !important;
-}
-
-/* Efeito de hover diferenciado para o botão de criar ordem */
-.btn-nova-ordem-sidebar:hover {
-    background: rgba(233, 166, 128, 0.1) !important; /* Fundo pêssego translúcido */
-    border-left: 4px solid #e9a680;
 }
