@@ -145,13 +145,13 @@ h1, h2, h3, .sidebar-logo, .kanban-title {
 /* Destaques fixos (Nova Ordem / Botões Específicos na Sidebar) */
 .btn-destaque-sidebar,
 .btn-nova-ordem-sidebar {
-    color: var(--pessego-ref) !important;
+    color: var(#a0aec0) !important;
     font-weight: 600;
 }
 
 .btn-destaque-sidebar i,
 .btn-nova-ordem-sidebar i {
-    color: var(--pessego-ref) !important;
+    color: var(#a0aec0) !important;
 }
 
 .btn-nova-ordem-sidebar:hover {
