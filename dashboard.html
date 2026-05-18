@@ -104,7 +104,53 @@
             </div>
         </div>
     </section>
+<section id="cadastro-screen" class="content-section hidden">
+    <div class="form-card animate-in">
+        <h2><i class="far fa-edit"></i> Nova Ordem</h2>
+        
+        <form id="serviceForm">
+            <div class="input-group">
+                <label>Cliente</label>
+                <input type="text" id="cli-nome" placeholder="Nome completo" required class="input-dark">
+            </div>
+            <div class="input-group">
+                <label>WhatsApp</label>
+                <input type="text" id="cli-phone" placeholder="DDD + Número" class="input-dark">
+            </div>
+            <div class="input-group">
+                <label>Aparelho</label>
+                <input type="text" id="apa-nome" placeholder="Marca e Modelo" required class="input-dark">
+            </div>
+            <div class="input-group">
+                <label>Defeito</label>
+                <textarea id="apa-defeito" placeholder="Relato do problema" required class="input-dark"></textarea>
+            </div>
+            
+            <div class="input-group">
+                <label>Peça Utilizada</label>
+                <select id="os-peca-select" class="input-dark">
+                    <option value="">-- Selecione uma peça (Opcional) --</option>
+                </select>
+            </div>
 
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 15px;">
+                <div class="input-group">
+                    <label>Data</label>
+                    <input type="date" id="apa-data" required class="input-dark">
+                </div>
+                <div class="input-group">
+                    <label>Valor do Serviço (R$)</label>
+                    <input type="number" step="0.01" id="apa-valor" placeholder="0.00" required class="input-dark">
+                </div>
+            </div>
+            
+            <div class="form-buttons" style="margin-top: 25px; display: flex; gap: 10px;">
+                <button type="button" onclick="showScreen('home-screen')" class="btn-cancel">Cancelar</button>
+                <button type="submit" class="btn-primary-gradient" style="width: 100%;">Salvar Ordem</button>
+            </div>
+        </form>
+    </div>
+</section>
     <!-- LISTA DE ORDENS -->
     <section id="lista-screen" class="content-section hidden">
         <div class="section-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
