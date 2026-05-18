@@ -5,36 +5,53 @@
 
 // --- NAVEGAÇÃO E ESTADO GLOBAL ---
 function showScreen(screenId) {
-    // ... sua lógica de esconder/mostrar telas ...
-    
-    if (screenId === 'nova-ordem-screen') {
-        carregarSelectPecas(); // Atualiza a lista sempre que você for criar uma OS
-    }
-    document.querySelectorAll('.content-section').forEach(section => {
-        section.classList.add('hidden');
+    // 1. ESCONDE TODAS AS TELAS DO SISTEMA
+    // Certifique-se de que todas as suas seções de conteúdo tenham a classe '.content-section'
+    const telas = document.querySelectorAll('.content-section');
+    telas.forEach(tela => {
+        tela.classList.add('hidden');
     });
 
-    // 2. Remove destaque de todos os itens do menu
-    document.querySelectorAll('.nav-item').forEach(item => {
-        item.classList.remove('active');
-    });
-
-    // 3. Mostra a seção alvo
-    const target = document.getElementById(screenId);
-    if (target) {
-        target.classList.remove('hidden');
+    // 2. MOSTRA A TELA SELECIONADA
+    const telaAlvo = document.getElementById(screenId);
+    if (telaAlvo) {
+        telaAlvo.classList.remove('hidden');
+    } else {
+        console.error(`Erro: A tela com o ID "${screenId}" não foi encontrada no HTML.`);
     }
 
-    // 4. Renderização condicional por tela
-    switch(screenId) {
-        case 'home-screen':      updateStats(); break;
-        case 'kanban-screen':    renderKanban(); break;
-        case 'lista-screen':     renderTable(); break;
-        case 'financeiro-screen': renderFinanceiro(); break;
-        case 'estoque-screen':    renderEstoque(); break;
+    // 3. GERENCIA O ACENDIMENTO DOS BOTÕES DA SIDEBAR (O CORRETO PARA NOVOS BUTTONS)
+    const botoesSidebar = document.querySelectorAll('.sidebar .nav-item');
+    botoesSidebar.forEach(botao => {
+        // Remove a classe ativa de todos os botões
+        botao.classList.remove('active');
+        
+        // Verifica se o 'onclick' deste botão contém o ID da tela atual para reativá-lo
+        if (botao.getAttribute('onclick') && botao.getAttribute('onclick').includes(screenId)) {
+            botao.classList.add('active');
+        }
+    });
+
+    // 4. LOGICAS EXTRAS DE CARREGAMENTO AUTOMÁTICO
+    if (screenId === 'home-screen' && typeof atualizarWelcomeBanner === 'function') {
+        atualizarWelcomeBanner();
+    }
+    if (screenId === 'cadastro-screen' && typeof carregarSelectPecas === 'function') {
+        carregarSelectPecas();
+    }
+    if (screenId === 'lista-screen' && typeof renderTable === 'function') {
+        renderTable();
+    }
+    if (screenId === 'kanban-screen' && typeof renderKanban === 'function') {
+        renderKanban();
+    }
+    if (screenId === 'estoque-screen' && typeof renderEstoque === 'function') {
+        renderEstoque();
+    }
+    if (screenId === 'financeiro-screen' && typeof renderFinanceiro === 'function') {
+        renderFinanceiro();
     }
 }
-
 // --- GESTÃO DE ORDENS DE SERVIÇO (OS) ---
 const getOS = () => JSON.parse(localStorage.getItem('SAD_PRO_OS') || '[]');
 const saveOS = (data) => {
