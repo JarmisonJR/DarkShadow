@@ -44,64 +44,106 @@ h1, h2, h3, .sidebar-logo, .kanban-title {
 .hidden { display: none !important; }
 
 /* --- SIDEBAR --- */
+/* --- ESTILIZAÇÃO DA SIDEBAR E SEUS BOTÕES --- */
+
 .sidebar {
-    width: 260px;
-    background: var(--sidebar-bg);
-    border-right: 1px solid var(--border-color);
-    padding: 30px 20px;
     display: flex;
     flex-direction: column;
-    position: fixed;
     height: 100vh;
-    z-index: 1000;
+    background-color: #0a0a0a;
+    border-right: 1px solid #1f1f21;
+    position: fixed;
+    width: 250px;
+    top: 0;
+    left: 0;
+    z-index: 100;
 }
 
 .sidebar-logo {
-    font-size: 1.6rem;
-    text-transform: uppercase;
-    margin-bottom: 40px;
-    letter-spacing: 2px;
-    color: var(--text-white);
+    padding: 25px 20px;
+    text-align: center;
 }
 
-.sidebar-logo span { 
-    color: var(--primary-sunset); 
-    text-shadow: 0 0 10px var(--sunset-glow); 
+.sidebar-logo h2 {
+    color: #ffffff;
+    font-size: 1.2rem;
+    letter-spacing: 1px;
+    margin: 0;
 }
 
-.nav-menu { 
-    flex-grow: 1; 
-    display: flex; 
-    flex-direction: column; 
-    gap: 8px; 
+.nav-menu {
+    flex-grow: 1;
+    padding: 10px 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px; /* Espaçamento idêntico entre os botões */
 }
 
+/* Base de todos os botões da Sidebar (Padrão Nova Ordem) */
 .nav-item {
+    width: 100%;
     background: transparent;
     border: none;
-    color: var(--text-muted);
+    border-left: 4px solid transparent;
+    color: #a0aec0; /* Cor cinza elegante para itens inativos */
     padding: 14px 18px;
-    border-radius: 12px;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-weight: 500;
+    cursor: pointer;
     display: flex;
     align-items: center;
     gap: 12px;
-    transition: 0.3s;
-    cursor: pointer;
     text-align: left;
-    width: 100%;
+    transition: all 0.25s ease;
 }
 
-.nav-item:hover { 
-    background: rgba(255, 255, 255, 0.05); 
-    color: var(--text-white); 
+/* Ícones padrão dentro dos botões */
+.nav-item i {
+    font-size: 1.1rem;
+    color: #a0aec0;
+    transition: color 0.25s ease;
 }
 
+/* Efeito Hover Geral para todos os botões (Igual ao que fizemos no Nova Ordem) */
+.nav-item:hover {
+    background: rgba(233, 166, 128, 0.08) !important; /* Fundo pêssego translúcido */
+    color: #e9a680 !important; /* Texto assume a cor pêssego */
+    border-left: 4px solid #e9a680; /* Barra lateral pêssego acende */
+    padding-left: 22px; /* Leve recuo para a direita no movimento */
+}
+
+.nav-item:hover i {
+    color: #e9a680 !important;
+}
+
+/* Estado do botão que está selecionado/ativo no momento */
 .nav-item.active {
-    background: linear-gradient(to right, var(--primary-teal), rgba(21, 94, 99, 0.2)) !important;
-    color: var(--primary-sunset) !important;
-    border-left: 3px solid var(--primary-sunset);
+    background: rgba(21, 94, 99, 0.15) !important; /* Fundo petróleo suave */
+    color: #ffffff !important;
+    border-left: 4px solid #155e63; /* Barra esquerda na cor petróleo */
+    font-weight: 600;
 }
 
+.nav-item.active i {
+    color: #155e63 !important;
+}
+
+/* Destaque fixo para a Nova Ordem (Ela já nasce na cor pêssego mesmo sem o mouse em cima) */
+.btn-destaque-sidebar {
+    color: #e9a680 !important;
+    font-weight: 600;
+}
+
+.btn-destaque-sidebar i {
+    color: #e9a680 !important;
+}
+
+/* Rodapé */
+.sidebar-footer {
+    padding: 20px 15px;
+    border-top: 1px solid rgba(255, 255, 255, 0.03);
+}
 /* --- MAIN LAYOUT --- */
 .main-wrapper {
     margin-left: 260px;
