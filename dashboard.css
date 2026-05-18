@@ -754,3 +754,18 @@ select.input-dark option {
     color: #000 !important;
     box-shadow: 0 4px 15px rgba(233, 166, 128, 0.3);
 }
+/* Estilo específico para o botão de Nova Ordem na Sidebar */
+.btn-nova-ordem-sidebar {
+    color: #e9a680 !important; /* Texto em pêssego para destacar a ação */
+    font-weight: 600;
+}
+
+.btn-nova-ordem-sidebar i {
+    color: #e9a680 !important;
+}
+
+/* Efeito de hover diferenciado para o botão de criar ordem */
+.btn-nova-ordem-sidebar:hover {
+    background: rgba(233, 166, 128, 0.1) !important; /* Fundo pêssego translúcido */
+    border-left: 4px solid #e9a680;
+}
