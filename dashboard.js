@@ -681,3 +681,61 @@ function confirmarSair() {
 function closeConfirm() {
     document.getElementById('custom-confirm').classList.add('hidden');
 }
+// --- FUNÇÃO PARA SALVAR NOVA ORDEM DE SERVIÇO ---
+function handleFormSubmit(e) {
+    e.preventDefault(); // Impede a página de recarregar
+
+    // 1. Captura a lista atual de OS no sistema
+    const osList = getOS();
+
+    // 2. Captura a peça selecionada para dar baixa (reaproveitando a lógica corrigida)
+    const selectPeca = document.getElementById('os-peca-select');
+    const pecaId = selectPeca ? selectPeca.value : "";
+
+    if (pecaId && pecaId !== "") {
+        const estoque = getEstoque();
+        const index = estoque.findIndex(p => String(p.id) === String(pecaId));
+
+        if (index !== -1) {
+            if (estoque[index].quantidade > 0) {
+                estoque[index].quantidade -= 1;
+                saveEstoque(estoque);
+                console.log(`Baixa efetuada no estoque: 1 un de ${estoque[index].nome}`);
+            } else {
+                alert(`Atenção: A peça "${estoque[index].nome}" está esgotada no estoque, mas a OS será criada.`);
+            }
+        }
+    }
+
+    // 3. Cria o objeto da Nova OS com os dados do formulário
+    const novaOS = {
+        id: Math.floor(1000 + Math.random() * 8999), // ID único de 4 dígitos
+        cliente: document.getElementById('cli-nome').value,
+        telefone: document.getElementById('cli-phone').value,
+        aparelho: document.getElementById('apa-nome').value,
+        defeito: document.getElementById('apa-defeito').value,
+        data: document.getElementById('apa-data').value,
+        valor: parseFloat(document.getElementById('apa-valor').value || 0),
+        status: 'Pendente', // Toda ordem nasce pendente no Kanban
+        pecaUtilizada: pecaId
+    };
+
+    // 4. Salva no localStorage através da sua função base
+    osList.push(novaOS);
+    saveOS(osList);
+
+    // 5. Limpa os campos do formulário
+    e.target.reset();
+
+    // 6. Redireciona visualmente para a lista de ordens e atualiza a tabela
+    showScreen('lista-screen');
+    if (typeof renderTable === 'function') renderTable();
+}
+
+// --- VÍNCULO DO EVENTO COM O FORMULÁRIO ---
+document.addEventListener('DOMContentLoaded', () => {
+    const form = document.getElementById('serviceForm');
+    if (form) {
+        form.addEventListener('submit', handleFormSubmit);
+    }
+});
