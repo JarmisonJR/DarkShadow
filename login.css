@@ -142,7 +142,7 @@ input:focus {
     /* 1. ADICIONE A FOTO DE FUNDO AQUI */
     /* Substitua o link abaixo pela URL da imagem que você desejar */
     background-image: linear-gradient(rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0.85)), 
-                      url('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1920');
+                      url('image.jpg');
     
     /* 2. CONFIGURAÇÕES DE POSICIONAMENTO DA FOTO */
     background-size: cover;        /* Faz a foto cobrir a tela inteira sem distorcer */
