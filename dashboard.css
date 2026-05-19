@@ -1,29 +1,32 @@
 @import url('https://fonts.googleapis.com/css2?family=Forum&family=Inter:wght@400;600;700&display=swap');
 
-/* --- VARIÁVEIS DE CORES (Identidade Visual Consolidada) --- */
+/* --- VARIÁVEIS DE CORES (Identidade Visual Premium de Alto Contraste) --- */
 :root {
-    --bg-black: #050506;
-    --sidebar-bg: #0a0a0b;
-    --card-bg: rgba(17, 17, 20, 0.65);    
-    --bg-input: rgba(26, 26, 30, 0.7);    
+    --bg-black: #060608;
+    --sidebar-bg: #0b0b0d;
+    
+    /* Cores em RGBA para garantir o efeito de vidro fosco (Glassmorphism) */
+    --card-bg: rgba(10, 10, 12, 0.45);    
+    --bg-input: rgba(20, 20, 25, 0.6);    
 
     --primary-sunset: #ffb38a;      
     --pessego-ref: #e9a680;          
     --primary-teal: #155e63;        
-    --sunset-glow: rgba(255, 179, 138, 0.3);
+    --sunset-glow: rgba(255, 179, 138, 0.2);
 
     --text-white: #ffffff;
     --text-muted: #a1a1aa;
     --text-muted-lux: #a0aec0;      
-    --border-color: rgba(38, 38, 38, 0.4);  
-    --border-light: rgba(31, 31, 33, 0.3);
+    --border-color: rgba(255, 255, 255, 0.06);  
+    --border-light: rgba(255, 255, 255, 0.04);
 
     --danger: #ef4444;
     --danger-intense: #ff4d4d;
     --success: #10b981;
     --info: #3b82f6;
 
-    --shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37); 
+    /* Sombra difusa ideal para fazer os elementos "flutuarem" sobre a imagem */
+    --shadow: 0 16px 40px 0 rgba(0, 0, 0, 0.6); 
 }
 
 /* --- RESET & GLOBAL --- */
@@ -47,11 +50,11 @@ h1, h2, h3, .sidebar-logo, .kanban-title {
 
 .hidden { display: none !important; }
 
-/* --- SIDEBAR --- */
+/* --- SIDEBAR (Mantida sólida para ancorar o layout e dar profundidade) --- */
 .sidebar {
     width: 250px;
     background-color: var(--sidebar-bg);
-    border-right: 1px solid rgba(31, 31, 33, 0.8);
+    border-right: 1px solid rgba(255, 255, 255, 0.03);
     padding: 30px 20px;
     display: flex;
     flex-direction: column;
@@ -154,19 +157,17 @@ h1, h2, h3, .sidebar-logo, .kanban-title {
     border-left: 4px solid var(--pessego-ref);
 }
 
-/* Rodapé da Sidebar */
 .sidebar-footer {
     padding: 20px 0;
-    border-top: 1px solid rgba(255, 255, 255, 0.05);
-    margin-top: auto; /* Garante que fique sempre embaixo */
+    border-top: 1px solid rgba(255, 255, 255, 0.03);
+    margin-top: auto; 
 }
 
-/* CONSERTADO: BOTÃO SAIR (Melhor acabamento visual em vidro de perigo) */
 .btn-logout {
     width: 100%;
-    background: rgba(239, 68, 68, 0.08) !important;
+    background: rgba(239, 68, 68, 0.06) !important;
     color: var(--danger-intense) !important;
-    border: 1px solid rgba(239, 68, 68, 0.25) !important;
+    border: 1px solid rgba(239, 68, 68, 0.2) !important;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -185,11 +186,21 @@ h1, h2, h3, .sidebar-logo, .kanban-title {
     transform: translateY(-1px);
 }
 
-/* --- MAIN LAYOUT --- */
-.main-wrapper {
+/* --- SOLUÇÃO DO FUNDO: APLICADO DIRETAMENTE NO WRAPPER DA DASHBOARD --- */
+.main-wrapper, .main-content {
     margin-left: 250px;
     padding: 30px;
     width: calc(100% - 250px);
+    min-height: 100vh;
+    box-sizing: border-box;
+
+    /* Força a imagem a renderizar perfeitamente independente da tag HTML usada */
+    background-image: linear-gradient(rgba(6, 6, 8, 0.45), rgba(6, 6, 8, 0.55)), 
+                      url('Imagem4.jpg');
+    background-size: cover;        
+    background-position: center center;    
+    background-repeat: no-repeat;  
+    background-attachment: fixed;  
 }
 
 .content-section {
@@ -201,17 +212,20 @@ h1, h2, h3, .sidebar-logo, .kanban-title {
     to { opacity: 1; transform: translateY(0); }
 }
 
-/* --- WELCOME BANNER --- */
+/* --- DESIGN GLASSMORPHISM DA DASHBOARD --- */
+
+/* Welcome Banner: Vidro altamente translúcido com gradiente de luz */
 .welcome-banner {
-    background: linear-gradient(135deg, rgba(21, 94, 99, 0.25) 0%, rgba(233, 166, 128, 0.1) 100%) !important;
-    border: 1px solid rgba(255, 255, 255, 0.06);
+    background: linear-gradient(135deg, rgba(21, 94, 99, 0.2) 0%, rgba(233, 166, 128, 0.05) 100%) !important;
+    border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: 16px;
     padding: 30px;
     margin-bottom: 30px;
     position: relative;
     overflow: hidden;
-    backdrop-filter: blur(14px); 
-    -webkit-backdrop-filter: blur(14px);
+    backdrop-filter: blur(20px); 
+    -webkit-backdrop-filter: blur(20px);
+    box-shadow: var(--shadow);
 }
 
 .welcome-banner::before {
@@ -243,7 +257,7 @@ h1, h2, h3, .sidebar-logo, .kanban-title {
 }
 
 .welcome-text p {
-    color: #888;
+    color: #ccc;
     margin-top: 5px;
     font-size: 1rem;
 }
@@ -262,14 +276,14 @@ h1, h2, h3, .sidebar-logo, .kanban-title {
 }
 
 #current-date {
-    color: var(--primary-teal); 
+    color: var(--primary-sunset); 
     font-size: 0.85rem;
     font-weight: bold;
     text-transform: uppercase;
     letter-spacing: 1px;
 }
 
-/* --- CARDS DE ESTATÍSTICA --- */
+/* Cards de Estatística: Vidro fosco puro refinado */
 .stats-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -278,20 +292,25 @@ h1, h2, h3, .sidebar-logo, .kanban-title {
 }
 
 .stat-card {
-    background: rgba(17, 17, 18, 0.65) !important;
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
+    background: var(--card-bg) !important;
+    border: 1px solid var(--border-color);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
     padding: 25px;
     border-radius: 12px;
     text-align: center;
-    transition: 0.3s;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
     box-shadow: var(--shadow);
 }
 
+.stat-card:hover {
+    transform: translateY(-2px);
+    border-color: rgba(255, 255, 255, 0.15);
+}
+
 .stat-card h3 { 
-    font-size: 0.7rem; 
-    color: #a1a1aa; 
+    font-size: 0.75rem; 
+    color: var(--text-muted-lux); 
     text-transform: uppercase; 
     letter-spacing: 1px;
     margin-bottom: 10px;
@@ -301,12 +320,12 @@ h1, h2, h3, .sidebar-logo, .kanban-title {
 .stat-card span,
 .stat-card .value { 
     font-size: 2.5rem; 
-    color: var(--pessego-ref); 
+    color: var(--primary-sunset); 
     font-weight: bold;
     margin-top: 10px;
 }
 
-/* --- KANBAN --- */
+/* Kanban Columns: Fundo sutil para deixar os circuitos passarem por trás */
 .kanban-container {
     display: flex;
     gap: 20px;
@@ -315,10 +334,10 @@ h1, h2, h3, .sidebar-logo, .kanban-title {
 }
 
 .kanban-column {
-    background: rgba(17, 17, 20, 0.5) !important;
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
+    background: rgba(10, 10, 12, 0.35) !important;
+    border: 1px solid var(--border-color);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
     border-radius: 20px;
     min-width: 320px;
     flex: 1;
@@ -333,9 +352,9 @@ h1, h2, h3, .sidebar-logo, .kanban-title {
     font-size: 1.2rem;
     color: var(--primary-sunset);
     text-align: center;
-    background: rgba(21, 94, 99, 0.2);
+    background: rgba(21, 94, 99, 0.25);
     border-radius: 20px 20px 0 0;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    border-bottom: 1px solid var(--border-color);
 }
 
 .kanban-cards-area { 
@@ -344,34 +363,37 @@ h1, h2, h3, .sidebar-logo, .kanban-title {
 }
 
 .kanban-card {
-    background: rgba(30, 30, 35, 0.75) !important;
-    border: 1px solid rgba(255, 255, 255, 0.04);
+    background: rgba(255, 255, 255, 0.04) !important;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
     padding: 15px;
     border-radius: 12px;
     margin-bottom: 12px;
     cursor: grab;
     border-left: 4px solid var(--primary-teal);
-    transition: 0.2s;
+    transition: all 0.2s ease;
 }
 
 .kanban-card:hover { 
     transform: translateY(-3px); 
-    border-color: var(--primary-sunset); 
+    border-color: var(--pessego-ref); 
+    background: rgba(255, 255, 255, 0.07) !important;
     box-shadow: var(--shadow);
 }
 
 .os-urgente {
     border-left: 5px solid var(--danger-intense) !important;
-    background: linear-gradient(to right, rgba(30,30,35,0.8), rgba(45, 17, 17, 0.8)) !important;
+    background: linear-gradient(to right, rgba(239, 68, 68, 0.1), rgba(10, 10, 12, 0.4)) !important;
 }
 
-/* --- TABELAS --- */
+/* Tabelas Vitrificadas */
 .table-container { 
-    background: rgba(10, 10, 10, 0.6) !important; 
-    backdrop-filter: blur(15px);
-    -webkit-backdrop-filter: blur(15px);
+    background: rgba(10, 10, 12, 0.4) !important; 
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
     border-radius: 15px; 
-    border: 1px solid rgba(255, 255, 255, 0.05); 
+    border: 1px solid var(--border-color); 
     overflow-x: auto; 
     box-shadow: var(--shadow);
 }
@@ -379,12 +401,13 @@ h1, h2, h3, .sidebar-logo, .kanban-title {
 table { width: 100%; border-collapse: collapse; }
 
 th, .table-header { 
-    background: rgba(21, 94, 99, 0.8) !important; 
-    color: var(--pessego-ref); 
+    background: rgba(21, 94, 99, 0.6) !important; 
+    color: var(--primary-sunset); 
     padding: 18px; 
     text-align: left; 
     font-size: 0.9rem; 
     font-weight: bold;
+    border-bottom: 1px solid var(--border-color);
 }
 
 td { 
@@ -394,7 +417,7 @@ td {
 }
 
 .estoque-critico {
-    background-color: rgba(233, 166, 128, 0.15) !important; 
+    background-color: rgba(233, 166, 128, 0.08) !important; 
 }
 
 .estoque-critico td {
@@ -432,8 +455,8 @@ td {
 .btn-del:hover { background: var(--danger); color: white; }
 
 .btn-action-dark {
-    background: #1a1a1b;
-    border: 1px solid #333;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border-light);
     color: #fff;
     padding: 8px;
     border-radius: 6px;
@@ -442,48 +465,9 @@ td {
 }
 
 .btn-action-dark:hover {
-    background: #333;
+    background: rgba(255, 255, 255, 0.15);
 }
 
-.btn-action-dark i.fa-check-circle:hover {
-    filter: brightness(1.5);
-    transform: scale(1.2);
-}
-
-.btn-del-mini {
-    background: #1a1a1b;
-    color: #fff;
-    border: 1px solid #333;
-    padding: 8px;
-    border-radius: 6px;
-}
-
-.btn-del-mini:hover {
-    background: #441111;
-    color: var(--danger-intense);
-}
-
-.btn-mini {
-    background: #1a1a1b;
-    border: 1px solid #333;
-    color: var(--pessego-ref);
-    width: 24px;
-    height: 24px;
-    border-radius: 50%;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: bold;
-    transition: 0.2s;
-}
-
-.btn-mini:hover {
-    background: var(--pessego-ref);
-    color: #000;
-}
-
-/* CONSERTADO: BOTÃO LIMPAR BANCO (Agora em Glassmorphism integrado com o tema) */
 .btn-limpar-banco {
     background-color: rgba(239, 68, 68, 0.05);
     backdrop-filter: blur(8px);
@@ -509,12 +493,9 @@ td {
     transform: translateY(-1px);
 }
 
-.btn-limpar-banco i { font-size: 0.9rem; }
-
-/* Botões com Gradiente */
 .btn-primary-gradient {
     background: linear-gradient(90deg, #155e63 0%, #e9a680 100%);
-    color: #ffffff; /* CONSERTADO: Alterado para branco para facilitar leitura */
+    color: #ffffff; 
     border: none;
     padding: 10px 18px;
     border-radius: 8px;
@@ -526,41 +507,25 @@ td {
     transition: transform 0.2s ease, filter 0.2s ease;
 }
 
-.btn-primary-gradient:hover {
-    transform: translateY(-1px);
-    filter: brightness(1.1);
+/* --- FORMULÁRIOS & CADASTROS (Vidro de Alto Contraste) --- */
+.form-card {
+    background: rgba(12, 12, 15, 0.65) !important; 
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid var(--border-color);
+    padding: 30px;
+    border-radius: 16px;
+    box-shadow: var(--shadow);
 }
 
-.btn-primary-gradient:active {
-    transform: translateY(0);
-}
-
-.btn-cancel {
-    background-color: #000000;
-    color: #ffffff;
-    border: 1px solid #333;
-    padding: 8px 16px;
-    border-radius: 8px;
-    font-size: 0.85rem;
-    font-weight: 500;
-    cursor: pointer;
-    transition: background 0.3s ease, border-color 0.3s ease;
-}
-
-.btn-cancel:hover {
-    background-color: #1a1a1a;
-    border-color: var(--pessego-ref); 
-}
-
-/* --- FORMULÁRIOS --- */
 .form-group { margin-bottom: 20px; }
 
-label { display: block; margin-bottom: 8px; color: var(--text-muted); font-size: 0.9rem; }
+label { display: block; margin-bottom: 8px; color: var(--text-muted-lux); font-size: 0.9rem; }
 
 input, textarea, select {
     width: 100%;
     background: var(--bg-input);
-    border: 1px solid rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border-color);
     padding: 14px;
     color: white;
     border-radius: 10px;
@@ -568,23 +533,11 @@ input, textarea, select {
     transition: 0.3s;
 }
 
-input:focus { border-color: var(--primary-sunset); background: rgba(0,0,0,0.4); }
-
-.input-dark {
-    background: rgba(26, 26, 27, 0.6);
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    color: white;
-    padding: 12px;
-    border-radius: 8px;
-    width: 100%;
+input:focus, textarea:focus, select:focus { 
+    border-color: var(--primary-sunset); 
+    background: rgba(0, 0, 0, 0.5); 
 }
 
-select.input-dark option {
-    background: #000;
-    color: #fff;
-}
-
-/* CONSERTADO: SUBMIT DE FORMULÁRIOS (Nova Ordem e Nova Peça com Texto Visível e Confortável) */
 button[type="submit"] {
     background: linear-gradient(to right, var(--primary-teal), var(--pessego-ref));
     color: #ffffff; 
@@ -601,19 +554,8 @@ button[type="submit"] {
 
 button[type="submit"]:hover {
     filter: brightness(1.15);
-    box-shadow: 0 4px 20px rgba(233, 166, 128, 0.2);
+    box-shadow: 0 4px 20px rgba(233, 166, 128, 0.3);
     transform: translateY(-1px);
-}
-
-/* CONSERTADO: CARD DE CADASTRO (Glassmorphism de Alto Contraste para Leitura Confortável) */
-.form-card {
-    background: rgba(15, 15, 18, 0.75) !important; /* Ligeiramente mais denso para proteger os textos */
-    backdrop-filter: blur(18px);
-    -webkit-backdrop-filter: blur(18px);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    padding: 30px;
-    border-radius: 16px;
-    box-shadow: var(--shadow);
 }
 
 /* --- BADGES DE STATUS --- */
@@ -624,151 +566,31 @@ button[type="submit"]:hover {
     font-weight: bold;
 }
 
-.status-pendente { background: rgba(245, 158, 11, 0.1); color: #f59e0b; }
-.status-andamento { background: rgba(59, 130, 246, 0.1); color: #3b82f6; }
-.status-concluido { background: rgba(16, 185, 129, 0.1); color: #10b981; }
+.status-pendente { background: rgba(245, 158, 11, 0.15); color: #f59e0b; }
+.status-andamento { background: rgba(59, 130, 246, 0.15); color: #3b82f6; }
+.status-concluido { background: rgba(16, 185, 129, 0.15); color: #10b981; }
 
 /* --- MODAIS & OVERLAYS --- */
 .modal-overlay {
     position: fixed;
     top: 0; left: 0;
     width: 100%; height: 100%;
-    background: rgba(0, 0, 0, 0.85);
-    backdrop-filter: blur(8px);
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(12px);
     display: flex;
     align-items: center;
     justify-content: center;
     z-index: 9999;
-    transition: all 0.3s ease;
 }
 
 .modal-content {
-    background: #000000;
-    border: 1px solid #333;
+    background: rgba(10, 10, 12, 0.8);
+    border: 1px solid var(--border-color);
+    backdrop-filter: blur(20px);
     color: white;
     padding: 30px;
     border-radius: 15px;
     width: 90%;
     max-width: 500px;
-}
-
-.modal-buttons {
-    display: flex;
-    gap: 12px;
-    margin-top: 25px;
-}
-
-.modal-buttons .btn-cancel {
-    flex: 1;
-    background: #000;
-    color: #fff;
-    border: 1px solid #333;
-    padding: 12px;
-    border-radius: 8px;
-    cursor: pointer;
-}
-
-.modal-buttons .btn-primary-gradient {
-    flex: 2; 
-}
-
-/* Card de Confirmação de Ações */
-.confirm-card {
-    background: #111112;
-    border: 1px solid var(--border-light);
-    padding: 30px;
-    border-radius: 16px;
-    max-width: 400px;
-    width: 90%;
-    text-align: center;
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
-    animation: modalEntrada 0.3s ease-out;
-}
-
-@keyframes modalEntrada {
-    from { opacity: 0; transform: scale(0.9); }
-    to { opacity: 1; transform: scale(1); }
-}
-
-.confirm-card h3 {
-    color: #ffffff;
-    font-size: 1.4rem;
-    margin-bottom: 10px;
-}
-
-.confirm-card p {
-    color: #888;
-    margin-bottom: 25px;
-    line-height: 1.5;
-}
-
-.confirm-buttons {
-    display: flex;
-    gap: 12px;
-    justify-content: center;
-}
-
-#confirm-no {
-    background: #1a1a1b;
-    color: #ffffff;
-    border: 1px solid #333;
-    padding: 12px 25px;
-    border-radius: 8px;
-    font-weight: 600;
-    cursor: pointer;
-    flex: 1;
-    transition: 0.3s;
-}
-
-#confirm-no:hover {
-    background: #333;
-    border-color: #444;
-}
-
-#confirm-yes {
-    background: var(--danger-intense);
-    color: #ffffff;
-    border: none;
-    padding: 12px 25px;
-    border-radius: 8px;
-    font-weight: bold;
-    cursor: pointer;
-    flex: 1;
-    transition: 0.3s;
-    box-shadow: 0 4px 15px rgba(255, 77, 77, 0.3);
-}
-
-#confirm-yes:hover {
-    background: #ff3333;
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(255, 77, 77, 0.5);
-}
-
-.confirm-card i.warning-icon { color: var(--pessego-ref); } 
-.confirm-card i.danger-icon { color: var(--danger-intense); }  
-
-.btn-confirm-danger {
-    background: var(--danger-intense) !important;
-    box-shadow: 0 4px 15px rgba(255, 77, 77, 0.3);
-}
-
-.btn-confirm-warning {
-    background: var(--pessego-ref) !important;
-    color: #000 !important;
-    box-shadow: 0 4px 15px rgba(233, 166, 128, 0.3);
-}
-
-/* --- MAIN CONTENT COM IMAGEM DE FUNDO (CLAREADA) --- */
-.main-content {
-    background-image: linear-gradient(rgba(10, 10, 10, 0.45), rgba(10, 10, 10, 0.55)), 
-                      url('Imagem4.jpg');
-    background-size: cover;        
-    background-position: center center;    
-    background-repeat: no-repeat;  
-    background-attachment: fixed;  
-    
-    min-height: 100vh;
-    margin-left: 250px;            
-    padding: 30px;
-    box-sizing: border-box;
+    box-shadow: var(--shadow);
 }
