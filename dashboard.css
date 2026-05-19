@@ -4,26 +4,26 @@
 :root {
     --bg-black: #050506;
     --sidebar-bg: #0a0a0b;
-    --card-bg: #111114;
-    --bg-input: #1a1a1e;
+    --card-bg: rgba(17, 17, 20, 0.75); /* ALTERADO: Fundo translúcido para efeito de vidro */
+    --bg-input: rgba(26, 26, 30, 0.7);   /* ALTERADO: Inputs levemente transparentes */
 
-    --primary-sunset: #ffb38a;      /* Bege alaranjado original */
-    --pessego-ref: #e9a680;         /* Tom pêssego das imagens de referência */
-    --primary-teal: #155e63;        /* Teal/Petróleo profundo */
+    --primary-sunset: #ffb38a;      
+    --pessego-ref: #e9a680;          
+    --primary-teal: #155e63;        
     --sunset-glow: rgba(255, 179, 138, 0.3);
 
     --text-white: #ffffff;
     --text-muted: #a1a1aa;
-    --text-muted-lux: #a0aec0;      /* Cinza elegante para itens inativos */
-    --border-color: #262626;
-    --border-light: #1f1f21;
+    --text-muted-lux: #a0aec0;      
+    --border-color: rgba(38, 38, 38, 0.4); /* ALTERADO: Bordas mais sutis para o efeito vidro */
+    --border-light: rgba(31, 31, 33, 0.3);
 
     --danger: #ef4444;
     --danger-intense: #ff4d4d;
     --success: #10b981;
     --info: #3b82f6;
 
-    --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+    --shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
 }
 
 /* --- RESET & GLOBAL --- */
@@ -51,7 +51,7 @@ h1, h2, h3, .sidebar-logo, .kanban-title {
 .sidebar {
     width: 250px;
     background-color: var(--sidebar-bg);
-    border-right: 1px solid var(--border-light);
+    border-right: 1px solid rgba(31, 31, 33, 0.8);
     padding: 30px 20px;
     display: flex;
     flex-direction: column;
@@ -72,11 +72,6 @@ h1, h2, h3, .sidebar-logo, .kanban-title {
     text-align: center;
 }
 
-.sidebar-logo span { 
-    color: var(--primary-sunset); 
-    text-shadow: 0 0 10px var(--sunset-glow); 
-}
-
 .sidebar-logo h2 {
     color: #ffffff;
     font-size: 1.2rem;
@@ -92,7 +87,6 @@ h1, h2, h3, .sidebar-logo, .kanban-title {
     padding: 10px 0;
 }
 
-/* Base de todos os botões da Sidebar */
 .nav-item {
     width: 100%;
     background: transparent;
@@ -111,14 +105,12 @@ h1, h2, h3, .sidebar-logo, .kanban-title {
     transition: all 0.25s ease;
 }
 
-/* Ícones padrão dentro dos botões */
 .nav-item i {
     font-size: 1.1rem;
     color: var(--text-muted-lux);
     transition: color 0.25s ease;
 }
 
-/* Efeito Hover Geral para todos os botões */
 .nav-item:hover {
     background: rgba(233, 166, 128, 0.08) !important; 
     color: var(--pessego-ref) !important; 
@@ -130,7 +122,6 @@ h1, h2, h3, .sidebar-logo, .kanban-title {
     color: var(--pessego-ref) !important;
 }
 
-/* Estado do botão que está selecionado/ativo */
 .nav-item.active {
     background: rgba(21, 94, 99, 0.15) !important; 
     color: #ffffff !important;
@@ -142,16 +133,15 @@ h1, h2, h3, .sidebar-logo, .kanban-title {
     color: var(--primary-teal) !important;
 }
 
-/* Destaques fixos (Nova Ordem / Botões Específicos na Sidebar) */
 .btn-destaque-sidebar,
 .btn-nova-ordem-sidebar {
-    color: var(--text-muted-lux) !important; /* CORRIGIDO: Sintaxe var() corrigida */
+    color: var(--text-muted-lux) !important; 
     font-weight: 600;
 }
 
 .btn-destaque-sidebar i,
 .btn-nova-ordem-sidebar i {
-    color: var(--text-muted-lux) !important; /* CORRIGIDO: Sintaxe var() corrigida */
+    color: var(--text-muted-lux) !important; 
 }
 
 .btn-nova-ordem-sidebar:hover {
@@ -159,13 +149,11 @@ h1, h2, h3, .sidebar-logo, .kanban-title {
     border-left: 4px solid var(--pessego-ref);
 }
 
-/* Rodapé da Sidebar */
 .sidebar-footer {
     padding: 20px 0;
     border-top: 1px solid rgba(255, 255, 255, 0.05);
 }
 
-/* Botão SAIR */
 .btn-logout {
     width: 100%;
     background: rgba(255, 77, 77, 0.05) !important;
@@ -187,11 +175,21 @@ h1, h2, h3, .sidebar-logo, .kanban-title {
     box-shadow: 0 0 15px rgba(255, 77, 77, 0.3);
 }
 
-/* --- MAIN LAYOUT --- */
-.main-wrapper {
+/* --- MAIN LAYOUT (CORRIGIDO E UNIFICADO COM O CIRCUITO) --- */
+.main-wrapper, .main-content {
     margin-left: 250px;
     padding: 30px;
     width: calc(100% - 250px);
+    min-height: 100vh;
+    box-sizing: border-box;
+    
+    /* CONFIGURAÇÃO DO CIRCUITO COMO FUNDO IMPENETRÁVEL */
+    background-image: linear-gradient(rgba(5, 5, 6, 0.82), rgba(5, 5, 6, 0.9)), 
+                      url('Imagem4.jpg');
+    background-size: cover;        
+    background-position: center center;    
+    background-repeat: no-repeat;  
+    background-attachment: fixed;  
 }
 
 .content-section {
@@ -203,74 +201,19 @@ h1, h2, h3, .sidebar-logo, .kanban-title {
     to { opacity: 1; transform: translateY(0); }
 }
 
-/* --- WELCOME BANNER --- */
+/* --- EFETUANDO GLASSMORPHISM (Efeito Vidro Fosco nos Elementos) --- */
 .welcome-banner {
-    background: linear-gradient(135deg, rgba(21, 94, 99, 0.2) 0%, rgba(233, 166, 128, 0.1) 100%);
-    border: 1px solid var(--border-light);
+    background: linear-gradient(135deg, rgba(21, 94, 99, 0.25) 0%, rgba(233, 166, 128, 0.1) 100%) !important;
+    border: 1px solid rgba(255, 255, 255, 0.06);
     border-radius: 16px;
     padding: 30px;
     margin-bottom: 30px;
     position: relative;
     overflow: hidden;
-    backdrop-filter: blur(10px);
+    backdrop-filter: blur(14px); /* Desfoca o circuito ao fundo */
+    -webkit-backdrop-filter: blur(14px);
 }
 
-.welcome-banner::before {
-    content: '';
-    position: absolute;
-    top: -50px;
-    right: -50px;
-    width: 150px;
-    height: 150px;
-    background: var(--pessego-ref);
-    filter: blur(80px);
-    opacity: 0.15;
-}
-
-.welcome-content {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.welcome-text h1 {
-    font-size: 1.8rem;
-    color: #ffffff;
-    margin: 0;
-}
-
-.welcome-text h1 span {
-    color: var(--pessego-ref); 
-}
-
-.welcome-text p {
-    color: #888;
-    margin-top: 5px;
-    font-size: 1rem;
-}
-
-.clock-container {
-    text-align: right;
-    display: flex;
-    flex-direction: column;
-}
-
-#current-time {
-    font-size: 1.5rem;
-    font-weight: bold;
-    color: #ffffff;
-    font-family: 'Courier New', monospace;
-}
-
-#current-date {
-    color: var(--primary-teal); 
-    font-size: 0.85rem;
-    font-weight: bold;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-}
-
-/* --- CARDS DE ESTATÍSTICA (DASHBOARD) --- */
 .stats-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -279,32 +222,33 @@ h1, h2, h3, .sidebar-logo, .kanban-title {
 }
 
 .stat-card {
-    background: #111112;
-    border: 1px solid var(--border-light);
+    background: rgba(17, 17, 18, 0.65) !important;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
     padding: 25px;
     border-radius: 12px;
     text-align: center;
     transition: 0.3s;
+    box-shadow: var(--shadow);
 }
 
 .stat-card h3 { 
     font-size: 0.7rem; 
-    color: #666; 
+    color: #888; 
     text-transform: uppercase; 
     letter-spacing: 1px;
     margin-bottom: 10px;
 }
 
-.stat-card p, 
-.stat-card span,
-.stat-card .value { 
+.stat-card p, .stat-card span, .stat-card .value { 
     font-size: 2.5rem; 
     color: var(--pessego-ref); 
     font-weight: bold;
     margin-top: 10px;
 }
 
-/* --- KANBAN --- */
+/* --- KANBAN TRANSPARENTE --- */
 .kanban-container {
     display: flex;
     gap: 20px;
@@ -313,14 +257,17 @@ h1, h2, h3, .sidebar-logo, .kanban-title {
 }
 
 .kanban-column {
-    background: var(--card-bg);
-    border: 1px solid var(--border-color);
+    background: rgba(17, 17, 20, 0.5) !important;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
     border-radius: 20px;
     min-width: 320px;
     flex: 1;
     min-height: 600px;
     display: flex;
     flex-direction: column;
+    box-shadow: var(--shadow);
 }
 
 .kanban-title {
@@ -328,9 +275,9 @@ h1, h2, h3, .sidebar-logo, .kanban-title {
     font-size: 1.2rem;
     color: var(--primary-sunset);
     text-align: center;
-    background: rgba(21, 94, 99, 0.1);
+    background: rgba(21, 94, 99, 0.2);
     border-radius: 20px 20px 0 0;
-    border-bottom: 1px solid var(--border-color);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .kanban-cards-area { 
@@ -339,8 +286,8 @@ h1, h2, h3, .sidebar-logo, .kanban-title {
 }
 
 .kanban-card {
-    background: var(--bg-input);
-    border: 1px solid var(--border-color);
+    background: rgba(30, 30, 35, 0.75) !important;
+    border: 1px solid rgba(255, 255, 255, 0.04);
     padding: 15px;
     border-radius: 12px;
     margin-bottom: 12px;
@@ -357,21 +304,24 @@ h1, h2, h3, .sidebar-logo, .kanban-title {
 
 .os-urgente {
     border-left: 5px solid var(--danger-intense) !important;
-    background: linear-gradient(to right, #1a1a1b, #2d1111) !important;
+    background: linear-gradient(to right, rgba(30,30,35,0.8), rgba(45, 17, 17, 0.8)) !important;
 }
 
 /* --- TABELAS --- */
 .table-container { 
-    background: #0a0a0a; 
+    background: rgba(10, 10, 10, 0.6) !important; 
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
     border-radius: 15px; 
-    border: 1px solid #1a1a1a; 
+    border: 1px solid rgba(255, 255, 255, 0.05); 
     overflow-x: auto; 
+    box-shadow: var(--shadow);
 }
 
 table { width: 100%; border-collapse: collapse; }
 
 th, .table-header { 
-    background: var(--primary-teal); 
+    background: rgba(21, 94, 99, 0.8) !important; 
     color: var(--pessego-ref); 
     padding: 18px; 
     text-align: left; 
@@ -381,29 +331,13 @@ th, .table-header {
 
 td { 
     padding: 18px; 
-    border-bottom: 1px solid var(--border-color); 
+    border-bottom: 1px solid rgba(255, 255, 255, 0.03); 
     color: var(--text-white);
 }
 
 /* Alertas de Estoque */
 .estoque-critico {
-    background-color: rgba(233, 166, 128, 0.1) !important; 
-}
-
-.estoque-critico td {
-    color: var(--pessego-ref) !important; 
-}
-
-.estoque-critico i.fa-exclamation-triangle {
-    margin-left: 10px;
-    color: var(--danger-intense);
-    animation: blink 1.5s infinite;
-}
-
-@keyframes blink {
-    0% { opacity: 1; }
-    50% { opacity: 0.3; }
-    100% { opacity: 1; }
+    background-color: rgba(233, 166, 128, 0.15) !important; 
 }
 
 /* --- BOTÕES DE AÇÃO --- */
@@ -424,122 +358,6 @@ td {
 .btn-action:hover { background: var(--primary-teal); color: var(--primary-sunset); }
 .btn-del:hover { background: var(--danger); color: white; }
 
-.btn-action-dark {
-    background: #1a1a1b;
-    border: 1px solid #333;
-    color: #fff;
-    padding: 8px;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: 0.3s;
-}
-
-.btn-action-dark:hover {
-    background: #333;
-}
-
-.btn-action-dark i.fa-check-circle:hover {
-    filter: brightness(1.5);
-    transform: scale(1.2);
-}
-
-.btn-del-mini {
-    background: #1a1a1b;
-    color: #fff;
-    border: 1px solid #333;
-    padding: 8px;
-    border-radius: 6px;
-}
-
-.btn-del-mini:hover {
-    background: #441111;
-    color: var(--danger-intense);
-}
-
-.btn-mini {
-    background: #1a1a1b;
-    border: 1px solid #333;
-    color: var(--pessego-ref);
-    width: 24px;
-    height: 24px;
-    border-radius: 50%;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: bold;
-    transition: 0.2s;
-}
-
-.btn-mini:hover {
-    background: var(--pessego-ref);
-    color: #000;
-}
-
-/* Botão Limpar Banco */
-.btn-limpar-banco {
-    background-color: #1a1a1a;
-    color: #ffffff;
-    border: 1px solid #333;
-    padding: 6px 12px;
-    border-radius: 4px;
-    font-size: 0.75rem;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    transition: all 0.3s ease;
-}
-
-.btn-limpar-banco:hover {
-    background-color: #3d0000;
-    border-color: var(--danger-intense);
-    color: var(--danger-intense);
-}
-
-.btn-limpar-banco i { font-size: 0.9rem; }
-
-/* Botões com Gradiente */
-.btn-primary-gradient {
-    background: linear-gradient(90deg, #155e63 0%, #e9a680 100%);
-    color: #000000;
-    border: none;
-    padding: 10px 18px;
-    border-radius: 8px;
-    font-weight: 700;
-    font-size: 0.85rem;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    cursor: pointer;
-    transition: transform 0.2s ease, filter 0.2s ease;
-}
-
-.btn-primary-gradient:hover {
-    transform: translateY(-1px);
-    filter: brightness(1.1);
-}
-
-.btn-primary-gradient:active {
-    transform: translateY(0);
-}
-
-.btn-cancel {
-    background-color: #000000;
-    color: #ffffff;
-    border: 1px solid #333;
-    padding: 8px 16px;
-    border-radius: 8px;
-    font-size: 0.85rem;
-    font-weight: 500;
-    cursor: pointer;
-    transition: background 0.3s ease, border-color 0.3s ease;
-}
-
-.btn-cancel:hover {
-    background-color: #1a1a1a;
-    border-color: var(--pessego-ref); 
-}
-
 /* --- FORMULÁRIOS --- */
 .form-group { margin-bottom: 20px; }
 
@@ -548,7 +366,7 @@ label { display: block; margin-bottom: 8px; color: var(--text-muted); font-size:
 input, textarea, select {
     width: 100%;
     background: var(--bg-input);
-    border: 1px solid var(--border-color);
+    border: 1px solid rgba(255, 255, 255, 0.05);
     padding: 14px;
     color: white;
     border-radius: 10px;
@@ -556,188 +374,24 @@ input, textarea, select {
     transition: 0.3s;
 }
 
-input:focus { border-color: var(--primary-sunset); }
+input:focus { border-color: var(--primary-sunset); background: rgba(0,0,0,0.4); }
 
 .input-dark {
-    background: #1a1a1b;
-    border: 1px solid #333;
+    background: rgba(26, 26, 27, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.05);
     color: white;
     padding: 12px;
     border-radius: 8px;
     width: 100%;
 }
 
-select.input-dark option {
-    background: #000;
-    color: #fff;
-}
-
-button[type="submit"] {
-    background: linear-gradient(to right, var(--primary-teal), var(--primary-sunset));
-    color: var(--bg-black);
-    padding: 15px;
-    width: 100%;
-    border-radius: 10px;
-    font-weight: bold;
-    border: none;
-    cursor: pointer;
-    text-transform: uppercase;
-}
-
-/* --- BADGES DE STATUS --- */
-.status-badge {
-    padding: 6px 12px;
-    border-radius: 20px;
-    font-size: 0.75rem;
-    font-weight: bold;
-}
-
-.status-pendente { background: rgba(245, 158, 11, 0.1); color: #f59e0b; }
-.status-andamento { background: rgba(59, 130, 246, 0.1); color: #3b82f6; }
-.status-concluido { background: rgba(16, 185, 129, 0.1); color: #10b981; }
-
-/* --- MODAIS & OVERLAYS --- */
-.modal-overlay {
-    position: fixed;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    background: rgba(0, 0, 0, 0.85);
-    backdrop-filter: blur(8px);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 9999;
-    transition: all 0.3s ease;
-}
-
-.modal-content {
-    background: #000000;
-    border: 1px solid #333;
-    color: white;
-    padding: 30px;
-    border-radius: 15px;
-    width: 90%;
-    max-width: 500px;
-}
-
-.modal-buttons {
-    display: flex;
-    gap: 12px;
-    margin-top: 25px;
-}
-
-.modal-buttons .btn-cancel {
-    flex: 1;
-    background: #000;
-    color: #fff;
-    border: 1px solid #333;
-    padding: 12px;
-    border-radius: 8px;
-    cursor: pointer;
-}
-
-.modal-buttons .btn-primary-gradient {
-    flex: 2; 
-}
-
-/* Card de Confirmação de Ações */
-.confirm-card {
-    background: #111112;
-    border: 1px solid var(--border-light);
+/* Form Card de Cadastro */
+.form-card {
+    background: rgba(17, 17, 18, 0.75) !important;
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.06);
     padding: 30px;
     border-radius: 16px;
-    max-width: 400px;
-    width: 90%;
-    text-align: center;
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
-    animation: modalEntrada 0.3s ease-out;
-}
-
-@keyframes modalEntrada {
-    from { opacity: 0; transform: scale(0.9); }
-    to { opacity: 1; transform: scale(1); }
-}
-
-.confirm-card h3 {
-    color: #ffffff;
-    font-size: 1.4rem;
-    margin-bottom: 10px;
-}
-
-.confirm-card p {
-    color: #888;
-    margin-bottom: 25px;
-    line-height: 1.5;
-}
-
-.confirm-buttons {
-    display: flex;
-    gap: 12px;
-    justify-content: center;
-}
-
-#confirm-no {
-    background: #1a1a1b;
-    color: #ffffff;
-    border: 1px solid #333;
-    padding: 12px 25px;
-    border-radius: 8px;
-    font-weight: 600;
-    cursor: pointer;
-    flex: 1;
-    transition: 0.3s;
-}
-
-#confirm-no:hover {
-    background: #333;
-    border-color: #444;
-}
-
-#confirm-yes {
-    background: var(--danger-intense);
-    color: #ffffff;
-    border: none;
-    padding: 12px 25px;
-    border-radius: 8px;
-    font-weight: bold;
-    cursor: pointer;
-    flex: 1;
-    transition: 0.3s;
-    box-shadow: 0 4px 15px rgba(255, 77, 77, 0.3);
-}
-
-#confirm-yes:hover {
-    background: #ff3333;
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(255, 77, 77, 0.5);
-}
-
-/* Modificadores Dinâmicos para Modais */
-.confirm-card i.warning-icon { color: var(--pessego-ref); } 
-.confirm-card i.danger-icon { color: var(--danger-intense); }  
-
-.btn-confirm-danger {
-    background: var(--danger-intense) !important;
-    box-shadow: 0 4px 15px rgba(255, 77, 77, 0.3);
-}
-
-.btn-confirm-warning {
-    background: var(--pessego-ref) !important;
-    color: #000 !important;
-    box-shadow: 0 4px 15px rgba(233, 166, 128, 0.3);
-}
-
-/* --- MAIN CONTENT COM IMAGEM DE FUNDO --- */
-.main-content {
-    background-image: linear-gradient(rgba(10, 10, 10, 0.85), rgba(10, 10, 10, 0.9)), 
-                  url('Imagem4.jpg');
-    background-size: cover;        
-    background-position: center;    
-    background-repeat: no-repeat;  
-    background-attachment: fixed;  
-    
-    min-height: 100vh;
-    margin-left: 250px;            
-    padding: 30px;
-    box-sizing: border-box;
+    box-shadow: var(--shadow);
 }
