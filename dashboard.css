@@ -730,7 +730,7 @@ button[type="submit"] {
 /* --- MAIN CONTENT COM IMAGEM DE FUNDO --- */
 .main-content {
     background-image: linear-gradient(rgba(10, 10, 10, 0.85), rgba(10, 10, 10, 0.9)), 
-                      url('fe71656f-3ff0-46a8-997b-6c17a0f53484.jpg');
+                      url('imagem2.jpg');
     background-size: cover;        
     background-position: center;    
     background-repeat: no-repeat;  
