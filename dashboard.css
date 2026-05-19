@@ -184,12 +184,14 @@ h1, h2, h3, .sidebar-logo, .kanban-title {
     box-sizing: border-box;
     
     /* CONFIGURAÇÃO DO CIRCUITO COMO FUNDO IMPENETRÁVEL */
-    background-image: linear-gradient(rgba(5, 5, 6, 0.82), rgba(5, 5, 6, 0.9)), 
+    background-image: linear-gradient(rgba(10, 10, 10, 0.45), rgba(10, 10, 10, 0.55)), 
                       url('Imagem4.jpg');
-    background-size: cover;        
-    background-position: center center;    
-    background-repeat: no-repeat;  
-    background-attachment: fixed;  
+    
+    /* 2. COMPORTAMENTO DA IMAGEM */
+    background-size: cover;        /* Cobre toda a área sem distorcer */
+    background-position: center;    /* Centraliza os circuitos na tela */
+    background-repeat: no-repeat;  /* Impede a imagem de duplicar */
+    background-attachment: fixed;  /* O fundo fica fixo enquanto o conteúdo rola */
 }
 
 .content-section {
