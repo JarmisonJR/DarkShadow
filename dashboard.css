@@ -145,13 +145,13 @@ h1, h2, h3, .sidebar-logo, .kanban-title {
 /* Destaques fixos (Nova Ordem / Botões Específicos na Sidebar) */
 .btn-destaque-sidebar,
 .btn-nova-ordem-sidebar {
-    color: var(#a0aec0) !important;
+    color: var(--text-muted-lux) !important; /* CORRIGIDO: Sintaxe var() corrigida */
     font-weight: 600;
 }
 
 .btn-destaque-sidebar i,
 .btn-nova-ordem-sidebar i {
-    color: var(#a0aec0) !important;
+    color: var(--text-muted-lux) !important; /* CORRIGIDO: Sintaxe var() corrigida */
 }
 
 .btn-nova-ordem-sidebar:hover {
@@ -726,21 +726,18 @@ button[type="submit"] {
     color: #000 !important;
     box-shadow: 0 4px 15px rgba(233, 166, 128, 0.3);
 }
+
+/* --- MAIN CONTENT COM IMAGEM DE FUNDO --- */
 .main-content {
-    /* 1. DEFINE A IMAGEM DE FUNDO */
-    /* Substitua 'seu-circuito.jpg' pelo nome ou link real da imagem */
     background-image: linear-gradient(rgba(10, 10, 10, 0.85), rgba(10, 10, 10, 0.9)), 
                       url('fe71656f-3ff0-46a8-997b-6c17a0f53484.jpg');
+    background-size: cover;        
+    background-position: center;    
+    background-repeat: no-repeat;  
+    background-attachment: fixed;  
     
-    /* 2. COMPORTAMENTO DA IMAGEM */
-    background-size: cover;        /* Cobre toda a área sem distorcer */
-    background-position: center;    /* Centraliza os circuitos na tela */
-    background-repeat: no-repeat;  /* Impede a imagem de duplicar */
-    background-attachment: fixed;  /* O fundo fica fixo enquanto o conteúdo rola */
-    
-    /* 3. DIMENSÕES */
     min-height: 100vh;
-    margin-left: 250px;            /* Alinhamento para não cobrir a sidebar */
+    margin-left: 250px;            
     padding: 30px;
     box-sizing: border-box;
 }
