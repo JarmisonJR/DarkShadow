@@ -726,3 +726,21 @@ button[type="submit"] {
     color: #000 !important;
     box-shadow: 0 4px 15px rgba(233, 166, 128, 0.3);
 }
+.main-content {
+    /* 1. DEFINE A IMAGEM DE FUNDO */
+    /* Substitua 'seu-circuito.jpg' pelo nome ou link real da imagem */
+    background-image: linear-gradient(rgba(10, 10, 10, 0.85), rgba(10, 10, 10, 0.9)), 
+                      url('fe71656f-3ff0-46a8-997b-6c17a0f53484.jpg');
+    
+    /* 2. COMPORTAMENTO DA IMAGEM */
+    background-size: cover;        /* Cobre toda a área sem distorcer */
+    background-position: center;    /* Centraliza os circuitos na tela */
+    background-repeat: no-repeat;  /* Impede a imagem de duplicar */
+    background-attachment: fixed;  /* O fundo fica fixo enquanto o conteúdo rola */
+    
+    /* 3. DIMENSÕES */
+    min-height: 100vh;
+    margin-left: 250px;            /* Alinhamento para não cobrir a sidebar */
+    padding: 30px;
+    box-sizing: border-box;
+}
