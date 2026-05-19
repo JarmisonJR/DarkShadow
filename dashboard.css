@@ -4,18 +4,18 @@
 :root {
     --bg-black: #050506;
     --sidebar-bg: #0a0a0b;
-    --card-bg: rgba(17, 17, 20, 0.65);    /* ATUALIZADO: Suporte translúcido para efeito de vidro */
-    --bg-input: rgba(26, 26, 30, 0.7);    /* ATUALIZADO: Inputs levemente transparentes */
+    --card-bg: rgba(17, 17, 20, 0.65);    
+    --bg-input: rgba(26, 26, 30, 0.7);    
 
-    --primary-sunset: #ffb38a;      /* Bege alaranjado original */
-    --pessego-ref: #e9a680;          /* Tom pêssego das imagens de referência */
-    --primary-teal: #155e63;        /* Teal/Petróleo profundo */
+    --primary-sunset: #ffb38a;      
+    --pessego-ref: #e9a680;          
+    --primary-teal: #155e63;        
     --sunset-glow: rgba(255, 179, 138, 0.3);
 
     --text-white: #ffffff;
     --text-muted: #a1a1aa;
-    --text-muted-lux: #a0aec0;      /* Cinza elegante para itens inativos */
-    --border-color: rgba(38, 38, 38, 0.4);  /* ATUALIZADO: Bordas sutis para integrar o vidro */
+    --text-muted-lux: #a0aec0;      
+    --border-color: rgba(38, 38, 38, 0.4);  
     --border-light: rgba(31, 31, 33, 0.3);
 
     --danger: #ef4444;
@@ -23,7 +23,7 @@
     --success: #10b981;
     --info: #3b82f6;
 
-    --shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37); /* ATUALIZADO: Sombra ideal para glassmorphism */
+    --shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37); 
 }
 
 /* --- RESET & GLOBAL --- */
@@ -47,7 +47,7 @@ h1, h2, h3, .sidebar-logo, .kanban-title {
 
 .hidden { display: none !important; }
 
-/* --- SIDEBAR (Mantida sólida para contraste estrutural) --- */
+/* --- SIDEBAR --- */
 .sidebar {
     width: 250px;
     background-color: var(--sidebar-bg);
@@ -92,7 +92,6 @@ h1, h2, h3, .sidebar-logo, .kanban-title {
     padding: 10px 0;
 }
 
-/* Base de todos os botões da Sidebar */
 .nav-item {
     width: 100%;
     background: transparent;
@@ -111,14 +110,12 @@ h1, h2, h3, .sidebar-logo, .kanban-title {
     transition: all 0.25s ease;
 }
 
-/* Ícones padrão dentro dos botões */
 .nav-item i {
     font-size: 1.1rem;
     color: var(--text-muted-lux);
     transition: color 0.25s ease;
 }
 
-/* Efeito Hover Geral para todos os botões */
 .nav-item:hover {
     background: rgba(233, 166, 128, 0.08) !important; 
     color: var(--pessego-ref) !important; 
@@ -130,7 +127,6 @@ h1, h2, h3, .sidebar-logo, .kanban-title {
     color: var(--pessego-ref) !important;
 }
 
-/* Estado do botão que está selecionado/ativo */
 .nav-item.active {
     background: rgba(21, 94, 99, 0.15) !important; 
     color: #ffffff !important;
@@ -142,7 +138,6 @@ h1, h2, h3, .sidebar-logo, .kanban-title {
     color: var(--primary-teal) !important;
 }
 
-/* Destaques fixos (Nova Ordem / Botões Específicos na Sidebar) */
 .btn-destaque-sidebar,
 .btn-nova-ordem-sidebar {
     color: var(--text-muted-lux) !important; 
@@ -163,28 +158,31 @@ h1, h2, h3, .sidebar-logo, .kanban-title {
 .sidebar-footer {
     padding: 20px 0;
     border-top: 1px solid rgba(255, 255, 255, 0.05);
+    margin-top: auto; /* Garante que fique sempre embaixo */
 }
 
-/* Botão SAIR */
+/* CONSERTADO: BOTÃO SAIR (Melhor acabamento visual em vidro de perigo) */
 .btn-logout {
     width: 100%;
-    background: rgba(255, 77, 77, 0.05) !important;
+    background: rgba(239, 68, 68, 0.08) !important;
     color: var(--danger-intense) !important;
-    border: 1px solid rgba(255, 77, 77, 0.2) !important;
+    border: 1px solid rgba(239, 68, 68, 0.25) !important;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 12px 15px;
+    padding: 12px 18px;
     border-radius: 8px;
     cursor: pointer;
-    transition: 0.3s;
-    font-weight: bold;
+    transition: all 0.3s ease;
+    font-weight: 600;
 }
 
 .btn-logout:hover {
     background: var(--danger-intense) !important;
     color: #ffffff !important;
-    box-shadow: 0 0 15px rgba(255, 77, 77, 0.3);
+    border-color: var(--danger-intense) !important;
+    box-shadow: 0 0 15px rgba(255, 77, 77, 0.4);
+    transform: translateY(-1px);
 }
 
 /* --- MAIN LAYOUT --- */
@@ -203,7 +201,7 @@ h1, h2, h3, .sidebar-logo, .kanban-title {
     to { opacity: 1; transform: translateY(0); }
 }
 
-/* --- WELCOME BANNER (Efeito Vidro Adicionado) --- */
+/* --- WELCOME BANNER --- */
 .welcome-banner {
     background: linear-gradient(135deg, rgba(21, 94, 99, 0.25) 0%, rgba(233, 166, 128, 0.1) 100%) !important;
     border: 1px solid rgba(255, 255, 255, 0.06);
@@ -212,7 +210,7 @@ h1, h2, h3, .sidebar-logo, .kanban-title {
     margin-bottom: 30px;
     position: relative;
     overflow: hidden;
-    backdrop-filter: blur(14px); /* Desfoca o circuito suavemente ao fundo */
+    backdrop-filter: blur(14px); 
     -webkit-backdrop-filter: blur(14px);
 }
 
@@ -271,7 +269,7 @@ h1, h2, h3, .sidebar-logo, .kanban-title {
     letter-spacing: 1px;
 }
 
-/* --- CARDS DE ESTATÍSTICA (Efeito Vidro Adicionado) --- */
+/* --- CARDS DE ESTATÍSTICA --- */
 .stats-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -308,7 +306,7 @@ h1, h2, h3, .sidebar-logo, .kanban-title {
     margin-top: 10px;
 }
 
-/* --- KANBAN (Efeito Vidro Adicionado) --- */
+/* --- KANBAN --- */
 .kanban-container {
     display: flex;
     gap: 20px;
@@ -367,7 +365,7 @@ h1, h2, h3, .sidebar-logo, .kanban-title {
     background: linear-gradient(to right, rgba(30,30,35,0.8), rgba(45, 17, 17, 0.8)) !important;
 }
 
-/* --- TABELAS (Efeito Vidro Adicionado) --- */
+/* --- TABELAS --- */
 .table-container { 
     background: rgba(10, 10, 10, 0.6) !important; 
     backdrop-filter: blur(15px);
@@ -395,7 +393,6 @@ td {
     color: var(--text-white);
 }
 
-/* Alertas de Estoque */
 .estoque-critico {
     background-color: rgba(233, 166, 128, 0.15) !important; 
 }
@@ -486,14 +483,17 @@ td {
     color: #000;
 }
 
-/* Botão Limpar Banco */
+/* CONSERTADO: BOTÃO LIMPAR BANCO (Agora em Glassmorphism integrado com o tema) */
 .btn-limpar-banco {
-    background-color: #1a1a1a;
+    background-color: rgba(239, 68, 68, 0.05);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
     color: #ffffff;
-    border: 1px solid #333;
-    padding: 6px 12px;
-    border-radius: 4px;
-    font-size: 0.75rem;
+    border: 1px solid rgba(239, 68, 68, 0.2);
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    font-weight: 600;
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -502,9 +502,11 @@ td {
 }
 
 .btn-limpar-banco:hover {
-    background-color: #3d0000;
+    background-color: var(--danger);
     border-color: var(--danger-intense);
-    color: var(--danger-intense);
+    color: #ffffff;
+    box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
+    transform: translateY(-1px);
 }
 
 .btn-limpar-banco i { font-size: 0.9rem; }
@@ -512,7 +514,7 @@ td {
 /* Botões com Gradiente */
 .btn-primary-gradient {
     background: linear-gradient(90deg, #155e63 0%, #e9a680 100%);
-    color: #000000;
+    color: #ffffff; /* CONSERTADO: Alterado para branco para facilitar leitura */
     border: none;
     padding: 10px 18px;
     border-radius: 8px;
@@ -582,24 +584,33 @@ select.input-dark option {
     color: #fff;
 }
 
+/* CONSERTADO: SUBMIT DE FORMULÁRIOS (Nova Ordem e Nova Peça com Texto Visível e Confortável) */
 button[type="submit"] {
-    background: linear-gradient(to right, var(--primary-teal), var(--primary-sunset));
-    color: var(--bg-black);
+    background: linear-gradient(to right, var(--primary-teal), var(--pessego-ref));
+    color: #ffffff; 
     padding: 15px;
     width: 100%;
     border-radius: 10px;
-    font-weight: bold;
+    font-weight: 700;
     border: none;
     cursor: pointer;
     text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: all 0.3s ease;
 }
 
-/* Card de Formulário Geral (Glassmorphism aplicado) */
+button[type="submit"]:hover {
+    filter: brightness(1.15);
+    box-shadow: 0 4px 20px rgba(233, 166, 128, 0.2);
+    transform: translateY(-1px);
+}
+
+/* CONSERTADO: CARD DE CADASTRO (Glassmorphism de Alto Contraste para Leitura Confortável) */
 .form-card {
-    background: rgba(17, 17, 18, 0.75) !important;
-    backdrop-filter: blur(15px);
-    -webkit-backdrop-filter: blur(15px);
-    border: 1px solid rgba(255, 255, 255, 0.06);
+    background: rgba(15, 15, 18, 0.75) !important; /* Ligeiramente mais denso para proteger os textos */
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
     padding: 30px;
     border-radius: 16px;
     box-shadow: var(--shadow);
@@ -733,7 +744,6 @@ button[type="submit"] {
     box-shadow: 0 6px 20px rgba(255, 77, 77, 0.5);
 }
 
-/* Modificadores Dinâmicos para Modais */
 .confirm-card i.warning-icon { color: var(--pessego-ref); } 
 .confirm-card i.danger-icon { color: var(--danger-intense); }  
 
@@ -750,7 +760,6 @@ button[type="submit"] {
 
 /* --- MAIN CONTENT COM IMAGEM DE FUNDO (CLAREADA) --- */
 .main-content {
-    /* Opacidade reduzida para 0.45 e 0.55 garantindo maior claridade da imagem de circuito */
     background-image: linear-gradient(rgba(10, 10, 10, 0.45), rgba(10, 10, 10, 0.55)), 
                       url('Imagem4.jpg');
     background-size: cover;        
