@@ -4,18 +4,18 @@
 :root {
     --bg-black: #050506;
     --sidebar-bg: #0a0a0b;
-    --card-bg: rgba(17, 17, 20, 0.75); /* ALTERADO: Fundo translúcido para efeito de vidro */
-    --bg-input: rgba(26, 26, 30, 0.7);   /* ALTERADO: Inputs levemente transparentes */
+    --card-bg: rgba(17, 17, 20, 0.65);    /* ATUALIZADO: Suporte translúcido para efeito de vidro */
+    --bg-input: rgba(26, 26, 30, 0.7);    /* ATUALIZADO: Inputs levemente transparentes */
 
-    --primary-sunset: #ffb38a;      
-    --pessego-ref: #e9a680;          
-    --primary-teal: #155e63;        
+    --primary-sunset: #ffb38a;      /* Bege alaranjado original */
+    --pessego-ref: #e9a680;          /* Tom pêssego das imagens de referência */
+    --primary-teal: #155e63;        /* Teal/Petróleo profundo */
     --sunset-glow: rgba(255, 179, 138, 0.3);
 
     --text-white: #ffffff;
     --text-muted: #a1a1aa;
-    --text-muted-lux: #a0aec0;      
-    --border-color: rgba(38, 38, 38, 0.4); /* ALTERADO: Bordas mais sutis para o efeito vidro */
+    --text-muted-lux: #a0aec0;      /* Cinza elegante para itens inativos */
+    --border-color: rgba(38, 38, 38, 0.4);  /* ATUALIZADO: Bordas sutis para integrar o vidro */
     --border-light: rgba(31, 31, 33, 0.3);
 
     --danger: #ef4444;
@@ -23,7 +23,7 @@
     --success: #10b981;
     --info: #3b82f6;
 
-    --shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+    --shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37); /* ATUALIZADO: Sombra ideal para glassmorphism */
 }
 
 /* --- RESET & GLOBAL --- */
@@ -47,7 +47,7 @@ h1, h2, h3, .sidebar-logo, .kanban-title {
 
 .hidden { display: none !important; }
 
-/* --- SIDEBAR --- */
+/* --- SIDEBAR (Mantida sólida para contraste estrutural) --- */
 .sidebar {
     width: 250px;
     background-color: var(--sidebar-bg);
@@ -72,6 +72,11 @@ h1, h2, h3, .sidebar-logo, .kanban-title {
     text-align: center;
 }
 
+.sidebar-logo span { 
+    color: var(--primary-sunset); 
+    text-shadow: 0 0 10px var(--sunset-glow); 
+}
+
 .sidebar-logo h2 {
     color: #ffffff;
     font-size: 1.2rem;
@@ -87,6 +92,7 @@ h1, h2, h3, .sidebar-logo, .kanban-title {
     padding: 10px 0;
 }
 
+/* Base de todos os botões da Sidebar */
 .nav-item {
     width: 100%;
     background: transparent;
@@ -105,12 +111,14 @@ h1, h2, h3, .sidebar-logo, .kanban-title {
     transition: all 0.25s ease;
 }
 
+/* Ícones padrão dentro dos botões */
 .nav-item i {
     font-size: 1.1rem;
     color: var(--text-muted-lux);
     transition: color 0.25s ease;
 }
 
+/* Efeito Hover Geral para todos os botões */
 .nav-item:hover {
     background: rgba(233, 166, 128, 0.08) !important; 
     color: var(--pessego-ref) !important; 
@@ -122,6 +130,7 @@ h1, h2, h3, .sidebar-logo, .kanban-title {
     color: var(--pessego-ref) !important;
 }
 
+/* Estado do botão que está selecionado/ativo */
 .nav-item.active {
     background: rgba(21, 94, 99, 0.15) !important; 
     color: #ffffff !important;
@@ -133,6 +142,7 @@ h1, h2, h3, .sidebar-logo, .kanban-title {
     color: var(--primary-teal) !important;
 }
 
+/* Destaques fixos (Nova Ordem / Botões Específicos na Sidebar) */
 .btn-destaque-sidebar,
 .btn-nova-ordem-sidebar {
     color: var(--text-muted-lux) !important; 
@@ -149,11 +159,13 @@ h1, h2, h3, .sidebar-logo, .kanban-title {
     border-left: 4px solid var(--pessego-ref);
 }
 
+/* Rodapé da Sidebar */
 .sidebar-footer {
     padding: 20px 0;
     border-top: 1px solid rgba(255, 255, 255, 0.05);
 }
 
+/* Botão SAIR */
 .btn-logout {
     width: 100%;
     background: rgba(255, 77, 77, 0.05) !important;
@@ -175,23 +187,11 @@ h1, h2, h3, .sidebar-logo, .kanban-title {
     box-shadow: 0 0 15px rgba(255, 77, 77, 0.3);
 }
 
-/* --- MAIN LAYOUT (CORRIGIDO E UNIFICADO COM O CIRCUITO) --- */
-.main-wrapper, .main-content {
+/* --- MAIN LAYOUT --- */
+.main-wrapper {
     margin-left: 250px;
     padding: 30px;
     width: calc(100% - 250px);
-    min-height: 100vh;
-    box-sizing: border-box;
-    
-    /* CONFIGURAÇÃO DO CIRCUITO COMO FUNDO IMPENETRÁVEL */
-    background-image: linear-gradient(rgba(10, 10, 10, 0.45), rgba(10, 10, 10, 0.55)), 
-                      url('Imagem4.jpg');
-    
-    /* 2. COMPORTAMENTO DA IMAGEM */
-    background-size: cover;        /* Cobre toda a área sem distorcer */
-    background-position: center;    /* Centraliza os circuitos na tela */
-    background-repeat: no-repeat;  /* Impede a imagem de duplicar */
-    background-attachment: fixed;  /* O fundo fica fixo enquanto o conteúdo rola */
 }
 
 .content-section {
@@ -203,7 +203,7 @@ h1, h2, h3, .sidebar-logo, .kanban-title {
     to { opacity: 1; transform: translateY(0); }
 }
 
-/* --- EFETUANDO GLASSMORPHISM (Efeito Vidro Fosco nos Elementos) --- */
+/* --- WELCOME BANNER (Efeito Vidro Adicionado) --- */
 .welcome-banner {
     background: linear-gradient(135deg, rgba(21, 94, 99, 0.25) 0%, rgba(233, 166, 128, 0.1) 100%) !important;
     border: 1px solid rgba(255, 255, 255, 0.06);
@@ -212,10 +212,66 @@ h1, h2, h3, .sidebar-logo, .kanban-title {
     margin-bottom: 30px;
     position: relative;
     overflow: hidden;
-    backdrop-filter: blur(14px); /* Desfoca o circuito ao fundo */
+    backdrop-filter: blur(14px); /* Desfoca o circuito suavemente ao fundo */
     -webkit-backdrop-filter: blur(14px);
 }
 
+.welcome-banner::before {
+    content: '';
+    position: absolute;
+    top: -50px;
+    right: -50px;
+    width: 150px;
+    height: 150px;
+    background: var(--pessego-ref);
+    filter: blur(80px);
+    opacity: 0.15;
+}
+
+.welcome-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.welcome-text h1 {
+    font-size: 1.8rem;
+    color: #ffffff;
+    margin: 0;
+}
+
+.welcome-text h1 span {
+    color: var(--pessego-ref); 
+}
+
+.welcome-text p {
+    color: #888;
+    margin-top: 5px;
+    font-size: 1rem;
+}
+
+.clock-container {
+    text-align: right;
+    display: flex;
+    flex-direction: column;
+}
+
+#current-time {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #ffffff;
+    font-family: 'Courier New', monospace;
+}
+
+#current-date {
+    color: var(--primary-teal); 
+    font-size: 0.85rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* --- CARDS DE ESTATÍSTICA (Efeito Vidro Adicionado) --- */
 .stats-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -237,20 +293,22 @@ h1, h2, h3, .sidebar-logo, .kanban-title {
 
 .stat-card h3 { 
     font-size: 0.7rem; 
-    color: #888; 
+    color: #a1a1aa; 
     text-transform: uppercase; 
     letter-spacing: 1px;
     margin-bottom: 10px;
 }
 
-.stat-card p, .stat-card span, .stat-card .value { 
+.stat-card p, 
+.stat-card span,
+.stat-card .value { 
     font-size: 2.5rem; 
     color: var(--pessego-ref); 
     font-weight: bold;
     margin-top: 10px;
 }
 
-/* --- KANBAN TRANSPARENTE --- */
+/* --- KANBAN (Efeito Vidro Adicionado) --- */
 .kanban-container {
     display: flex;
     gap: 20px;
@@ -309,7 +367,7 @@ h1, h2, h3, .sidebar-logo, .kanban-title {
     background: linear-gradient(to right, rgba(30,30,35,0.8), rgba(45, 17, 17, 0.8)) !important;
 }
 
-/* --- TABELAS --- */
+/* --- TABELAS (Efeito Vidro Adicionado) --- */
 .table-container { 
     background: rgba(10, 10, 10, 0.6) !important; 
     backdrop-filter: blur(15px);
@@ -342,6 +400,22 @@ td {
     background-color: rgba(233, 166, 128, 0.15) !important; 
 }
 
+.estoque-critico td {
+    color: var(--pessego-ref) !important; 
+}
+
+.estoque-critico i.fa-exclamation-triangle {
+    margin-left: 10px;
+    color: var(--danger-intense);
+    animation: blink 1.5s infinite;
+}
+
+@keyframes blink {
+    0% { opacity: 1; }
+    50% { opacity: 0.3; }
+    100% { opacity: 1; }
+}
+
 /* --- BOTÕES DE AÇÃO --- */
 .btn-action, .btn-del {
     width: 38px;
@@ -359,6 +433,122 @@ td {
 
 .btn-action:hover { background: var(--primary-teal); color: var(--primary-sunset); }
 .btn-del:hover { background: var(--danger); color: white; }
+
+.btn-action-dark {
+    background: #1a1a1b;
+    border: 1px solid #333;
+    color: #fff;
+    padding: 8px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.btn-action-dark:hover {
+    background: #333;
+}
+
+.btn-action-dark i.fa-check-circle:hover {
+    filter: brightness(1.5);
+    transform: scale(1.2);
+}
+
+.btn-del-mini {
+    background: #1a1a1b;
+    color: #fff;
+    border: 1px solid #333;
+    padding: 8px;
+    border-radius: 6px;
+}
+
+.btn-del-mini:hover {
+    background: #441111;
+    color: var(--danger-intense);
+}
+
+.btn-mini {
+    background: #1a1a1b;
+    border: 1px solid #333;
+    color: var(--pessego-ref);
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    transition: 0.2s;
+}
+
+.btn-mini:hover {
+    background: var(--pessego-ref);
+    color: #000;
+}
+
+/* Botão Limpar Banco */
+.btn-limpar-banco {
+    background-color: #1a1a1a;
+    color: #ffffff;
+    border: 1px solid #333;
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s ease;
+}
+
+.btn-limpar-banco:hover {
+    background-color: #3d0000;
+    border-color: var(--danger-intense);
+    color: var(--danger-intense);
+}
+
+.btn-limpar-banco i { font-size: 0.9rem; }
+
+/* Botões com Gradiente */
+.btn-primary-gradient {
+    background: linear-gradient(90deg, #155e63 0%, #e9a680 100%);
+    color: #000000;
+    border: none;
+    padding: 10px 18px;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    transition: transform 0.2s ease, filter 0.2s ease;
+}
+
+.btn-primary-gradient:hover {
+    transform: translateY(-1px);
+    filter: brightness(1.1);
+}
+
+.btn-primary-gradient:active {
+    transform: translateY(0);
+}
+
+.btn-cancel {
+    background-color: #000000;
+    color: #ffffff;
+    border: 1px solid #333;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.3s ease, border-color 0.3s ease;
+}
+
+.btn-cancel:hover {
+    background-color: #1a1a1a;
+    border-color: var(--pessego-ref); 
+}
 
 /* --- FORMULÁRIOS --- */
 .form-group { margin-bottom: 20px; }
@@ -387,7 +577,24 @@ input:focus { border-color: var(--primary-sunset); background: rgba(0,0,0,0.4); 
     width: 100%;
 }
 
-/* Form Card de Cadastro */
+select.input-dark option {
+    background: #000;
+    color: #fff;
+}
+
+button[type="submit"] {
+    background: linear-gradient(to right, var(--primary-teal), var(--primary-sunset));
+    color: var(--bg-black);
+    padding: 15px;
+    width: 100%;
+    border-radius: 10px;
+    font-weight: bold;
+    border: none;
+    cursor: pointer;
+    text-transform: uppercase;
+}
+
+/* Card de Formulário Geral (Glassmorphism aplicado) */
 .form-card {
     background: rgba(17, 17, 18, 0.75) !important;
     backdrop-filter: blur(15px);
@@ -396,4 +603,163 @@ input:focus { border-color: var(--primary-sunset); background: rgba(0,0,0,0.4); 
     padding: 30px;
     border-radius: 16px;
     box-shadow: var(--shadow);
+}
+
+/* --- BADGES DE STATUS --- */
+.status-badge {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: bold;
+}
+
+.status-pendente { background: rgba(245, 158, 11, 0.1); color: #f59e0b; }
+.status-andamento { background: rgba(59, 130, 246, 0.1); color: #3b82f6; }
+.status-concluido { background: rgba(16, 185, 129, 0.1); color: #10b981; }
+
+/* --- MODAIS & OVERLAYS --- */
+.modal-overlay {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(8px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    transition: all 0.3s ease;
+}
+
+.modal-content {
+    background: #000000;
+    border: 1px solid #333;
+    color: white;
+    padding: 30px;
+    border-radius: 15px;
+    width: 90%;
+    max-width: 500px;
+}
+
+.modal-buttons {
+    display: flex;
+    gap: 12px;
+    margin-top: 25px;
+}
+
+.modal-buttons .btn-cancel {
+    flex: 1;
+    background: #000;
+    color: #fff;
+    border: 1px solid #333;
+    padding: 12px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.modal-buttons .btn-primary-gradient {
+    flex: 2; 
+}
+
+/* Card de Confirmação de Ações */
+.confirm-card {
+    background: #111112;
+    border: 1px solid var(--border-light);
+    padding: 30px;
+    border-radius: 16px;
+    max-width: 400px;
+    width: 90%;
+    text-align: center;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+    animation: modalEntrada 0.3s ease-out;
+}
+
+@keyframes modalEntrada {
+    from { opacity: 0; transform: scale(0.9); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+.confirm-card h3 {
+    color: #ffffff;
+    font-size: 1.4rem;
+    margin-bottom: 10px;
+}
+
+.confirm-card p {
+    color: #888;
+    margin-bottom: 25px;
+    line-height: 1.5;
+}
+
+.confirm-buttons {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+}
+
+#confirm-no {
+    background: #1a1a1b;
+    color: #ffffff;
+    border: 1px solid #333;
+    padding: 12px 25px;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    flex: 1;
+    transition: 0.3s;
+}
+
+#confirm-no:hover {
+    background: #333;
+    border-color: #444;
+}
+
+#confirm-yes {
+    background: var(--danger-intense);
+    color: #ffffff;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    flex: 1;
+    transition: 0.3s;
+    box-shadow: 0 4px 15px rgba(255, 77, 77, 0.3);
+}
+
+#confirm-yes:hover {
+    background: #ff3333;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(255, 77, 77, 0.5);
+}
+
+/* Modificadores Dinâmicos para Modais */
+.confirm-card i.warning-icon { color: var(--pessego-ref); } 
+.confirm-card i.danger-icon { color: var(--danger-intense); }  
+
+.btn-confirm-danger {
+    background: var(--danger-intense) !important;
+    box-shadow: 0 4px 15px rgba(255, 77, 77, 0.3);
+}
+
+.btn-confirm-warning {
+    background: var(--pessego-ref) !important;
+    color: #000 !important;
+    box-shadow: 0 4px 15px rgba(233, 166, 128, 0.3);
+}
+
+/* --- MAIN CONTENT COM IMAGEM DE FUNDO (CLAREADA) --- */
+.main-content {
+    /* Opacidade reduzida para 0.45 e 0.55 garantindo maior claridade da imagem de circuito */
+    background-image: linear-gradient(rgba(10, 10, 10, 0.45), rgba(10, 10, 10, 0.55)), 
+                      url('Imagem4.jpg');
+    background-size: cover;        
+    background-position: center center;    
+    background-repeat: no-repeat;  
+    background-attachment: fixed;  
+    
+    min-height: 100vh;
+    margin-left: 250px;            
+    padding: 30px;
+    box-sizing: border-box;
 }
