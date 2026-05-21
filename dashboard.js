@@ -791,3 +791,83 @@ document.getElementById('confirm-yes').addEventListener('click', function() {
     
     alert('Backup gerado com sucesso e banco de dados resetado!');
 });
+document.querySelectorAll('.btn-whatsapp-notif').forEach(botao => {
+    botao.addEventListener('click', function(e) {
+        const telefone = this.getAttribute('data-phone');
+        const cliente = this.getAttribute('data-cliente');
+        const os = this.getAttribute('data-os');
+        
+        // Mensagem customizada e formatada para o WhatsApp
+        const mensagem = `Olá, ${cliente}! O orçamento da sua Ordem de Serviço #${os} foi aprovado e o conserto do seu equipamento já foi finalizado com sucesso. Você já pode vir retirá-lo!`;
+        
+        // Codifica o texto para formato URL
+        const mensagemCodificada = encodeURIComponent(mensagem);
+        
+        // Atualiza o link do botão na hora do clique
+        this.href = `https://api.whatsapp.com/send?phone=${telefone}&text=${mensagemCodificada}`;
+    });
+});
+const ctx = document.getElementById('faturamentoChart').getContext('2d');
+
+// Criando o gradiente de cor para a linha do gráfico
+const gradienteLinha = ctx.createLinearGradient(0, 0, 400, 0);
+gradienteLinha.addColorStop(0, '#155e63'); // Teal
+gradienteLinha.addColorStop(1, '#e9a680'); // Pêssego
+
+const faturamentoChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+        labels: ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'], // Dias da semana
+        datasets: [{
+            label: 'Faturamento (R$)',
+            data: [450, 820, 610, 1200, 950, 1400], // Valores simulados de entrada
+            borderColor: gradienteLinha,
+            borderWidth: 3,
+            backgroundColor: 'rgba(233, 166, 128, 0.03)', // Preenchimento sutil abaixo da linha
+            fill: true,
+            tension: 0.3, // Deixa a linha curvada e elegante
+            pointBackgroundColor: '#e9a680',
+            pointRadius: 5
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: { display: false } // Esconde a legenda padrão para ficar minimalista
+        },
+        scales: {
+            y: {
+                grid: { color: 'rgba(255, 255, 255, 0.05)' }, // Linhas guia bem discretas
+                ticks: { color: '#a0aec0' }
+            },
+            x: {
+                grid: { display: false },
+                ticks: { color: '#a0aec0' }
+            }
+        }
+    }
+});
+document.querySelectorAll('.garantia-badge').forEach(badge => {
+    const dataConclusaoStr = badge.getAttribute('data-data-conclusao');
+    const dataConclusao = new Date(dataConclusaoStr);
+    const dataAtual = new Date();
+    
+    // Calcula a diferença em dias
+    const diffTempo = Math.abs(dataAtual - dataConclusao);
+    const diasPassados = Math.ceil(diffTempo / (1000 * 60 * 60 * 24));
+    
+    const prazoGarantia = 90; // Dias padrão de garantia do laboratório
+    const diasRestantes = prazoGarantia - diasPassados;
+    
+    const textoElemento = badge.querySelector('.garantia-texto');
+    
+    if (diasRestantes > 0) {
+        badge.classList.add('garantia-ativa');
+        textoElemento.innerText = `Garantia: ${diasRestantes} dias restando`;
+    } else {
+        badge.classList.add('garantia-vencida');
+        textoElemento.innerText = "Garantia Expirada";
+    }
+});
+
