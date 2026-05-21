@@ -1,29 +1,31 @@
-@import url('https://fonts.googleapis.com/css2?family=Forum&family=Inter:wght=400;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Forum&family=Inter:wght@400;600;700&display=swap');
 
-/* --- VARIÁVEIS DE CORES (Identidade Visual Consolidada) --- */
+/* --- VARIÁVEIS DE CORES (Identidade Visual Consolidada & Glassmorphism Premium) --- */
 :root {
     --bg-black: #050506;
     --sidebar-bg: #0a0a0b;
-    --card-bg: rgba(17, 17, 20, 0.65);         /* Suporte translúcido para efeito de vidro */
-    --bg-input: rgba(26, 26, 30, 0.7);         /* Inputs levemente transparentes */
+    
+    /* Opacidades ajustadas para dar nitidez ao circuito de fundo */
+    --card-bg: rgba(10, 10, 12, 0.45);        
+    --bg-input: rgba(20, 20, 25, 0.6);        
 
-    --primary-sunset: #ffb38a;       /* Bege alaranjado original */
-    --pessego-ref: #e9a680;           /* Tom pêssego das imagens de referência */
-    --primary-teal: #155e63;          /* Teal/Petróleo profundo */
-    --sunset-glow: rgba(255, 179, 138, 0.3);
+    --primary-sunset: #ffb38a;       
+    --pessego-ref: #e9a680;           
+    --primary-teal: #155e63;          
+    --sunset-glow: rgba(255, 179, 138, 0.2);
 
     --text-white: #ffffff;
     --text-muted: #a1a1aa;
-    --text-muted-lux: #a0aec0;       /* Cinza elegante para itens inativos */
-    --border-color: rgba(38, 38, 38, 0.4);   /* Bordas sutis para integrar o vidro */
-    --border-light: rgba(31, 31, 33, 0.3);
+    --text-muted-lux: #a0aec0;       
+    --border-color: rgba(255, 255, 255, 0.06);  
+    --border-light: rgba(255, 255, 255, 0.04);
 
     --danger: #ef4444;
     --danger-intense: #ff4d4d;
     --success: #10b981;
     --info: #3b82f6;
 
-    --shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37); /* Sombra ideal para glassmorphism */
+    --shadow: 0 16px 40px 0 rgba(0, 0, 0, 0.6); 
 }
 
 /* --- RESET & GLOBAL --- */
@@ -51,7 +53,7 @@ h1, h2, h3, .sidebar-logo, .kanban-title {
 .sidebar {
     width: 250px;
     background-color: var(--sidebar-bg);
-    border-right: 1px solid rgba(31, 31, 33, 0.8);
+    border-right: 1px solid rgba(255, 255, 255, 0.03);
     padding: 30px 20px;
     display: flex;
     flex-direction: column;
@@ -156,15 +158,15 @@ h1, h2, h3, .sidebar-logo, .kanban-title {
 
 .sidebar-footer {
     padding: 20px 0;
-    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    border-top: 1px solid rgba(255, 255, 255, 0.03);
     margin-top: auto;
 }
 
 .btn-logout {
     width: 100%;
-    background: rgba(239, 68, 68, 0.08);
+    background: rgba(239, 68, 68, 0.06);
     color: var(--danger-intense);
-    border: 1px solid rgba(239, 68, 68, 0.25);
+    border: 1px solid rgba(239, 68, 68, 0.2);
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -183,9 +185,9 @@ h1, h2, h3, .sidebar-logo, .kanban-title {
     transform: translateY(-1px);
 }
 
-/* --- MAIN CONTENT & LAYOUT (Unificados para evitar quebra) --- */
-.main-content {
-    background-image: linear-gradient(rgba(10, 10, 10, 0.55), rgba(10, 10, 10, 0.65)), 
+/* --- MAIN CONTENT & LAYOUT (Garante renderização perfeita da imagem) --- */
+.main-wrapper, .main-content {
+    background-image: linear-gradient(rgba(6, 6, 8, 0.45), rgba(6, 6, 8, 0.55)), 
                       url('Imagem4.jpg');
     background-size: cover;        
     background-position: center center;    
@@ -208,15 +210,16 @@ h1, h2, h3, .sidebar-logo, .kanban-title {
 
 /* --- WELCOME BANNER --- */
 .welcome-banner {
-    background: linear-gradient(135deg, rgba(21, 94, 99, 0.25) 0%, rgba(233, 166, 128, 0.1) 100%);
-    border: 1px solid rgba(255, 255, 255, 0.06);
+    background: linear-gradient(135deg, rgba(21, 94, 99, 0.2) 0%, rgba(233, 166, 128, 0.05) 100%);
+    border: 1px solid var(--border-color);
     border-radius: 16px;
     padding: 30px;
     margin-bottom: 30px;
     position: relative;
     overflow: hidden;
-    backdrop-filter: blur(14px); 
-    -webkit-backdrop-filter: blur(14px);
+    backdrop-filter: blur(20px); 
+    -webkit-backdrop-filter: blur(20px);
+    box-shadow: var(--shadow);
 }
 
 .welcome-banner::before {
@@ -237,7 +240,7 @@ h1, h2, h3, .sidebar-logo, .kanban-title {
     justify-content: space-between;
     align-items: center;
     position: relative;
-    z-index: 1; /* Garante leitura acima do blur */
+    z-index: 1; 
 }
 
 .welcome-text h1 {
@@ -251,7 +254,7 @@ h1, h2, h3, .sidebar-logo, .kanban-title {
 }
 
 .welcome-text p {
-    color: #888;
+    color: #ccc;
     margin-top: 5px;
     font-size: 1rem;
 }
@@ -270,7 +273,7 @@ h1, h2, h3, .sidebar-logo, .kanban-title {
 }
 
 #current-date {
-    color: var(--pessego-ref); /* Ajustado para conversar melhor com o tom sunset */
+    color: var(--primary-sunset); 
     font-size: 0.85rem;
     font-weight: bold;
     text-transform: uppercase;
@@ -287,9 +290,9 @@ h1, h2, h3, .sidebar-logo, .kanban-title {
 
 .stat-card {
     background: var(--card-bg);
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid var(--border-color);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
     padding: 25px;
     border-radius: 12px;
     text-align: center;
@@ -298,8 +301,8 @@ h1, h2, h3, .sidebar-logo, .kanban-title {
 }
 
 .stat-card h3 { 
-    font-size: 0.7rem; 
-    color: #a1a1aa; 
+    font-size: 0.75rem; 
+    color: var(--text-muted-lux); 
     text-transform: uppercase; 
     letter-spacing: 1px;
     margin-bottom: 10px;
@@ -307,7 +310,7 @@ h1, h2, h3, .sidebar-logo, .kanban-title {
 
 .stat-card .value, .stat-card p, .stat-card span { 
     font-size: 2.5rem; 
-    color: var(--pessego-ref); 
+    color: var(--primary-sunset); 
     font-weight: bold;
     margin-top: 10px;
     display: block;
@@ -322,10 +325,10 @@ h1, h2, h3, .sidebar-logo, .kanban-title {
 }
 
 .kanban-column {
-    background: rgba(17, 17, 20, 0.5);
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
+    background: rgba(10, 10, 12, 0.35);
+    border: 1px solid var(--border-color);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
     border-radius: 20px;
     min-width: 320px;
     flex: 1;
@@ -341,9 +344,9 @@ h1, h2, h3, .sidebar-logo, .kanban-title {
     font-size: 1.2rem;
     color: var(--primary-sunset);
     text-align: center;
-    background: rgba(21, 94, 99, 0.2);
+    background: rgba(21, 94, 99, 0.25);
     border-radius: 20px 20px 0 0;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    border-bottom: 1px solid var(--border-color);
 }
 
 .kanban-cards-area { 
@@ -352,8 +355,10 @@ h1, h2, h3, .sidebar-logo, .kanban-title {
 }
 
 .kanban-card {
-    background: rgba(30, 30, 35, 0.75);
-    border: 1px solid rgba(255, 255, 255, 0.04);
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
     padding: 15px;
     border-radius: 12px;
     margin-bottom: 12px;
@@ -364,16 +369,16 @@ h1, h2, h3, .sidebar-logo, .kanban-title {
 
 .os-urgente {
     border-left: 5px solid var(--danger-intense) !important;
-    background: linear-gradient(to right, rgba(30, 30, 35, 0.8), rgba(45, 17, 17, 0.8)) !important;
+    background: linear-gradient(to right, rgba(239, 68, 68, 0.1), rgba(10, 10, 12, 0.4)) !important;
 }
 
 /* --- TABELAS --- */
 .table-container { 
-    background: rgba(10, 10, 10, 0.6); 
-    backdrop-filter: blur(15px);
-    -webkit-backdrop-filter: blur(15px);
+    background: rgba(10, 10, 12, 0.4); 
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
     border-radius: 15px; 
-    border: 1px solid rgba(255, 255, 255, 0.05); 
+    border: 1px solid var(--border-color); 
     overflow-x: auto; 
     box-shadow: var(--shadow);
 }
@@ -381,12 +386,13 @@ h1, h2, h3, .sidebar-logo, .kanban-title {
 table { width: 100%; border-collapse: collapse; }
 
 th, .table-header { 
-    background: rgba(21, 94, 99, 0.8); 
-    color: var(--pessego-ref); 
+    background: rgba(21, 94, 99, 0.6); 
+    color: var(--primary-sunset); 
     padding: 18px; 
     text-align: left; 
     font-size: 0.9rem; 
     font-weight: bold;
+    border-bottom: 1px solid var(--border-color);
 }
 
 td { 
@@ -396,7 +402,7 @@ td {
 }
 
 .estoque-critico {
-    background-color: rgba(233, 166, 128, 0.15) !important; 
+    background-color: rgba(233, 166, 128, 0.08) !important; 
 }
 
 .estoque-critico td {
@@ -434,8 +440,8 @@ td {
 .btn-del:hover { background: var(--danger); color: white; }
 
 .btn-action-dark {
-    background: #1a1a1b;
-    border: 1px solid #333;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border-light);
     color: #fff;
     padding: 8px;
     border-radius: 6px;
@@ -443,20 +449,21 @@ td {
     transition: all 0.3s ease;
 }
 
-.btn-action-dark:hover { background: #333; }
+.btn-action-dark:hover { background: rgba(255, 255, 255, 0.15); }
 
 .btn-del-mini {
-    background: #1a1a1b;
+    background: rgba(255, 255, 255, 0.05);
     color: #fff;
-    border: 1px solid #333;
+    border: 1px solid var(--border-light);
     padding: 8px;
     border-radius: 6px;
     transition: all 0.3s ease;
 }
 
 .btn-del-mini:hover {
-    background: #441111;
+    background: rgba(239, 68, 68, 0.2);
     color: var(--danger-intense);
+    border-color: rgba(239, 68, 68, 0.4);
 }
 
 .btn-limpar-banco {
@@ -522,13 +529,12 @@ td {
 /* --- FORMULÁRIOS --- */
 .form-group { margin-bottom: 20px; }
 
-label { display: block; margin-bottom: 8px; color: var(--text-muted); font-size: 0.9rem; }
+label { display: block; margin-bottom: 8px; color: var(--text-muted-lux); font-size: 0.9rem; }
 
-/* Proteção para inputs textuais, evitando quebrar Radio e Checkbox */
 input[type="text"], input[type="password"], input[type="email"], input[type="number"], textarea, select {
     width: 100%;
     background: var(--bg-input);
-    border: 1px solid rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border-color);
     padding: 14px;
     color: white;
     border-radius: 10px;
@@ -538,7 +544,7 @@ input[type="text"], input[type="password"], input[type="email"], input[type="num
 
 input:focus, textarea:focus, select:focus { 
     border-color: var(--primary-sunset); 
-    background: rgba(0,0,0,0.4); 
+    background: rgba(0, 0, 0, 0.5); 
 }
 
 button[type="submit"] {
@@ -557,15 +563,15 @@ button[type="submit"] {
 
 button[type="submit"]:hover {
     filter: brightness(1.15);
-    box-shadow: 0 4px 20px rgba(233, 166, 128, 0.2);
+    box-shadow: 0 4px 20px rgba(233, 166, 128, 0.3);
     transform: translateY(-1px);
 }
 
 .form-card {
-    background: rgba(15, 15, 18, 0.75);
-    backdrop-filter: blur(18px);
-    -webkit-backdrop-filter: blur(18px);
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(12, 12, 15, 0.65);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid var(--border-color);
     padding: 30px;
     border-radius: 16px;
     box-shadow: var(--shadow);
@@ -579,17 +585,17 @@ button[type="submit"]:hover {
     font-weight: bold;
 }
 
-.status-pendente { background: rgba(245, 158, 11, 0.1); color: #f59e0b; }
-.status-andamento { background: rgba(59, 130, 246, 0.1); color: #3b82f6; }
-.status-concluido { background: rgba(16, 185, 129, 0.1); color: #10b981; }
+.status-pendente { background: rgba(245, 158, 11, 0.15); color: #f59e0b; }
+.status-andamento { background: rgba(59, 130, 246, 0.15); color: #3b82f6; }
+.status-concluido { background: rgba(16, 185, 129, 0.15); color: #10b981; }
 
 /* --- MODAIS & OVERLAYS --- */
 .modal-overlay {
     position: fixed;
     top: 0; left: 0;
     width: 100%; height: 100%;
-    background: rgba(0, 0, 0, 0.85);
-    backdrop-filter: blur(8px);
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(12px);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -597,24 +603,27 @@ button[type="submit"]:hover {
 }
 
 .modal-content {
-    background: #000000;
-    border: 1px solid #333;
+    background: rgba(10, 10, 12, 0.8);
+    border: 1px solid var(--border-color);
+    backdrop-filter: blur(20px);
     color: white;
     padding: 30px;
     border-radius: 15px;
     width: 90%;
     max-width: 500px;
+    box-shadow: var(--shadow);
 }
 
 .confirm-card {
-    background: #111112;
-    border: 1px solid var(--border-light);
+    background: rgba(17, 17, 18, 0.85);
+    border: 1px solid var(--border-color);
+    backdrop-filter: blur(20px);
     padding: 30px;
     border-radius: 16px;
     max-width: 400px;
     width: 90%;
     text-align: center;
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+    box-shadow: var(--shadow);
     animation: modalEntrada 0.3s ease-out;
 }
 
@@ -624,9 +633,9 @@ button[type="submit"]:hover {
 }
 
 #confirm-no {
-    background: #1a1a1b;
+    background: rgba(255, 255, 255, 0.05);
     color: #ffffff;
-    border: 1px solid #333;
+    border: 1px solid var(--border-light);
     padding: 12px 25px;
     border-radius: 8px;
     font-weight: 600;
@@ -635,7 +644,7 @@ button[type="submit"]:hover {
     transition: all 0.3s ease;
 }
 
-#confirm-no:hover { background: #333; border-color: #444; }
+#confirm-no:hover { background: rgba(255, 255, 255, 0.15); border-color: rgba(255, 255, 255, 0.3); }
 
 #confirm-yes {
     background: var(--danger-intense);
@@ -656,7 +665,7 @@ button[type="submit"]:hover {
     box-shadow: 0 6px 20px rgba(255, 77, 77, 0.5);
 }
 
-/* --- DETALHES DINÂMICOS (Efeitos de Hover e Alertas) --- */
+/* --- DETALHES DINÂMICOS (Efeitos de Hover e Alertas das Novas Ideias) --- */
 .card-timer {
     display: inline-flex;
     align-items: center;
@@ -680,7 +689,7 @@ button[type="submit"]:hover {
     100% { box-shadow: 0 0 0 0 rgba(255, 77, 77, 0); }
 }
 
-/* Brilho Dinâmico Unificado no Hover */
+/* Brilho Dinâmico Unificado no Hover (Valorização do Circuito de Fundo) */
 .stat-card:hover, .form-card:hover, .kanban-card:hover {
     border-color: rgba(233, 166, 128, 0.4) !important;
     box-shadow: 0 16px 40px 0 rgba(0, 0, 0, 0.6), 
@@ -693,6 +702,8 @@ button[type="submit"]:hover {
     box-shadow: 0 16px 40px 0 rgba(0, 0, 0, 0.6), 
                 0 0 25px rgba(21, 94, 99, 0.1) !important;
 }
+
+/* Botão de Integração WhatsApp */
 .btn-whatsapp-notif {
     display: inline-flex;
     align-items: center;
@@ -716,6 +727,8 @@ button[type="submit"]:hover {
     color: #ffffff !important;
     box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
 }
+
+/* Badge do Módulo de Garantia */
 .garantia-badge {
     display: inline-flex;
     align-items: center;
@@ -727,14 +740,12 @@ button[type="submit"]:hover {
     font-weight: 600;
 }
 
-/* Estado da garantia ativa */
 .garantia-ativa {
     background: rgba(59, 130, 246, 0.1);
     color: #3b82f6;
     border: 1px solid rgba(59, 130, 246, 0.2);
 }
 
-/* Estado da garantia vencida */
 .garantia-vencida {
     background: rgba(161, 161, 170, 0.1);
     color: #a1a1aa;
