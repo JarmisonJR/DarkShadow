@@ -693,3 +693,50 @@ button[type="submit"]:hover {
     box-shadow: 0 16px 40px 0 rgba(0, 0, 0, 0.6), 
                 0 0 25px rgba(21, 94, 99, 0.1) !important;
 }
+.btn-whatsapp-notif {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    margin-top: 12px;
+    padding: 8px 12px;
+    background: rgba(16, 185, 129, 0.1);
+    border: 1px solid rgba(16, 185, 129, 0.2);
+    color: #10b981 !important;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.btn-whatsapp-notif:hover {
+    background: #10b981;
+    color: #ffffff !important;
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+.garantia-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.75rem;
+    padding: 4px 8px;
+    border-radius: 4px;
+    margin-top: 12px;
+    font-weight: 600;
+}
+
+/* Estado da garantia ativa */
+.garantia-ativa {
+    background: rgba(59, 130, 246, 0.1);
+    color: #3b82f6;
+    border: 1px solid rgba(59, 130, 246, 0.2);
+}
+
+/* Estado da garantia vencida */
+.garantia-vencida {
+    background: rgba(161, 161, 170, 0.1);
+    color: #a1a1aa;
+    border: 1px solid rgba(161, 161, 170, 0.2);
+}
