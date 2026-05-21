@@ -882,7 +882,7 @@ function inicializarGraficoFaturamento() {
     const ctx = canvas.getContext('2d');
 
     // 1. Coleta as ordens salvas (Ajuste o nome 'ordens_servico' se o seu banco usar outra chave)
-    const ordens = JSON.parse(localStorage.getItem('ordens_servico')) || [];
+    const ordens = JSON.parse(localStorage.getItem('SAD_PRO_OS')) || [];
     
     // 2. Inicializa um array com zero para cada um dos 12 meses
     const faturamentoPorMes = Array(12).fill(0);
