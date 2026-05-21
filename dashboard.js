@@ -871,3 +871,113 @@ document.querySelectorAll('.garantia-badge').forEach(badge => {
     }
 });
 
+// Variável global para podermos atualizar o gráfico quando necessário
+let meuGraficoFaturamento = null;
+
+// Função principal para processar os dados e renderizar o gráfico
+function inicializarGraficoFaturamento() {
+    const canvas = document.getElementById('faturamentoChart');
+    if (!canvas) return; // Evita erros caso mude de aba e o canvas não esteja na tela
+
+    const ctx = canvas.getContext('2d');
+
+    // 1. Coleta as ordens salvas (Ajuste o nome 'ordens_servico' se o seu banco usar outra chave)
+    const ordens = JSON.parse(localStorage.getItem('ordens_servico')) || [];
+    
+    // 2. Inicializa um array com zero para cada um dos 12 meses
+    const faturamentoPorMes = Array(12).fill(0);
+    const anoAtual = new Date().getFullYear();
+
+    // 3. Filtra e soma os valores das ordens CONCLUÍDAS do ano atual
+    ordens.forEach(ordem => {
+        // Altere 'status' e 'concluido' / 'data' e 'valor' de acordo com os atributos do seu objeto
+        if (ordem.status === 'concluido' || ordem.status === 'Concluído') {
+            const dataOrdem = new Date(ordem.data); 
+            
+            // Verifica se a ordem pertence ao ano corrente
+            if (dataOrdem.getFullYear() === anoAtual) {
+                const mes = dataOrdem.getMonth(); // 0 = Janeiro, 11 = Dezembro
+                
+                // Converte para número para evitar concatenação de texto
+                const valorLimpo = parseFloat(ordem.valor) || 0; 
+                faturamentoPorMes[mes] += valorLimpo;
+            }
+        }
+    });
+
+    // 4. Criação dos gradientes de cor para manter o design premium
+    const gradienteLinha = ctx.createLinearGradient(0, 0, 400, 0);
+    gradienteLinha.addColorStop(0, '#155e63'); // Teal profundo
+    gradienteLinha.addColorStop(1, '#e9a680'); // Pêssego
+
+    const gradientePreenchimento = ctx.createLinearGradient(0, 0, 0, 300);
+    gradientePreenchimento.addColorStop(0, 'rgba(233, 166, 128, 0.12)');
+    gradientePreenchimento.addColorStop(1, 'rgba(21, 94, 99, 0.00)');
+
+    // 5. Se o gráfico já existia (em uma navegação de abas), destrói a instância antiga para não duplicar
+    if (meuGraficoFaturamento) {
+        meuGraficoFaturamento.destroy();
+    }
+
+    // 6. Renderiza o Chart.js configurado para o estilo Glassmorphism
+    meuGraficoFaturamento = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'],
+            datasets: [{
+                label: 'Faturamento Realizado (R$)',
+                data: faturamentoPorMes,
+                borderColor: gradienteLinha,
+                borderWidth: 3,
+                backgroundColor: gradientePreenchimento,
+                fill: true,
+                tension: 0.35, // Curvatura elegante das linhas
+                pointBackgroundColor: '#e9a680',
+                pointBorderColor: '#050506',
+                pointBorderWidth: 2,
+                pointRadius: 5,
+                pointHoverRadius: 7
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: true,
+                    labels: { color: '#a0aec0', font: { family: 'Inter', size: 12 } }
+                },
+                tooltip: {
+                    backgroundColor: 'rgba(10, 10, 12, 0.9)',
+                    titleColor: '#ffb38a',
+                    bodyColor: '#fff',
+                    borderColor: 'rgba(255, 255, 255, 0.1)',
+                    borderWidth: 1,
+                    padding: 12,
+                    displayColors: false,
+                    callbacks: {
+                        label: function(context) {
+                            return `Recebido: R$ ${context.parsed.y.toFixed(2)}`;
+                        }
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    grid: { color: 'rgba(255, 255, 255, 0.04)' },
+                    ticks: {
+                        color: '#a0aec0',
+                        callback: value => `R$ ${value}`
+                    }
+                },
+                x: {
+                    grid: { display: false },
+                    ticks: { color: '#a0aec0' }
+                }
+            }
+        }
+    });
+}
+
+// 7. Gatilho para carregar o gráfico assim que a página abrir
+document.addEventListener('DOMContentLoaded', inicializarGraficoFaturamento);
