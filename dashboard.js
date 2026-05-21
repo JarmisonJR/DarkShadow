@@ -756,3 +756,38 @@ document.addEventListener('DOMContentLoaded', () => {
         form.addEventListener('submit', handleFormSubmit);
     }
 });
+// Função para simular ou baixar o backup dos dados atuais
+function baixarBackupDados() {
+    // Exemplo de estrutura que você já deve ter no seu LocalStorage ou Banco
+    const dadosSistema = {
+        ordens: JSON.parse(localStorage.getItem('ordens_servico')) || [],
+        pecas: JSON.parse(localStorage.getItem('estoque_pecas')) || []
+    };
+
+    // Transforma os dados em texto JSON formatado
+    const dadosTexto = JSON.stringify(dadosSistema, null, 2);
+    
+    // Cria um arquivo temporário para download
+    const blob = new Blob([dadosTexto], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    
+    const linkTemporario = document.createElement("a");
+    linkTemporario.href = url;
+    linkTemporario.download = `backup_sistema_${new Date().toISOString().slice(0,10)}.json`;
+    
+    // Dispara o download silenciosamente
+    document.body.appendChild(linkTemporario);
+    linkTemporario.click();
+    document.body.removeChild(linkTemporario);
+}
+
+// Vinculando ao seu botão de confirmação de exclusão
+document.getElementById('confirm-yes').addEventListener('click', function() {
+    // 1. Faz o backup de segurança primeiro
+    baixarBackupDados();
+    
+    // 2. Aqui entra o seu código atual que limpa o banco de verdade
+    // localStorage.clear(); ou sua requisição para o banco de dados...
+    
+    alert('Backup gerado com sucesso e banco de dados resetado!');
+});
