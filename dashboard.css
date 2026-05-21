@@ -779,3 +779,41 @@ button[type="submit"]:hover {
     padding: 30px;
     box-sizing: border-box;
 }
+/* Tag de tempo dentro do card */
+.card-timer {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.75rem;
+    color: var(--text-muted-lux);
+    background: rgba(255, 255, 255, 0.05);
+    padding: 2px 6px;
+    border-radius: 4px;
+    margin-top: 10px;
+}
+
+/* Se o card estiver parado há muitos dias, a borda pulsa */
+.card-atrasado {
+    border-left: 4px solid var(--danger-intense) !important;
+    animation: pulsoAlerta 2s infinite ease-in-out;
+}
+
+@keyframes pulsoAlerta {
+    0% { box-shadow: 0 0 0 0 rgba(255, 77, 77, 0.4); }
+    70% { box-shadow: 0 0 0 10px rgba(255, 77, 77, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(255, 77, 77, 0); }
+}
+/* Efeito de Brilho Dinâmico nos Cards */
+.stat-card:hover, .form-card:hover, .kanban-card:hover {
+    border-color: rgba(233, 166, 128, 0.4) !important;
+    box-shadow: 0 16px 40px 0 rgba(0, 0, 0, 0.6), 
+                0 0 20px rgba(233, 166, 128, 0.15) !important;
+    transform: translateY(-3px);
+}
+
+/* Opcional: Se quiser um brilho esverdeado/teal nas colunas do Kanban */
+.kanban-column:hover {
+    border-color: rgba(21, 94, 99, 0.4) !important;
+    box-shadow: 0 16px 40px 0 rgba(0, 0, 0, 0.6), 
+                0 0 25px rgba(21, 94, 99, 0.1) !important;
+}
