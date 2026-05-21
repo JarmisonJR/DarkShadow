@@ -18,273 +18,240 @@
 <body class="dark-theme">
 
     <div id="main-layout" class="display-flex">
-<aside class="sidebar">
-    <div class="sidebar-logo">
-        <h2>TECHNICIAN PRO</h2>
-    </div>
-    
-    <nav class="nav-menu">
-        <div class="nav-item active" onclick="showScreen('home-screen')">
-            <i class="fas fa-home"></i> Dashboard
-        </div>
-        <div class="nav-item btn-nova-ordem-sidebar" onclick="showScreen('cadastro-screen')">
-            <i class="fas fa-plus-circle"></i> Nova Ordem
-        </div>
-        <div class="nav-item" onclick="showScreen('lista-screen')">
-            <i class="fas fa-list"></i> Ordens
-        </div>
-        <div class="nav-item" onclick="showScreen('kanban-screen')">
-            <i class="fas fa-columns"></i> Kanban
-        </div>
-        <div class="nav-item" onclick="showScreen('estoque-screen')">
-            <i class="fas fa-boxes"></i> Estoque
-        </div>
-        <div class="nav-item" onclick="showScreen('financeiro-screen')">
-            <i class="fas fa-chart-line"></i> Financeiro
-        </div>
-    </nav>
+        <!-- BARRA LATERAL (SIDEBAR) -->
+        <aside class="sidebar">
+            <div class="sidebar-logo">
+                <h2>TECHNICIAN PRO</h2>
+            </div>
+            
+            <nav class="nav-menu">
+                <div class="nav-item active" onclick="showScreen('home-screen')">
+                    <i class="fas fa-home"></i> Dashboard
+                </div>
+                <div class="nav-item btn-nova-ordem-sidebar" onclick="showScreen('cadastro-screen')">
+                    <i class="fas fa-plus-circle"></i> Nova Ordem
+                </div>
+                <div class="nav-item" onclick="showScreen('lista-screen')">
+                    <i class="fas fa-list"></i> Ordens
+                </div>
+                <div class="nav-item" onclick="showScreen('kanban-screen')">
+                    <i class="fas fa-columns"></i> Kanban
+                </div>
+                <div class="nav-item" onclick="showScreen('estoque-screen')">
+                    <i class="fas fa-boxes"></i> Estoque
+                </div>
+                <div class="nav-item" onclick="showScreen('financeiro-screen')">
+                    <i class="fas fa-chart-line"></i> Financeiro
+                </div>
+            </nav>
 
-    <div class="sidebar-footer">
-        <button onclick="confirmarSair()" class="btn-logout">
-            <span>SAIR</span> <i class="fas fa-power-off"></i>
-        </button>
-    </div>
-</aside>
+            <div class="sidebar-footer">
+                <button onclick="confirmarSair()" class="btn-logout">
+                    <span>SAIR</span> <i class="fas fa-power-off"></i>
+                </button>
+            </div>
+        </aside>
 
         <!-- CONTEÚDO PRINCIPAL -->
-       <!-- CONTEÚDO PRINCIPAL -->
-<main class="main-wrapper">
+        <main class="main-wrapper">
 
-    <!-- HOME / DASHBOARD -->
-    <section id="home-screen" class="content-section">
-    <section class="welcome-banner">
-    <div class="welcome-content">
-        <div class="welcome-text">
-    <h1>Olá, <span id="user-name">Técnico</span>! 👋</h1>
-    <p id="welcome-message">Pronto para organizar os reparos de hoje?</p>
-</div>
-        <div class="welcome-stats">
-            <div class="clock-container">
-                <span id="current-time">00:00:00</span>
-                <span id="current-date">14 de Maio, 2026</span>
-            </div>
-        </div>
-    </div>
-</section>
-        <div class="stats-grid">
-            <div class="stat-card" onclick="showScreen('lista-screen')" style="cursor:pointer">
-                <h3>Ordens Abertas</h3>
-                <span id="stat-pendente">0</span>
-            </div>
-            <div class="stat-card">
-                <h3>Registros Totais</h3>
-                <span id="stat-total">0</span>
-            </div>
-            <div class="stat-card">
-                <h3>Concluídas</h3>
-                <span id="stat-concluido">0</span>
-            </div>
-        </div>
-    </section>
-
-    <!-- KANBAN (FLUXO DE TRABALHO) -->
-    <section id="kanban-screen" class="content-section hidden">
-        <div class="section-header">
-            <h2>Fluxo Kanban</h2>
-        </div>
-        <div class="kanban-container">
-            <div class="kanban-column" id="col-pendente" ondrop="drop(event)" ondragover="allowDrop(event)">
-                <div class="kanban-header">PENDENTE</div>
-                <div class="kanban-cards"></div>
-            </div>
-            <div class="kanban-column" id="col-andamento" ondrop="drop(event)" ondragover="allowDrop(event)">
-                <div class="kanban-header">EM ANDAMENTO</div>
-                <div class="kanban-cards"></div>
-            </div>
-            <div class="kanban-column" id="col-concluido" ondrop="drop(event)" ondragover="allowDrop(event)">
-                <div class="kanban-header">CONCLUÍDO</div>
-                <div class="kanban-cards"></div>
-            </div>
-        </div>
-    </section>
-<section id="cadastro-screen" class="content-section hidden">
-    <div class="form-card animate-in">
-        <h2><i class="far fa-edit"></i> Nova Ordem</h2>
-        
-        <form id="serviceForm">
-            <div class="input-group">
-                <label>Cliente</label>
-                <input type="text" id="cli-nome" placeholder="Nome completo" required class="input-dark">
-            </div>
-            <div class="input-group">
-                <label>WhatsApp</label>
-                <input type="text" id="cli-phone" placeholder="DDD + Número" class="input-dark">
-            </div>
-            <div class="input-group">
-                <label>Aparelho</label>
-                <input type="text" id="apa-nome" placeholder="Marca e Modelo" required class="input-dark">
-            </div>
-            <div class="input-group">
-                <label>Defeito</label>
-                <textarea id="apa-defeito" placeholder="Relato do problema" required class="input-dark"></textarea>
-            </div>
-            
-            <div class="input-group">
-                <label>Peça Utilizada</label>
-                <select id="os-peca-select" class="input-dark">
-                    <option value="">-- Selecione uma peça (Opcional) --</option>
-                </select>
-            </div>
-
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 15px;">
-                <div class="input-group">
-                    <label>Data</label>
-                    <input type="date" id="apa-data" required class="input-dark">
-                </div>
-                <div class="input-group">
-                    <label>Valor do Serviço (R$)</label>
-                    <input type="number" step="0.01" id="apa-valor" placeholder="0.00" required class="input-dark">
-                </div>
-            </div>
-            
-            <div class="form-buttons" style="margin-top: 25px; display: flex; gap: 10px;">
-                <button type="button" onclick="showScreen('home-screen')" class="btn-cancel">Cancelar</button>
-                <button type="submit" class="btn-primary-gradient" style="width: 100%;">Salvar Ordem</button>
-            </div>
-        </form>
-    </div>
-</section>
-    <!-- LISTA DE ORDENS -->
-    <section id="lista-screen" class="content-section hidden">
-        <div class="section-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-            <h2>Ordens de Serviço</h2>
-            <button class="btn-limpar-banco" onclick="limparBanco()">
-                <i class="fas fa-trash-alt"></i> Limpar Banco
-            </button>
-        </div>
-        <div class="table-container">
-            <table>
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Cliente</th>
-                        <th>Aparelho</th>
-                        <th>Data</th>
-                        <th>Status</th>
-                        <th>Ações</th>
-                    </tr>
-                </thead>
-                <tbody id="table-body"></tbody>
-            </table>
-        </div>
-    </section>
-
-    <!-- FINANCEIRO -->
-    <section id="financeiro-screen" class="content-section hidden">
-        <div class="section-header">
-            <h2>Fluxo Financeiro</h2>
-        </div>
-        <div class="stats-grid">
-            <div class="stat-card card-entrada">
-                <h3>Total Entradas</h3>
-                <p id="fin-entradas">R$ 0,00</p>
-            </div>
-            <div class="stat-card card-saida">
-                <h3>Total Custos (Peças)</h3>
-                <p id="fin-saidas">R$ 0,00</p>
-            </div>
-            <div class="stat-card card-saldo">
-                <h3>Saldo em Caixa</h3>
-                <p id="fin-saldo">R$ 0,00</p>
-            </div>
-        </div>
-        <div class="table-container" style="margin-top: 20px;">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Data</th>
-                        <th>Descrição</th>
-                        <th>Tipo</th>
-                        <th>Valor</th>
-                    </tr>
-                </thead>
-                <tbody id="finance-body"></tbody>
-            </table>
-        </div>
-    </section>
-
-    <!-- CADASTRO DE ORDEM -->
-    <section id="cadastro-screen" class="content-section hidden">
-        <div class="form-card animate-in">
-            <div class="form-header">
-                <h2><i class="far fa-edit"></i> Nova Ordem</h2>
-            </div>
-            <form id="serviceForm">
-                <div class="input-group">
-                    <label>Cliente</label>
-                    <input type="text" id="cli-nome" placeholder="Nome completo" required>
-                </div>
-                <div class="input-group">
-                    <label>WhatsApp</label>
-                    <input type="number" id="cli-phone" placeholder="DDD + Número">
-                </div>
-                <div class="input-group">
-                    <label>Aparelho</label>
-                    <input type="text" id="apa-nome" placeholder="Marca e Modelo" required>
-                </div>
-                <div class="input-group">
-                    <label>Defeito</label>
-                    <textarea id="apa-defeito" placeholder="Relato do problema" required></textarea>
-                </div>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-                    <div class="input-group">
-                        <label>Data</label>
-                        <input type="date" id="apa-data" required>
-                    </div>
-                    <div class="input-group">
-                        <label>Valor (R$)</label>
-                        <input type="number" step="0.01" id="apa-valor" placeholder="0.00">
+            <!-- HOME / DASHBOARD -->
+            <section id="home-screen" class="content-section">
+                <div class="welcome-banner">
+                    <div class="welcome-content">
+                        <div class="welcome-text">
+                            <h1>Olá, <span id="user-name">Técnico</span>! 👋</h1>
+                            <p id="welcome-message">Pronto para organizar os reparos de hoje?</p>
+                        </div>
+                        <div class="welcome-stats">
+                            <div class="clock-container">
+                                <span id="current-time">00:00:00</span>
+                                <span id="current-date">14 de Maio, 2026</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <div style="margin-top: 15px;">
-    <label>Peça Utilizada</label>
-    <select id="os-peca-select" class="input-dark">
-        <option value="">Nenhuma peça selecionada</option>
-        <!-- Populado via JS -->
-    </select>
-</div>
-                <div class="form-buttons" style="margin-top: 20px; display: flex; gap: 10px;">
-                    <button type="button" onclick="showScreen('home-screen')" class="btn-cancel">Cancelar</button>
-                    <button type="submit" class="btn-primary-gradient">Salvar Ordem</button>
+                <div class="stats-grid">
+                    <div class="stat-card" onclick="showScreen('lista-screen')" style="cursor:pointer">
+                        <h3>Ordens Abertas</h3>
+                        <span id="stat-pendente">0</span>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Registros Totais</h3>
+                        <span id="stat-total">0</span>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Concluídas</h3>
+                        <span id="stat-concluido">0</span>
+                    </div>
                 </div>
-            </form>
-        </div>
-    </section>
+            </section>
 
-    <!-- ESTOQUE -->
-    <section id="estoque-screen" class="content-section hidden">
-        <div class="section-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-            <h2>Estoque de Peças</h2>
-            <button class="btn-primary-gradient" onclick="abrirModalPeca()">
-                <i class="fas fa-plus"></i> Nova Peça
-            </button>
-        </div>
-        <div class="table-container">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Peça</th>
-                        <th>Quantidade</th>
-                        <th>Preço Custo</th>
-                        <th>Ações</th>
-                    </tr>
-                </thead>
-                <tbody id="stock-body"></tbody>
-            </table>
-        </div>
-    </section>
+            <!-- KANBAN (FLUXO DE TRABALHO) -->
+            <section id="kanban-screen" class="content-section hidden">
+                <div class="section-header">
+                    <h2>Fluxo Kanban</h2>
+                </div>
+                <div class="kanban-container">
+                    <div class="kanban-column" id="col-pendente" ondrop="drop(event)" ondragover="allowDrop(event)">
+                        <div class="kanban-header">PENDENTE</div>
+                        <div class="kanban-cards"></div>
+                    </div>
+                    <div class="kanban-column" id="col-andamento" ondrop="drop(event)" ondragover="allowDrop(event)">
+                        <div class="kanban-header">EM ANDAMENTO</div>
+                        <div class="kanban-cards"></div>
+                    </div>
+                    <div class="kanban-column" id="col-concluido" ondrop="drop(event)" ondragover="allowDrop(event)">
+                        <div class="kanban-header">CONCLUÍDO</div>
+                        <div class="kanban-cards"></div>
+                    </div>
+                </div>
+            </section>
 
-</main>
+            <!-- CADASTRO DE ORDEM -->
+            <section id="cadastro-screen" class="content-section hidden">
+                <div class="form-card animate-in">
+                    <h2><i class="far fa-edit"></i> Nova Ordem</h2>
+                    
+                    <form id="serviceForm">
+                        <div class="input-group">
+                            <label>Cliente</label>
+                            <input type="text" id="cli-nome" placeholder="Nome completo" required class="input-dark">
+                        </div>
+                        <div class="input-group">
+                            <label>WhatsApp</label>
+                            <input type="text" id="cli-phone" placeholder="DDD + Número" class="input-dark">
+                        </div>
+                        <div class="input-group">
+                            <label>Aparelho</label>
+                            <input type="text" id="apa-nome" placeholder="Marca e Modelo" required class="input-dark">
+                        </div>
+                        <div class="input-group">
+                            <label>Defeito</label>
+                            <textarea id="apa-defeito" placeholder="Relato do problema" required class="input-dark"></textarea>
+                        </div>
+                        
+                        <div class="input-group">
+                            <label>Peça Utilizada</label>
+                            <select id="os-peca-select" class="input-dark">
+                                <option value="">Nenhuma peça selecionada (Opcional)</option>
+                                <!-- Populado via JS -->
+                            </select>
+                        </div>
+
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 15px;">
+                            <div class="input-group">
+                                <label>Data</label>
+                                <input type="date" id="apa-data" required class="input-dark">
+                            </div>
+                            <div class="input-group">
+                                <label>Valor do Serviço (R$)</label>
+                                <input type="number" step="0.01" id="apa-valor" placeholder="0.00" required class="input-dark">
+                            </div>
+                        </div>
+                        
+                        <div class="form-buttons" style="margin-top: 25px; display: flex; gap: 10px;">
+                            <button type="button" onclick="showScreen('home-screen')" class="btn-cancel">Cancelar</button>
+                            <button type="submit" class="btn-primary-gradient" style="width: 100%;">Salvar Ordem</button>
+                        </div>
+                    </form>
+                </div>
+            </section>
+
+            <!-- LISTA DE ORDENS -->
+            <section id="lista-screen" class="content-section hidden">
+                <div class="section-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h2>Ordens de Serviço</h2>
+                    <button class="btn-limpar-banco" onclick="limparBanco()">
+                        <i class="fas fa-trash-alt"></i> Limpar Banco
+                    </button>
+                </div>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Cliente</th>
+                                <th>Aparelho</th>
+                                <th>Data</th>
+                                <th>Status</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="table-body"></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- FINANCEIRO -->
+            <section id="financeiro-screen" class="content-section hidden">
+                <div class="section-header">
+                    <h2>Fluxo Financeiro</h2>
+                </div>
+                <div class="stats-grid">
+                    <div class="stat-card card-entrada">
+                        <h3>Total Entradas</h3>
+                        <p id="fin-entradas">R$ 0,00</p>
+                    </div>
+                    <div class="stat-card card-saida">
+                        <h3>Total Custos (Peças)</h3>
+                        <p id="fin-saidas">R$ 0,00</p>
+                    </div>
+                    <div class="stat-card card-saldo">
+                        <h3>Saldo em Caixa</h3>
+                        <p id="fin-saldo">R$ 0,00</p>
+                    </div>
+                </div>
+
+                <!-- Gráfico de Faturamento -->
+                <div class="form-card financial-chart-card" style="margin-top: 30px;">
+                    <h2 style="font-size: 1.4rem; color: var(--primary-sunset); margin-bottom: 20px;">
+                        <i class="fas fa-chart-line"></i> Fluxo de Faturamento Semanal
+                    </h2>
+                    <div style="position: relative; height:300px; width:100%">
+                        <canvas id="faturamentoChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="table-container" style="margin-top: 20px;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Data</th>
+                                <th>Descrição</th>
+                                <th>Tipo</th>
+                                <th>Valor</th>
+                            </tr>
+                        </thead>
+                        <tbody id="finance-body"></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- ESTOQUE -->
+            <section id="estoque-screen" class="content-section hidden">
+                <div class="section-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h2>Estoque de Peças</h2>
+                    <button class="btn-primary-gradient" onclick="abrirModalPeca()">
+                        <i class="fas fa-plus"></i> Nova Peça
+                    </button>
+                </div>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Peça</th>
+                                <th>Quantidade</th>
+                                <th>Preço Custo</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="stock-body"></tbody>
+                    </table>
+                </div>
+            </section>
+
+        </main>
     </div>
 
     <!-- MODAL PEÇA -->
@@ -306,12 +273,11 @@
                         <input type="number" step="0.01" id="modal-stk-preco" required>
                     </div>
                 </div>
-                <!-- Dentro do modal-content de Cadastro de Peça -->
-<div style="margin-top: 15px;">
-    <label>WhatsApp do Fornecedor</label>
-    <input type="text" id="modal-stk-fone" class="input-dark" placeholder="Ex: 21999999999">
-</div>
-                <div class="confirm-buttons">
+                <div style="margin-top: 15px;">
+                    <label>WhatsApp do Fornecedor</label>
+                    <input type="text" id="modal-stk-fone" class="input-dark" placeholder="Ex: 21999999999">
+                </div>
+                <div class="confirm-buttons" style="margin-top: 20px; display: flex; gap: 10px; justify-content: flex-end;">
                     <button type="button" onclick="fecharModalPeca()" class="btn-no" style="background: transparent; border: 1px solid #444; color: #fff; padding: 10px 20px; border-radius: 8px; cursor: pointer;">Cancelar</button>
                     <button type="submit" class="btn-primary">Salvar</button>
                 </div>
@@ -321,18 +287,16 @@
 
     <!-- MODAL CONFIRMAÇÃO -->
     <div id="custom-confirm" class="modal-overlay hidden">
-    <div class="confirm-card">
-        <i class="fas fa-exclamation-circle" style="font-size: 3rem; margin-bottom: 20px;"></i>
-        <h3 id="confirm-title">Confirmação</h3>
-        <p id="confirm-message"></p>
-        
-        <div class="confirm-buttons">
-            <button id="confirm-no" onclick="closeConfirm()">Cancelar</button>
-            <button id="confirm-yes">Confirmar</button>
+        <div class="confirm-card">
+            <i class="fas fa-exclamation-circle" style="font-size: 3rem; margin-bottom: 20px;"></i>
+            <h3 id="confirm-title">Confirmação</h3>
+            <p id="confirm-message"></p>
+            <div class="confirm-buttons">
+                <button id="confirm-no" onclick="closeConfirm()">Cancelar</button>
+                <button id="confirm-yes">Confirmar</button>
+            </div>
         </div>
     </div>
-</div>
-            
 
     <!-- TEMPLATE PDF (OCULTO) -->
     <div id="pdf-template" style="display: none;">
@@ -344,20 +308,23 @@
             </div>
         </div>
     </div>
-<!-- Template para Impressão de Etiqueta (Invisível na tela) -->
-<div id="etiqueta-template" style="display: none; width: 80mm; font-family: 'Courier New', Courier, monospace; padding: 10px; border: 1px solid #000; color: #000; background: #fff;">
-    <div style="text-align: center; border-bottom: 1px dashed #000; padding-bottom: 5px;">
-        <strong style="font-size: 1.2rem;">TECHNICIAN PRO</strong><br>
-        <span>Identificação de Aparelho</span>
+
+    <!-- TEMPLATE ETIQUETA (OCULTO) -->
+    <div id="etiqueta-template" style="display: none; width: 80mm; font-family: 'Courier New', Courier, monospace; padding: 10px; border: 1px solid #000; color: #000; background: #fff;">
+        <div style="text-align: center; border-bottom: 1px dashed #000; padding-bottom: 5px;">
+            <strong style="font-size: 1.2rem;">TECHNICIAN PRO</strong><br>
+            <span>Identificação de Aparelho</span>
+        </div>
+        <div id="etiqueta-content" style="margin-top: 10px; font-size: 0.9rem; line-height: 1.4;">
+            <!-- Preenchido via JS -->
+        </div>
+        <div style="text-align: center; margin-top: 10px; border-top: 1px dashed #000; padding-top: 5px;">
+            <small id="etiqueta-data"></small>
+        </div>
     </div>
-    <div id="etiqueta-content" style="margin-top: 10px; font-size: 0.9rem; line-height: 1.4;">
-        <!-- Preenchido via JS -->
-    </div>
-    <div style="text-align: center; margin-top: 10px; border-top: 1px dashed #000; padding-top: 5px;">
-        <small id="etiqueta-data"></small>
-    </div>
-</div>
-    <!-- JS Principal -->
+
+    <!-- Scripts e Bibliotecas -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="dashboard.js"></script>
 </body>
 </html>
