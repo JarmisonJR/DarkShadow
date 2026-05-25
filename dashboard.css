@@ -866,3 +866,71 @@ input[type="date"].input-dark::-webkit-calendar-picker-indicator {
 input[type="date"].input-dark::-webkit-calendar-picker-indicator:hover {
     transform: scale(1.1);
 }
+/* Container do seletor dentro da tabela */
+.qtd-control-tabela {
+    display: inline-flex;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 6px;
+    padding: 3px;
+    gap: 4px;
+}
+
+/* Botões + e - compactos para a tabela */
+.btn-qtd-tabela {
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.07);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+    font-size: 0.9rem;
+    font-weight: bold;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-qtd-tabela.menos:hover {
+    background: rgba(21, 94, 99, 0.3);
+    border-color: #155e63;
+    color: #4db6ac;
+}
+
+.btn-qtd-tabela.mais:hover {
+    background: rgba(233, 166, 128, 0.2);
+    border-color: #e9a680;
+    color: #e9a680;
+}
+
+/* Input numérico invisível */
+.input-qtd-tabela {
+    width: 28px;
+    text-align: right;
+    background: transparent;
+    border: none;
+    color: #ffffff;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 600;
+    outline: none;
+    -moz-appearance: textfield;
+}
+
+.input-qtd-tabela::-webkit-outer-spin-button,
+.input-qtd-tabela::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* Texto "un" ao lado do número */
+.texto-unidade {
+    color: #ffffff;
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-right: 4px;
+    user-select: none;
+}
