@@ -775,7 +775,7 @@ button[type="submit"]:hover {
 }
 
 /* Estilo dos Botões + e - */
-.btn-qtd {
+.btn-mini {
     width: 26px;
     height: 26px;
     display: flex;
@@ -792,7 +792,7 @@ button[type="submit"]:hover {
 }
 
 /* Hover específico para o botão de diminuir (-) -> Tom Teal */
-.btn-qtd.menos:hover {
+.btn-mini.menos:hover {
     background: rgba(21, 94, 99, 0.3);
     border-color: #155e63;
     color: #4db6ac;
@@ -800,7 +800,7 @@ button[type="submit"]:hover {
 }
 
 /* Hover específico para o botão de aumentar (+) -> Tom Pêssego */
-.btn-qtd.mais:hover {
+.btn-mini.mais:hover {
     background: rgba(233, 166, 128, 0.2);
     border-color: #e9a680;
     color: #e9a680;
