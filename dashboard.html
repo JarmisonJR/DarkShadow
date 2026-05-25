@@ -243,11 +243,12 @@
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; align-items: end;">
                     <div class="input-group">
                         <label>Qtd</label>
-                        <div class="qtd-control">
-                            <button type="button" class="btn-qtd menos" onclick="document.getElementById('modal-stk-qtd').stepDown();">-</button>
-                            <input type="number" id="modal-stk-qtd" min="1" value="1" required class="input-qtd" readonly>
-                            <button type="button" class="btn-qtd mais" onclick="document.getElementById('modal-stk-qtd').stepUp();">+</button>
-                        </div>
+                    
+`<div class="qtd-control">
+    <button type="button" class="btn-qtd menos" onclick="alterarQtdTabela(${item.id}, -1)">-</button>
+    <input type="number" class="input-qtd" value="${item.quantidade}" readonly>
+    <button type="button" class="btn-qtd mais" onclick="alterarQtdTabela(${item.id}, 1)">+</button>
+</div>`
                     </div>
                     <div class="input-group">
                         <label>Preço Custo</label>
