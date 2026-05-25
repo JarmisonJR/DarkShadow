@@ -981,3 +981,28 @@ function inicializarGraficoFaturamento() {
 
 // 7. Gatilho para carregar o gráfico assim que a página abrir
 document.addEventListener('DOMContentLoaded', inicializarGraficoFaturamento);
+function alterarQuantidadeTabela(id, mudanca) {
+    // 1. Recupera a lista atual de peças do localStorage
+    let pecas = JSON.parse(localStorage.getItem('pecas')) || [];
+    
+    // 2. Encontra a peça certa pelo ID
+    const peca = pecas.find(p => p.id === id);
+    
+    if (peca) {
+        // 3. Aplica a mudança garantindo que não fique menor que 0
+        let novaQtd = parseInt(peca.quantidade || 0) + mudanca;
+        if (novaQtd < 0) novaQtd = 0;
+        
+        peca.quantidade = novaQtd;
+        
+        // 4. Salva de volta no banco local
+        localStorage.setItem('pecas', JSON.stringify(pecas));
+        
+        // 5. Executa a sua função que redesenha a tabela para atualizar a tela
+        // (Substitua pelo nome real da sua função de atualizar a tela do estoque se for diferente)
+        renderizarEstoque(); 
+        
+        // Opcional: Se tiver uma função que atualiza o financeiro ou dashboards, chame aqui também
+        if (typeof atualizarCardsDash === 'function') atualizarCardsDash();
+    }
+}
