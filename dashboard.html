@@ -5,20 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Technician PRO | Gestão de Manutenção</title>
 
-    <!-- Fontes e Ícones -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Forum&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-    <!-- CSS Unificado -->
     <link rel="stylesheet" href="dashboard.css">
 
-    <!-- Dependência para PDF -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 </head>
 <body class="dark-theme">
 
     <div id="main-layout" class="display-flex">
-        <!-- BARRA LATERAL (SIDEBAR) -->
         <aside class="sidebar">
             <div class="sidebar-logo">
                 <h2>TECHNICIAN PRO</h2>
@@ -52,10 +48,8 @@
             </div>
         </aside>
 
-        <!-- CONTEÚDO PRINCIPAL -->
         <main class="main-wrapper">
 
-            <!-- HOME / DASHBOARD -->
             <section id="home-screen" class="content-section">
                 <div class="welcome-banner">
                     <div class="welcome-content">
@@ -87,7 +81,6 @@
                 </div>
             </section>
 
-            <!-- KANBAN (FLUXO DE TRABALHO) -->
             <section id="kanban-screen" class="content-section hidden">
                 <div class="section-header">
                     <h2>Fluxo Kanban</h2>
@@ -108,7 +101,6 @@
                 </div>
             </section>
 
-            <!-- CADASTRO DE ORDEM -->
             <section id="cadastro-screen" class="content-section hidden">
                 <div class="form-card animate-in">
                     <h2><i class="far fa-edit"></i> Nova Ordem</h2>
@@ -135,8 +127,7 @@
                             <label>Peça Utilizada</label>
                             <select id="os-peca-select" class="input-dark">
                                 <option value="">Nenhuma peça selecionada (Opcional)</option>
-                                <!-- Populado via JS -->
-                            </select>
+                                </select>
                         </div>
 
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 15px;">
@@ -158,7 +149,6 @@
                 </div>
             </section>
 
-            <!-- LISTA DE ORDENS -->
             <section id="lista-screen" class="content-section hidden">
                 <div class="section-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
                     <h2>Ordens de Serviço</h2>
@@ -183,7 +173,6 @@
                 </div>
             </section>
 
-            <!-- FINANCEIRO -->
             <section id="financeiro-screen" class="content-section hidden">
                 <div class="section-header">
                     <h2>Fluxo Financeiro</h2>
@@ -218,7 +207,6 @@
                 </div>
             </section>
 
-            <!-- ESTOQUE -->
             <section id="estoque-screen" class="content-section hidden">
                 <div class="section-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
                     <h2>Estoque de Peças</h2>
@@ -244,7 +232,6 @@
         </main>
     </div>
 
-    <!-- MODAL PEÇA -->
     <div id="modal-peca" class="modal-overlay hidden">
         <div class="form-card animate-in" style="max-width: 450px;">
             <h2>Cadastrar Peça</h2>
@@ -253,10 +240,14 @@
                     <label>Nome</label>
                     <input type="text" id="modal-stk-nome" required>
                 </div>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; align-items: end;">
                     <div class="input-group">
                         <label>Qtd</label>
-                        <input type="number" id="modal-stk-qtd" min="1" value="1" required>
+                        <div class="qtd-control">
+                            <button type="button" class="btn-qtd menos" onclick="document.getElementById('modal-stk-qtd').stepDown();">-</button>
+                            <input type="number" id="modal-stk-qtd" min="1" value="1" required class="input-qtd" readonly>
+                            <button type="button" class="btn-qtd mais" onclick="document.getElementById('modal-stk-qtd').stepUp();">+</button>
+                        </div>
                     </div>
                     <div class="input-group">
                         <label>Preço Custo</label>
@@ -275,7 +266,6 @@
         </div>
     </div>
 
-    <!-- MODAL CONFIRMAÇÃO -->
     <div id="custom-confirm" class="modal-overlay hidden">
         <div class="confirm-card">
             <i class="fas fa-exclamation-circle" style="font-size: 3rem; margin-bottom: 20px;"></i>
@@ -288,7 +278,6 @@
         </div>
     </div>
 
-    <!-- TEMPLATE PDF (OCULTO) -->
     <div id="pdf-template" style="display: none;">
         <div id="pdf-inner" style="padding: 40px; color: #000; background: #fff; font-family: sans-serif;">
             <h1 style="border-bottom: 2px solid #155e63; padding-bottom: 10px;">COMPROVANTE DE SERVIÇO</h1>
@@ -299,24 +288,19 @@
         </div>
     </div>
 
-    <!-- TEMPLATE ETIQUETA (OCULTO) -->
     <div id="etiqueta-template" style="display: none; width: 80mm; font-family: 'Courier New', Courier, monospace; padding: 10px; border: 1px solid #000; color: #000; background: #fff;">
         <div style="text-align: center; border-bottom: 1px dashed #000; padding-bottom: 5px;">
             <strong style="font-size: 1.2rem;">TECHNICIAN PRO</strong><br>
             <span>Identificação de Aparelho</span>
         </div>
         <div id="etiqueta-content" style="margin-top: 10px; font-size: 0.9rem; line-height: 1.4;">
-            <!-- Preenchido via JS -->
-        </div>
+            </div>
         <div style="text-align: center; margin-top: 10px; border-top: 1px dashed #000; padding-top: 5px;">
             <small id="etiqueta-data"></small>
         </div>
     </div>
 
-    <!-- Scripts e Bibliotecas -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="dashboard.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 </body>
 </html>
