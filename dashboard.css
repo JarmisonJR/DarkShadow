@@ -751,3 +751,73 @@ button[type="submit"]:hover {
     color: #a1a1aa;
     border: 1px solid rgba(161, 161, 170, 0.2);
 }
+/* CONTAINER DO CONTROLADOR DE QUANTIDADE */
+.qtd-control {
+    display: inline-flex;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 8px;
+    padding: 3px;
+    gap: 4px;
+}
+
+/* ESTILO BASE DOS BOTÕES "+" E "-" */
+.btn-qtd {
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #e2e8f0;
+    font-size: 1.1rem;
+    font-weight: 600;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    user-select: none;
+}
+
+/* BOTÃO DIMINUIR (-) */
+.btn-qtd.menos:hover {
+    background: rgba(21, 94, 99, 0.2); /* Sutil feedback azul/teal */
+    border-color: #155e63;
+    color: #38bdf8;
+    box-shadow: 0 0 12px rgba(21, 94, 99, 0.3);
+}
+
+/* BOTÃO AUMENTAR (+) */
+.btn-qtd.mais:hover {
+    background: rgba(233, 166, 128, 0.15); /* Feedback pêssego/sunset */
+    border-color: #e9a680;
+    color: #e9a680;
+    box-shadow: 0 0 12px rgba(233, 166, 128, 0.3);
+}
+
+/* EFEITO DE CLIQUE (MICROINTERAÇÃO) */
+.btn-qtd:active {
+    transform: scale(0.92);
+}
+
+/* CAMPO DE TEXTO DO NÚMERO (CENTRAL) */
+.input-qtd {
+    width: 36px;
+    text-align: center;
+    background: transparent;
+    border: none;
+    color: #fff;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 600;
+    outline: none;
+    -moz-appearance: textfield;
+}
+
+/* REMOVE AS SETAS PADRÃO DO NAVEGADOR */
+.input-qtd::-webkit-outer-spin-button,
+.input-qtd::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
