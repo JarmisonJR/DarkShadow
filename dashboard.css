@@ -762,60 +762,71 @@ button[type="submit"]:hover {
     gap: 4px;
 }
 
-/* ESTILO BASE DOS BOTÕES "+" E "-" */
+/* Container que envolve os botões na tabela */
+.qtd-control {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 6px;
+    padding: 2px;
+    gap: 6px;
+}
+
+/* Estilo dos Botões + e - */
 .btn-qtd {
-    width: 28px;
-    height: 28px;
+    width: 26px;
+    height: 26px;
     display: flex;
     align-items: center;
     justify-content: center;
-    background: rgba(255, 255, 255, 0.05);
+    background: rgba(255, 255, 255, 0.07);
     border: 1px solid rgba(255, 255, 255, 0.1);
-    color: #e2e8f0;
-    font-size: 1.1rem;
-    font-weight: 600;
-    border-radius: 6px;
+    color: #ffffff;
+    font-size: 1rem;
+    font-weight: bold;
+    border-radius: 4px;
     cursor: pointer;
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-    user-select: none;
+    transition: all 0.2s ease;
 }
 
-/* BOTÃO DIMINUIR (-) */
+/* Hover específico para o botão de diminuir (-) -> Tom Teal */
 .btn-qtd.menos:hover {
-    background: rgba(21, 94, 99, 0.2); /* Sutil feedback azul/teal */
+    background: rgba(21, 94, 99, 0.3);
     border-color: #155e63;
-    color: #38bdf8;
-    box-shadow: 0 0 12px rgba(21, 94, 99, 0.3);
+    color: #4db6ac;
+    box-shadow: 0 0 8px rgba(21, 94, 99, 0.5);
 }
 
-/* BOTÃO AUMENTAR (+) */
+/* Hover específico para o botão de aumentar (+) -> Tom Pêssego */
 .btn-qtd.mais:hover {
-    background: rgba(233, 166, 128, 0.15); /* Feedback pêssego/sunset */
+    background: rgba(233, 166, 128, 0.2);
     border-color: #e9a680;
     color: #e9a680;
-    box-shadow: 0 0 12px rgba(233, 166, 128, 0.3);
+    box-shadow: 0 0 8px rgba(233, 166, 128, 0.4);
 }
 
-/* EFEITO DE CLIQUE (MICROINTERAÇÃO) */
+/* Clique rápido */
 .btn-qtd:active {
     transform: scale(0.92);
 }
 
-/* CAMPO DE TEXTO DO NÚMERO (CENTRAL) */
+/* Estilização do input de número no meio */
 .input-qtd {
-    width: 36px;
+    width: 40px;
     text-align: center;
     background: transparent;
     border: none;
-    color: #fff;
+    color: #ffffff;
     font-family: 'Inter', sans-serif;
-    font-size: 0.95rem;
+    font-size: 0.9rem;
     font-weight: 600;
     outline: none;
     -moz-appearance: textfield;
 }
 
-/* REMOVE AS SETAS PADRÃO DO NAVEGADOR */
+/* Remove setas nativas do input number */
 .input-qtd::-webkit-outer-spin-button,
 .input-qtd::-webkit-inner-spin-button {
     -webkit-appearance: none;
