@@ -240,14 +240,11 @@
                     <label>Nome</label>
                     <input type="text" id="modal-stk-nome" required>
                 </div>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; align-items: end;">
+                   <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
                     <div class="input-group">
                         <label>Qtd</label>
- <div class="qtd-control">
-                            <button type="button" class="btn-qtd menos" onclick="document.getElementById('modal-stk-qtd').stepDown();">-</button>
-                            <input type="number" id="modal-stk-qtd" min="1" value="1" required class="input-qtd" readonly>
-                            <button type="button" class="btn-qtd mais" onclick="document.getElementById('modal-stk-qtd').stepUp();">+</button>
-                        </div>
+                        <input type="number" id="modal-stk-qtd" min="1" value="1" required>
+                    </div>
                     </div>
                     <div class="input-group">
                         <label>Preço Custo</label>
