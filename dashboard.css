@@ -26,6 +26,7 @@
     --danger-intense: #ff5252;
     --success: #10b981;
     --info: #3b82f6;
+    --warning: #f59e0b;
 
     --shadow: 0 20px 50px 0 rgba(0, 0, 0, 0.5); 
     --blur-intensity: blur(16px);
@@ -49,7 +50,7 @@ body {
     letter-spacing: -0.01em;
 }
 
-h1, h2, h3, .sidebar-logo, .kanban-title { 
+h1, h2, h3, h4, .sidebar-logo, .kanban-title { 
     font-family: 'Forum', serif; 
     font-weight: 400;
 }
@@ -119,6 +120,8 @@ h1, h2, h3, .sidebar-logo, .kanban-title {
 }
 
 .nav-item i {
+    width: 16px;
+    text-align: center;
     font-size: 1rem;
     color: var(--text-muted);
     transition: var(--transition-premium);
@@ -200,6 +203,9 @@ h1, h2, h3, .sidebar-logo, .kanban-title {
     backdrop-filter: var(--blur-intensity); 
     -webkit-backdrop-filter: var(--blur-intensity);
     box-shadow: var(--shadow);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 .welcome-text h1 {
@@ -253,7 +259,7 @@ h1, h2, h3, .sidebar-logo, .kanban-title {
     -webkit-backdrop-filter: var(--blur-intensity);
     padding: 30px 24px;
     border-radius: 12px;
-    text-align: left; /* Alinhamento minimalista à esquerda */
+    text-align: left;
     transition: var(--transition-premium);
     box-shadow: var(--shadow);
 }
@@ -266,9 +272,10 @@ h1, h2, h3, .sidebar-logo, .kanban-title {
 }
 
 .stat-card .value, .stat-card p, .stat-card span { 
+    display: block;
     font-size: 2.2rem; 
     font-family: 'Inter', sans-serif;
-    font-weight: 300; /* Mais fino = mais elegante */
+    font-weight: 300;
     color: #ffffff;
     margin-top: 12px;
 }
@@ -306,7 +313,11 @@ h1, h2, h3, .sidebar-logo, .kanban-title {
     text-transform: uppercase;
 }
 
-.kanban-cards-area { padding: 20px; }
+.kanban-cards { 
+    padding: 20px; 
+    flex-grow: 1;
+    min-height: 500px;
+}
 
 .kanban-card {
     background: rgba(255, 255, 255, 0.02);
@@ -316,7 +327,22 @@ h1, h2, h3, .sidebar-logo, .kanban-title {
     margin-bottom: 14px;
     border-left: 3px solid var(--primary-teal);
     transition: var(--transition-premium);
+    cursor: grab;
 }
+
+.kanban-card h4 {
+    font-size: 1.1rem;
+    color: #ffffff;
+    margin-bottom: 6px;
+}
+
+.kanban-card p {
+    font-size: 0.85rem;
+    color: var(--text-muted-lux);
+    margin: 2px 0;
+}
+
+.kanban-card:active { cursor: grabbing; }
 
 .os-urgente {
     border-left: 3px solid var(--danger-intense) !important;
@@ -331,6 +357,14 @@ h1, h2, h3, .sidebar-logo, .kanban-title {
     border-radius: 14px; 
     border: 1px solid var(--border-color); 
     box-shadow: var(--shadow);
+    overflow-x: auto;
+    width: 100%;
+    margin-top: 20px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
 }
 
 th, .table-header { 
@@ -351,18 +385,15 @@ td {
     color: var(--text-white);
     font-size: 0.9rem;
     font-weight: 400;
+    vertical-align: middle;
 }
 
 tr:hover td {
     background: rgba(255, 255, 255, 0.01);
 }
 
-.estoque-critico {
-    background-color: rgba(239, 68, 68, 0.02) !important; 
-}
-
-/* --- BOTÕES TÁTEIS & OUTLINES --- */
-.btn-action, .btn-del {
+/* --- SINC DO MÓDULO DE BOTÕES (CSS vs JS) --- */
+.btn-acao, .btn-action, .btn-del {
     width: 36px;
     height: 36px;
     border-radius: 8px;
@@ -374,19 +405,42 @@ tr:hover td {
     transition: var(--transition-premium);
     background: var(--bg-input);
     color: var(--text-muted);
+    margin-right: 4px;
 }
 
-.btn-action:hover { 
+.btn-acao:hover, .btn-action:hover { 
     border-color: var(--primary-teal); 
     color: #4db6ac;
     box-shadow: 0 0 15px var(--teal-glow);
 }
 
-.btn-del:hover { 
-    background: rgba(239, 68, 68, 0.1); 
-    border-color: var(--danger); 
-    color: var(--danger-intense); 
+.btn-delete:hover, .btn-del:hover { 
+    background: rgba(239, 68, 68, 0.1) !important; 
+    border-color: var(--danger) !important; 
+    color: var(--danger-intense) !important; 
 }
+
+.btn-whatsapp:hover {
+    background: #25d366 !important;
+    color: #fff !important;
+    box-shadow: 0 0 15px rgba(37, 211, 102, 0.4);
+}
+
+.btn-qtd, .btn-mini, .btn-qtd-tabela {
+    width: 28px;
+    height: 28px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid var(--border-color);
+    color: var(--text-white);
+    font-size: 0.9rem;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: var(--transition-premium);
+}
+.btn-qtd:hover { border-color: var(--pessego-ref); color: var(--pessego-ref); }
 
 .btn-primary-gradient {
     background: transparent;
@@ -408,7 +462,6 @@ tr:hover td {
     transform: translateY(-1px);
 }
 
-/* Button Submit Geral */
 button[type="submit"] {
     background: transparent;
     border: 1px solid var(--primary-sunset);
@@ -420,6 +473,8 @@ button[type="submit"] {
     text-transform: uppercase;
     letter-spacing: 2px;
     transition: var(--transition-premium);
+    width: 100%;
+    cursor: pointer;
 }
 
 button[type="submit"]:hover {
@@ -437,6 +492,13 @@ button[type="submit"]:hover {
     border: 1px solid var(--border-color);
     padding: 40px;
     border-radius: 16px;
+    margin-top: 20px;
+}
+
+.form-group {
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
 }
 
 label { 
@@ -466,18 +528,19 @@ input:focus, textarea:focus, select:focus, input[type="date"].input-dark:focus {
     box-shadow: 0 0 20px rgba(233, 166, 128, 0.05);
 }
 
-/* --- BADGES DE STATUS --- */
-.status-badge {
-    padding: 4px 10px;
+/* --- BADGES DE STATUS (MAPEADOS COM O JS) --- */
+.badge, .status-badge {
+    padding: 6px 12px;
     border-radius: 4px;
     font-size: 0.7rem;
     text-transform: uppercase;
     letter-spacing: 1px;
     font-weight: 600;
+    display: inline-block;
 }
-.status-pendente { background: rgba(245, 158, 11, 0.06); border: 1px solid rgba(245, 158, 11, 0.2); color: #f59e0b; }
-.status-andamento { background: rgba(59, 130, 246, 0.06); border: 1px solid rgba(59, 130, 246, 0.2); color: #3b82f6; }
-.status-concluido { background: rgba(16, 185, 129, 0.06); border: 1px solid rgba(16, 185, 129, 0.2); color: #10b981; }
+.badge-pendente, .status-pendente { background: rgba(245, 158, 11, 0.06); border: 1px solid rgba(245, 158, 11, 0.2); color: #f59e0b; }
+.badge-andamento, .status-andamento { background: rgba(59, 130, 246, 0.06); border: 1px solid rgba(59, 130, 246, 0.2); color: #3b82f6; }
+.badge-concluido, .status-concluido { background: rgba(16, 185, 129, 0.06); border: 1px solid rgba(16, 185, 129, 0.2); color: #10b981; }
 
 /* --- INTERATIVIDADE E BRILHO UNIFICADO NO HOVER --- */
 .stat-card:hover, .form-card:hover, .kanban-card:hover {
@@ -503,31 +566,6 @@ input:focus, textarea:focus, select:focus, input[type="date"].input-dark:focus {
     padding: 2px;
 }
 
-.btn-mini, .btn-qtd-tabela {
-    width: 28px;
-    height: 28px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: rgba(255, 255, 255, 0.02);
-    border: 1px solid transparent;
-    color: var(--text-muted-lux);
-    font-size: 0.85rem;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: var(--transition-premium);
-}
-
-.btn-mini.menos:hover, .btn-qtd-tabela.menos:hover {
-    border-color: var(--primary-teal);
-    color: #4db6ac;
-}
-
-.btn-mini.mais:hover, .btn-qtd-tabela.mais:hover {
-    border-color: var(--pessego-ref);
-    color: var(--pessego-ref);
-}
-
 /* --- MODAIS VESTIDOS DE CRISTAL --- */
 .modal-overlay {
     position: fixed;
@@ -542,68 +580,27 @@ input:focus, textarea:focus, select:focus, input[type="date"].input-dark:focus {
 }
 
 .modal-content, .confirm-card {
-    background: rgba(12, 12, 14, 0.6);
+    background: rgba(12, 12, 14, 0.9);
     border: 1px solid var(--border-color);
     backdrop-filter: var(--blur-intensity);
     padding: 40px;
     border-radius: 16px;
     box-shadow: var(--shadow);
+    width: 100%;
+    max-width: 500px;
     animation: modalEntrada 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
-/* ==========================================================================
-   RESTANTE DO CÓDIGO (CLASSES UTILITÁRIAS, ALERTAS, GARANTIAS E TIMERS)
-   ========================================================================== */
 
-/* --- CUSTOMIZAÇÃO DO INPUT DE DATA (GLASS PREMIUM) --- */
-input[type="date"].input-dark {
-    appearance: none;
-    -webkit-appearance: none;
-    color-scheme: dark; /* Força os seletores internos a ficarem escuros em navegadores modernos */
-    background-color: var(--bg-input);
-    border: 1px solid var(--border-color);
-    color: #ffffff;
-    padding: 14px 18px;
-    border-radius: 8px;
-    font-family: 'Inter', sans-serif;
-    font-size: 0.95rem;
-    outline: none;
-    transition: var(--transition-premium);
-}
-
-input[type="date"].input-dark:focus {
-    border-color: var(--pessego-ref);
-    background-color: rgba(0, 0, 0, 0.6);
-    box-shadow: 0 0 20px rgba(233, 166, 128, 0.05);
-}
-
-/* Ícone de calendário nativo customizado */
+/* --- CUSTOMIZAÇÃO DO INPUT DE DATA --- */
 input[type="date"].input-dark::-webkit-calendar-picker-indicator {
     background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="%23e9a680" class="bi bi-calendar-event" viewBox="0 0 16 16"><path d="M11 6.5a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0zM10.5 8a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1zM13 6.5a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0z"/><path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4H1z"/></svg>');
     cursor: pointer;
     filter: drop-shadow(0px 0px 4px rgba(233, 166, 128, 0.3));
     transition: transform 0.2s ease;
 }
+input[type="date"].input-dark::-webkit-calendar-picker-indicator:hover { transform: scale(1.1); }
 
-input[type="date"].input-dark::-webkit-calendar-picker-indicator:hover {
-    transform: scale(1.1);
-}
-
-/* --- DETALHES DINÂMICOS & TIMERS (MODO BANCADA E ALERTAS) --- */
-.card-timer {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 0.75rem;
-    color: var(--text-muted-lux);
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid var(--border-light);
-    padding: 4px 8px;
-    border-radius: 4px;
-    margin-top: 12px;
-    font-family: 'Inter', sans-serif;
-}
-
-/* Alerta de Atraso de Ordem de Serviço */
+/* Alerta de Atraso */
 .card-atrasado {
     border-left: 3px solid var(--danger-intense) !important;
     animation: pulsoAlerta 2.5s infinite ease-in-out;
@@ -616,54 +613,28 @@ input[type="date"].input-dark::-webkit-calendar-picker-indicator:hover {
 }
 
 /* --- BOTÕES COMPLEMENTARES --- */
-.btn-action-dark {
-    background: rgba(255, 255, 255, 0.02);
-    border: 1px solid var(--border-color);
-    color: #fff;
-    padding: 8px 12px;
-    border-radius: 6px;
-    cursor: pointer;
+.btn-action-dark, .btn-cancel, .btn-del-mini, .btn-limpar-banco {
+    padding: 10px 18px;
+    border-radius: 8px;
     font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
     transition: var(--transition-premium);
-}
-
-.btn-action-dark:hover { 
-    background: rgba(255, 255, 255, 0.08); 
-    border-color: var(--text-muted-lux);
-}
-
-.btn-del-mini {
     background: rgba(255, 255, 255, 0.02);
-    color: var(--text-muted-lux);
     border: 1px solid var(--border-color);
-    padding: 8px 12px;
-    border-radius: 6px;
-    transition: var(--transition-premium);
+    color: var(--text-muted-lux);
 }
 
-.btn-del-mini:hover {
-    background: rgba(239, 68, 68, 0.08);
-    color: var(--danger-intense);
-    border-color: rgba(239, 68, 68, 0.2);
-}
+.btn-action-dark:hover { background: rgba(255, 255, 255, 0.08); border-color: var(--text-muted-lux); color: #fff; }
+.btn-cancel:hover { background-color: rgba(255, 255, 255, 0.02); border-color: var(--pessego-ref); color: #ffffff; }
+.btn-del-mini:hover { background: rgba(239, 68, 68, 0.08); color: var(--danger-intense); border-color: rgba(239, 68, 68, 0.2); }
 
 .btn-limpar-banco {
     background-color: rgba(239, 68, 68, 0.02);
-    backdrop-filter: var(--blur-intensity);
-    -webkit-backdrop-filter: var(--blur-intensity);
-    color: var(--text-muted-lux);
-    border: 1px solid var(--border-color);
-    padding: 10px 18px;
-    border-radius: 8px;
-    font-size: 0.8rem;
-    font-weight: 500;
-    cursor: pointer;
     display: flex;
     align-items: center;
     gap: 8px;
-    transition: var(--transition-premium);
 }
-
 .btn-limpar-banco:hover {
     background-color: rgba(239, 68, 68, 0.1);
     color: #ffffff;
@@ -671,118 +642,13 @@ input[type="date"].input-dark::-webkit-calendar-picker-indicator:hover {
     box-shadow: 0 10px 25px rgba(239, 68, 68, 0.05);
 }
 
-.btn-cancel {
-    background-color: transparent;
-    color: var(--text-muted-lux);
-    border: 1px solid var(--border-color);
-    padding: 10px 18px;
-    border-radius: 8px;
-    font-size: 0.85rem;
-    font-weight: 500;
-    cursor: pointer;
-    transition: var(--transition-premium);
-}
-
-.btn-cancel:hover {
-    background-color: rgba(255, 255, 255, 0.02);
-    border-color: var(--pessego-ref); 
-    color: #ffffff;
-}
-
-/* Botão de Integração de Notificação via WhatsApp */
-.btn-whatsapp-notif {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    width: 100%;
-    margin-top: 14px;
-    padding: 10px 14px;
-    background: rgba(16, 185, 129, 0.02);
-    border: 1px solid rgba(16, 185, 129, 0.15);
-    color: #10b981 !important;
-    border-radius: 6px;
-    font-size: 0.8rem;
-    font-weight: 500;
-    text-decoration: none;
-    transition: var(--transition-premium);
-}
-
-.btn-whatsapp-notif:hover {
-    background: rgba(16, 185, 129, 0.1);
-    border-color: var(--success);
-    color: #ffffff !important;
-    box-shadow: 0 10px 25px rgba(16, 185, 129, 0.05);
-}
-
-/* --- MÓDULO DE SEGURO E GARANTIA DE PEÇAS --- */
-.garantia-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 0.75rem;
-    padding: 4px 8px;
-    border-radius: 4px;
-    margin-top: 12px;
-    font-weight: 500;
-}
-
-.garantia-ativa {
-    background: rgba(59, 130, 246, 0.04);
-    color: #3b82f6;
-    border: 1px solid rgba(59, 130, 246, 0.15);
-}
-
-.garantia-vencida {
-    background: rgba(161, 161, 170, 0.04);
-    color: var(--text-muted);
-    border: 1px solid var(--border-color);
-}
-
-/* --- ESTILIZAÇÃO DO ESTOQUE CRÍTICO --- */
-.estoque-critico {
-    background-color: rgba(239, 68, 68, 0.01) !important; 
-}
-
-.estoque-critico td {
-    color: #ff7878 !important; 
-}
-
-.estoque-critico i.fa-exclamation-triangle {
-    margin-left: 8px;
-    color: var(--danger-intense);
-    animation: blinkMinimalista 2s infinite ease-in-out;
-}
-
-@keyframes blinkMinimalista {
-    0% { opacity: 1; transform: scale(1); }
-    50% { opacity: 0.4; transform: scale(0.95); }
-    100% { opacity: 1; transform: scale(1); }
-}
-
-/* --- INPUTS DE QUANTIDADE DA TABELA --- */
-.input-qtd, .input-qtd-tabela {
-    width: 32px;
-    text-align: center;
-    background: transparent;
-    border: none;
-    color: #ffffff;
-    font-family: 'Inter', sans-serif;
-    font-size: 0.9rem;
-    font-weight: 500;
-    outline: none;
-    -moz-appearance: textfield;
-}
-
-.texto-unidade {
-    color: var(--text-muted-lux);
-    font-size: 0.85rem;
-    font-weight: 400;
-    margin-right: 6px;
-    user-select: none;
-}
-
 /* --- CONFIGURAÇÕES INTERNAS DOS MODAIS DE CONFIRMAÇÃO --- */
+.modal-buttons {
+    display: flex;
+    gap: 12px;
+    margin-top: 24px;
+}
+
 #confirm-no {
     background: rgba(255, 255, 255, 0.02);
     color: var(--text-muted-lux);
@@ -795,12 +661,7 @@ input[type="date"].input-dark::-webkit-calendar-picker-indicator:hover {
     flex: 1;
     transition: var(--transition-premium);
 }
-
-#confirm-no:hover { 
-    background: rgba(255, 255, 255, 0.05); 
-    border-color: var(--text-white);
-    color: #ffffff;
-}
+#confirm-no:hover { background: rgba(255, 255, 255, 0.05); border-color: var(--text-white); color: #ffffff; }
 
 #confirm-yes {
     background: transparent;
@@ -814,7 +675,6 @@ input[type="date"].input-dark::-webkit-calendar-picker-indicator:hover {
     flex: 1;
     transition: var(--transition-premium);
 }
-
 #confirm-yes:hover {
     background: var(--danger-intense);
     color: #ffffff;
@@ -822,25 +682,18 @@ input[type="date"].input-dark::-webkit-calendar-picker-indicator:hover {
     transform: translateY(-2px);
 }
 
-/* --- ANIMAÇÕES GERAIS DA PLACA (FADE IN INTERNO) --- */
-@keyframes modalEntrada {
-    from { 
-        opacity: 0; 
-        transform: scale(0.96) translateY(10px); 
-        backdrop-filter: blur(0px);
-    }
-    to { 
-        opacity: 1; 
-        transform: scale(1) translateY(0);
-        backdrop-filter: var(--blur-intensity);
-    }
-}
-/* ==========================================================================
-   CONSERTO DE SINCRONIZAÇÃO E FLUXO DE MENSAGENS / NOTIFICAÇÕES
-   ========================================================================== */
+/* --- ESTOQUE CRÍTICO --- */
+.estoque-critico { background-color: rgba(239, 68, 68, 0.03) !important; }
+.estoque-critico td { color: #ff7878 !important; }
 
-/* Container Principal das Mensagens (Garante que elas fiquem em fila ordenada) */
-.messages-container, .chat-wrapper, .notification-stack {
+/* --- ANIMAÇÕES GERAIS --- */
+@keyframes modalEntrada {
+    from { opacity: 0; transform: scale(0.96) translateY(10px); }
+    to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+/* --- CHAT & NOTIFICAÇÕES ORDENS --- */
+.messages-container {
     display: flex;
     flex-direction: column;
     gap: 12px;
@@ -852,81 +705,42 @@ input[type="date"].input-dark::-webkit-calendar-picker-indicator:hover {
     scroll-behavior: smooth;
 }
 
-/* O Card da Mensagem em si (Garante sincronia de tamanho e comportamento) */
-.message-item, .notification-item {
+.message-item {
     display: flex;
     align-items: flex-start;
     gap: 12px;
     background: rgba(255, 255, 255, 0.02);
     border: 1px solid var(--border-color);
     backdrop-filter: var(--blur-intensity);
-    -webkit-backdrop-filter: var(--blur-intensity);
     padding: 14px 18px;
     border-radius: 8px;
     box-shadow: var(--shadow);
-    
-    /* Impedir que uma mensagem gigante distorça o layout das outras */
     width: 100%;
     flex-shrink: 0; 
-    
-    /* Sincronização de animação de entrada controlada */
     animation: mensagemSincronizada 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
-/* Alinhamento do conteúdo interno da mensagem */
-.message-content {
-    flex: 1; /* Ocupa o espaço restante perfeitamente */
-    min-width: 0; /* Correção vital do Flexbox para impedir quebras de layout com textos longos */
-}
+.message-content { flex: 1; min-width: 0; }
 
-/* Evita que mensagens longas vazem ou quebrem a sincronia visual */
-.message-text, .notification-text {
+.message-text {
     color: var(--text-white);
     font-size: 0.9rem;
     line-height: 1.5;
     word-wrap: break-word;
-    word-break: break-word;
     overflow-wrap: break-word;
 }
 
-/* Sincronização do timestamp / horário da mensagem */
-.message-time, .notification-time {
-    font-size: 0.75rem;
-    color: var(--text-muted-lux);
-    white-space: nowrap; /* Impede o horário de quebrar em duas linhas */
-    align-self: flex-end;
-}
+.message-time { font-size: 0.75rem; color: var(--text-muted-lux); white-space: nowrap; align-self: flex-end; }
 
-/* --- ANIMAÇÃO DE ENTRADA CRONOMETRADA (Efeito Cascata Avançado) --- */
 @keyframes mensagemSincronizada {
-    from {
-        opacity: 0;
-        transform: translateY(8px) scale(0.99);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-    }
+    from { opacity: 0; transform: translateY(8px) scale(0.99); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
 }
 
-/* Opcional: Se as mensagens forem geradas via JavaScript em sequência,
-   isso cria uma sincronia visual perfeita onde cada uma entra logo após a outra */
-.message-item:nth-child(1) { animation-delay: 0.05s; }
-.message-item:nth-child(2) { animation-delay: 0.10s; }
-.message-item:nth-child(3) { animation-delay: 0.15s; }
-.message-item:nth-child(4) { animation-delay: 0.20s; }
+.messages-container::-webkit-scrollbar { width: 4px; }
+.messages-container::-webkit-scrollbar-track { background: transparent; }
+.messages-container::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 10px; }
+.messages-container::-webkit-scrollbar-thumb:hover { background: var(--pessego-ref); }
 
-/* Customização da barra de rolagem do chat/mensagens para não poluir a tela */
-.messages-container::-webkit-scrollbar {
-    width: 4px;
-}
-.messages-container::-webkit-scrollbar-track {
-    background: transparent;
-}
-.messages-container::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 10px;
-}
-.messages-container::-webkit-scrollbar-thumb:hover {
-    background: var(--pessego-ref);
-}
+/* --- TEMPLATES OCULTOS DE IMPRESSÃO --- */
+#pdf-template, #etiqueta-template { display: none; }
