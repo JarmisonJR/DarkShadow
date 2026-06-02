@@ -550,3 +550,288 @@ input:focus, textarea:focus, select:focus, input[type="date"].input-dark:focus {
     box-shadow: var(--shadow);
     animation: modalEntrada 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
+/* ==========================================================================
+   RESTANTE DO CÓDIGO (CLASSES UTILITÁRIAS, ALERTAS, GARANTIAS E TIMERS)
+   ========================================================================== */
+
+/* --- CUSTOMIZAÇÃO DO INPUT DE DATA (GLASS PREMIUM) --- */
+input[type="date"].input-dark {
+    appearance: none;
+    -webkit-appearance: none;
+    color-scheme: dark; /* Força os seletores internos a ficarem escuros em navegadores modernos */
+    background-color: var(--bg-input);
+    border: 1px solid var(--border-color);
+    color: #ffffff;
+    padding: 14px 18px;
+    border-radius: 8px;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.95rem;
+    outline: none;
+    transition: var(--transition-premium);
+}
+
+input[type="date"].input-dark:focus {
+    border-color: var(--pessego-ref);
+    background-color: rgba(0, 0, 0, 0.6);
+    box-shadow: 0 0 20px rgba(233, 166, 128, 0.05);
+}
+
+/* Ícone de calendário nativo customizado */
+input[type="date"].input-dark::-webkit-calendar-picker-indicator {
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="%23e9a680" class="bi bi-calendar-event" viewBox="0 0 16 16"><path d="M11 6.5a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0zM10.5 8a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1zM13 6.5a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0z"/><path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4H1z"/></svg>');
+    cursor: pointer;
+    filter: drop-shadow(0px 0px 4px rgba(233, 166, 128, 0.3));
+    transition: transform 0.2s ease;
+}
+
+input[type="date"].input-dark::-webkit-calendar-picker-indicator:hover {
+    transform: scale(1.1);
+}
+
+/* --- DETALHES DINÂMICOS & TIMERS (MODO BANCADA E ALERTAS) --- */
+.card-timer {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.75rem;
+    color: var(--text-muted-lux);
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--border-light);
+    padding: 4px 8px;
+    border-radius: 4px;
+    margin-top: 12px;
+    font-family: 'Inter', sans-serif;
+}
+
+/* Alerta de Atraso de Ordem de Serviço */
+.card-atrasado {
+    border-left: 3px solid var(--danger-intense) !important;
+    animation: pulsoAlerta 2.5s infinite ease-in-out;
+}
+
+@keyframes pulsoAlerta {
+    0% { box-shadow: 0 0 0 0 rgba(255, 82, 82, 0.2); }
+    70% { box-shadow: 0 0 0 12px rgba(255, 82, 82, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(255, 82, 82, 0); }
+}
+
+/* --- BOTÕES COMPLEMENTARES --- */
+.btn-action-dark {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid var(--border-color);
+    color: #fff;
+    padding: 8px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    transition: var(--transition-premium);
+}
+
+.btn-action-dark:hover { 
+    background: rgba(255, 255, 255, 0.08); 
+    border-color: var(--text-muted-lux);
+}
+
+.btn-del-mini {
+    background: rgba(255, 255, 255, 0.02);
+    color: var(--text-muted-lux);
+    border: 1px solid var(--border-color);
+    padding: 8px 12px;
+    border-radius: 6px;
+    transition: var(--transition-premium);
+}
+
+.btn-del-mini:hover {
+    background: rgba(239, 68, 68, 0.08);
+    color: var(--danger-intense);
+    border-color: rgba(239, 68, 68, 0.2);
+}
+
+.btn-limpar-banco {
+    background-color: rgba(239, 68, 68, 0.02);
+    backdrop-filter: var(--blur-intensity);
+    -webkit-backdrop-filter: var(--blur-intensity);
+    color: var(--text-muted-lux);
+    border: 1px solid var(--border-color);
+    padding: 10px 18px;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: var(--transition-premium);
+}
+
+.btn-limpar-banco:hover {
+    background-color: rgba(239, 68, 68, 0.1);
+    color: #ffffff;
+    border-color: var(--danger);
+    box-shadow: 0 10px 25px rgba(239, 68, 68, 0.05);
+}
+
+.btn-cancel {
+    background-color: transparent;
+    color: var(--text-muted-lux);
+    border: 1px solid var(--border-color);
+    padding: 10px 18px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--transition-premium);
+}
+
+.btn-cancel:hover {
+    background-color: rgba(255, 255, 255, 0.02);
+    border-color: var(--pessego-ref); 
+    color: #ffffff;
+}
+
+/* Botão de Integração de Notificação via WhatsApp */
+.btn-whatsapp-notif {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    margin-top: 14px;
+    padding: 10px 14px;
+    background: rgba(16, 185, 129, 0.02);
+    border: 1px solid rgba(16, 185, 129, 0.15);
+    color: #10b981 !important;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: var(--transition-premium);
+}
+
+.btn-whatsapp-notif:hover {
+    background: rgba(16, 185, 129, 0.1);
+    border-color: var(--success);
+    color: #ffffff !important;
+    box-shadow: 0 10px 25px rgba(16, 185, 129, 0.05);
+}
+
+/* --- MÓDULO DE SEGURO E GARANTIA DE PEÇAS --- */
+.garantia-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.75rem;
+    padding: 4px 8px;
+    border-radius: 4px;
+    margin-top: 12px;
+    font-weight: 500;
+}
+
+.garantia-ativa {
+    background: rgba(59, 130, 246, 0.04);
+    color: #3b82f6;
+    border: 1px solid rgba(59, 130, 246, 0.15);
+}
+
+.garantia-vencida {
+    background: rgba(161, 161, 170, 0.04);
+    color: var(--text-muted);
+    border: 1px solid var(--border-color);
+}
+
+/* --- ESTILIZAÇÃO DO ESTOQUE CRÍTICO --- */
+.estoque-critico {
+    background-color: rgba(239, 68, 68, 0.01) !important; 
+}
+
+.estoque-critico td {
+    color: #ff7878 !important; 
+}
+
+.estoque-critico i.fa-exclamation-triangle {
+    margin-left: 8px;
+    color: var(--danger-intense);
+    animation: blinkMinimalista 2s infinite ease-in-out;
+}
+
+@keyframes blinkMinimalista {
+    0% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.4; transform: scale(0.95); }
+    100% { opacity: 1; transform: scale(1); }
+}
+
+/* --- INPUTS DE QUANTIDADE DA TABELA --- */
+.input-qtd, .input-qtd-tabela {
+    width: 32px;
+    text-align: center;
+    background: transparent;
+    border: none;
+    color: #ffffff;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 500;
+    outline: none;
+    -moz-appearance: textfield;
+}
+
+.texto-unidade {
+    color: var(--text-muted-lux);
+    font-size: 0.85rem;
+    font-weight: 400;
+    margin-right: 6px;
+    user-select: none;
+}
+
+/* --- CONFIGURAÇÕES INTERNAS DOS MODAIS DE CONFIRMAÇÃO --- */
+#confirm-no {
+    background: rgba(255, 255, 255, 0.02);
+    color: var(--text-muted-lux);
+    border: 1px solid var(--border-color);
+    padding: 12px 24px;
+    border-radius: 6px;
+    font-weight: 500;
+    font-size: 0.85rem;
+    cursor: pointer;
+    flex: 1;
+    transition: var(--transition-premium);
+}
+
+#confirm-no:hover { 
+    background: rgba(255, 255, 255, 0.05); 
+    border-color: var(--text-white);
+    color: #ffffff;
+}
+
+#confirm-yes {
+    background: transparent;
+    color: var(--danger-intense);
+    border: 1px solid var(--danger-intense);
+    padding: 12px 24px;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 0.85rem;
+    cursor: pointer;
+    flex: 1;
+    transition: var(--transition-premium);
+}
+
+#confirm-yes:hover {
+    background: var(--danger-intense);
+    color: #ffffff;
+    box-shadow: 0 15px 30px rgba(255, 82, 82, 0.1);
+    transform: translateY(-2px);
+}
+
+/* --- ANIMAÇÕES GERAIS DA PLACA (FADE IN INTERNO) --- */
+@keyframes modalEntrada {
+    from { 
+        opacity: 0; 
+        transform: scale(0.96) translateY(10px); 
+        backdrop-filter: blur(0px);
+    }
+    to { 
+        opacity: 1; 
+        transform: scale(1) translateY(0);
+        backdrop-filter: var(--blur-intensity);
+    }
+}
