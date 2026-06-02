@@ -6,7 +6,6 @@ function showScreen(screenId) {
         tela.classList.add('hidden');
     });
 
-
     const telaAlvo = document.getElementById(screenId);
     if (telaAlvo) {
         telaAlvo.classList.remove('hidden');
@@ -14,7 +13,6 @@ function showScreen(screenId) {
         console.error(`Erro: A tela com o ID "${screenId}" não foi encontrada no HTML.`);
     }
 
- 
     const botoesSidebar = document.querySelectorAll('.sidebar .nav-item');
     botoesSidebar.forEach(botao => {
         botao.classList.remove('active');
@@ -90,13 +88,12 @@ function handleFormSubmit(e) {
     showScreen('lista-screen');
 }
 
-// --- CONFIRMAÇÃO DE EXCLUSÃO PERSONALIZADA ---
 function excluirOS(id) {
     const modal = document.getElementById('custom-confirm');
     const btnYes = document.getElementById('confirm-yes');
     const msg = document.getElementById('confirm-message');
     
-    if(!modal) { // Fallback caso não tenha o modal HTML
+    if(!modal) { 
         if(confirm("Deseja realmente excluir esta ordem?")) {
             const filtrados = getOS().filter(os => os.id != id);
             saveOS(filtrados);
@@ -119,8 +116,6 @@ function excluirOS(id) {
     };
 }
 
-
-// --- SISTEMA KANBAN (DRAG & DROP) ---
 function allowDrop(ev) { ev.preventDefault(); }
 function drag(ev, id) { ev.dataTransfer.setData("osId", id); }
 
@@ -133,7 +128,6 @@ function drop(ev) {
     if (targetCol === 'col-andamento') novoStatus = 'Em Andamento';
     if (targetCol === 'col-concluido') novoStatus = 'Concluído';
 
-   // FORMA SEGURA (Converta ambos para String na comparação)
 const osList = getOS().map(os => {
     if (String(os.id) === String(id)) { 
         os.status = novoStatus; 
@@ -149,7 +143,6 @@ function renderKanban() {
     const colAndamento = document.querySelector('#col-andamento .kanban-cards');
     const colConcluido = document.querySelector('#col-concluido .kanban-cards');
 
-    // Limpa as colunas para evitar duplicatas ou erros de renderização
     if(colPendente) colPendente.innerHTML = '';
     if(colAndamento) colAndamento.innerHTML = '';
     if(colConcluido) colConcluido.innerHTML = '';
@@ -174,13 +167,12 @@ function renderKanban() {
             </div>
         `;
 
-        // Lógica de distribuição
         if (os.status === 'Pendente' && colPendente) colPendente.appendChild(card);
         else if (os.status === 'Em Andamento' && colAndamento) colAndamento.appendChild(card);
         else if (os.status === 'Concluído' && colConcluido) colConcluido.appendChild(card);
     });
 }
-// --- SISTEMA DE ESTOQUE ---
+
 const getEstoque = () => JSON.parse(localStorage.getItem('SAD_PRO_ESTOQUE') || '[]');
 const saveEstoque = (data) => localStorage.setItem('SAD_PRO_ESTOQUE', JSON.stringify(data));
 
@@ -192,12 +184,11 @@ function fecharModalPeca() {
     document.getElementById('modal-peca').classList.add('hidden');
 }
 
-// --- SISTEMA DE ESTOQUE ATUALIZADO ---
 function salvarPecaModal() {
     const nome = document.getElementById('modal-stk-nome').value;
     const qtd = document.getElementById('modal-stk-qtd').value;
     const preco = document.getElementById('modal-stk-preco').value;
-    const fone = document.getElementById('modal-stk-fone').value; // Novo campo
+    const fone = document.getElementById('modal-stk-fone').value; 
 
     if (!nome || !qtd || !preco) return alert("Preencha os campos obrigatórios!");
 
@@ -207,7 +198,7 @@ function salvarPecaModal() {
         nome,
         quantidade: parseInt(qtd),
         preco: parseFloat(preco),
-        foneFornecedor: fone.replace(/\D/g, '') // Salva apenas os números
+        foneFornecedor: fone.replace(/\D/g, '') 
     });
 
     saveEstoque(estoque);
@@ -216,11 +207,9 @@ function salvarPecaModal() {
     document.getElementById('pecaForm').reset();
 }
 
-// --- CONFIGURAÇÃO DE ESTOQUE BAIXO ---
 const LIMITE_ESTOQUE_BAIXO = 3; 
-const TELEFONE_FORNECEDOR = "21999999999"; // Substitua pelo número do seu fornecedor
+const TELEFONE_FORNECEDOR = "21999999999"; 
 
-// Funções para ajuste rápido de unidades
 function ajustarUnidade(id, delta) {
     const estoque = getEstoque().map(p => {
         if (p.id === id) {
@@ -302,7 +291,7 @@ function excluirPeca(id) {
         closeConfirm();
     };
 }
-// --- FINANCEIRO E DASHBOARD ---
+
 function renderFinanceiro() {
     const osList = getOS();
     const estoque = getEstoque();
@@ -311,7 +300,7 @@ function renderFinanceiro() {
     let totalEntradas = 0;
     let totalSaidas = 0;
 
-    // SÓ CONTABILIZA ENTRADA SE O STATUS FOR "CONCLUÍDO"
+    
     const entradasHTML = osList
         .filter(os => os.status === 'Concluído' && os.valor > 0)
         .map(os => {
@@ -326,17 +315,14 @@ function renderFinanceiro() {
             `;
         }).join('');
 
-    // Cálculo de saídas (Estoque)
     estoque.forEach(p => { 
         totalSaidas += (p.preco * p.quantidade); 
     });
 
-    // Atualização da Tabela Financeira
     if(tbody) {
         tbody.innerHTML = entradasHTML || '<tr><td colspan="4" style="text-align:center">Nenhuma entrada (OS Concluída) encontrada</td></tr>';
     }
 
-    // Atualização dos Cards de Valores
     const elEntradas = document.getElementById('fin-entradas');
     const elSaidas = document.getElementById('fin-saidas');
     const elSaldo = document.getElementById('fin-saldo');
@@ -353,11 +339,7 @@ function renderTable() {
     if (osList.length === 0) {
         tbody.innerHTML = '<tr><td colspan="6" style="text-align:center">Nenhuma ordem encontrada</td></tr>';
         return;
-        // Dentro do seu renderTable().map(os => { ... })
-// Adicione este botão junto aos outros (WhatsApp, PDF, Excluir):
-// Dentro do seu renderTable().map(os => { ... })
-// Adicione este botão junto aos outros (WhatsApp, PDF, Concluir):
-
+   
 `
 <button onclick="gerarEtiqueta(${os.id})" class="btn-action-dark" title="Gerar Etiqueta">
     <i class="fas fa-tag" style="color: #e9a680;"></i>
@@ -468,7 +450,7 @@ function limparBanco() {
     };
 }
 
-// --- INICIALIZAÇÃO ---
+
 document.addEventListener('DOMContentLoaded', () => {
     const form = document.getElementById('serviceForm');
     if(form) form.addEventListener('submit', handleFormSubmit);
@@ -476,7 +458,7 @@ document.addEventListener('DOMContentLoaded', () => {
     showScreen('home-screen');
     updateStats();
 });
-// Função para alterar o status manualmente (ex: via botão ou select na tabela)
+
 function alterarStatusOS(id, novoStatus) {
     const osList = getOS().map(os => {
         if (os.id == id) {
@@ -486,30 +468,27 @@ function alterarStatusOS(id, novoStatus) {
     });
 
     saveOS(osList);
-    
-    // Atualiza as telas abertas para refletir a mudança
+
     renderTable(); 
     renderFinanceiro(); 
     updateStats();
 }
-// Função para carregar peças no select da OS sempre que abrir a tela
 function carregarSelectPecas() {
     const select = document.getElementById('os-peca-select');
     if (!select) return;
     
     const estoque = getEstoque();
     
-    // Limpa e repopula
     select.innerHTML = '<option value="">-- Selecione uma peça (Opcional) --</option>';
     
     estoque.forEach(peca => {
         const option = document.createElement('option');
-        option.value = peca.id; // Importante: o ID deve ser o valor
+        option.value = peca.id; 
         option.textContent = `${peca.nome} (Estoque: ${peca.quantidade})`;
         select.appendChild(option);
     });
 }
-// Modificação da handleFormSubmit para dar baixa no estoque
+
 function handleFormSubmit(e) {
     e.preventDefault();
    // Dentro da sua função de salvar a OS (handleFormSubmit)
