@@ -1,18 +1,12 @@
-/**
- * TECHNICIAN PRO - Core Engine
- * Organizado por: Navegação, OS, Kanban, Financeiro, Estoque e WhatsApp
- */
 
-// --- NAVEGAÇÃO E ESTADO GLOBAL ---
 function showScreen(screenId) {
-    // 1. ESCONDE TODAS AS TELAS DO SISTEMA
-    // Certifique-se de que todas as suas seções de conteúdo tenham a classe '.content-section'
+  
     const telas = document.querySelectorAll('.content-section');
     telas.forEach(tela => {
         tela.classList.add('hidden');
     });
 
-    // 2. MOSTRA A TELA SELECIONADA
+
     const telaAlvo = document.getElementById(screenId);
     if (telaAlvo) {
         telaAlvo.classList.remove('hidden');
@@ -20,19 +14,16 @@ function showScreen(screenId) {
         console.error(`Erro: A tela com o ID "${screenId}" não foi encontrada no HTML.`);
     }
 
-    // 3. GERENCIA O ACENDIMENTO DOS BOTÕES DA SIDEBAR (O CORRETO PARA NOVOS BUTTONS)
+ 
     const botoesSidebar = document.querySelectorAll('.sidebar .nav-item');
     botoesSidebar.forEach(botao => {
-        // Remove a classe ativa de todos os botões
         botao.classList.remove('active');
-        
-        // Verifica se o 'onclick' deste botão contém o ID da tela atual para reativá-lo
+           
         if (botao.getAttribute('onclick') && botao.getAttribute('onclick').includes(screenId)) {
             botao.classList.add('active');
         }
     });
 
-    // 4. LOGICAS EXTRAS DE CARREGAMENTO AUTOMÁTICO
     if (screenId === 'home-screen' && typeof atualizarWelcomeBanner === 'function') {
         atualizarWelcomeBanner();
     }
@@ -52,14 +43,13 @@ function showScreen(screenId) {
         renderFinanceiro();
     }
 }
-// --- GESTÃO DE ORDENS DE SERVIÇO (OS) ---
+
 const getOS = () => JSON.parse(localStorage.getItem('SAD_PRO_OS') || '[]');
 const saveOS = (data) => {
     localStorage.setItem('SAD_PRO_OS', JSON.stringify(data));
     updateStats();
 };
 
-// --- FUNÇÃO WHATSAPP ---
 function enviarWhatsApp(id) {
     const os = getOS().find(o => o.id == id);
     if (!os || !os.telefone) {
@@ -242,7 +232,6 @@ function ajustarUnidade(id, delta) {
     renderEstoque();
 }
 
-// Atualização da renderEstoque para incluir os novos botões
 function renderEstoque() {
     const tbody = document.getElementById('stock-body'); 
     const data = getEstoque();
