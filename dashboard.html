@@ -208,60 +208,116 @@
                 </div>
             </section>
 
-            <section id="estoque-screen" class="content-section hidden">
-                <div class="section-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                    <h2>Estoque de Peças</h2>
-                    <button class="btn-primary-gradient" onclick="abrirModalPeca()">
-                        <i class="fas fa-plus"></i> Nova Peça
-                    </button>
-                </div>
-                <div class="table-container">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Peça</th>
-                                <th style="width: 160px; text-align: center;">Quantidade</th>
-                                <th>Preço Custo</th>
-                                <th>Ações</th>
-                            </tr>
-                        </thead>
-                        <tbody id="stock-body"></tbody>
-                    </table>
-                </div>
-            </section>
-
-        </main>
+           <!-- ================= SEÇÃO ESTOQUE MELHORADA ================= -->
+<section id="estoque-screen" class="content-section hidden">
+    <div class="section-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <h2>Estoque de Peças</h2>
+        <button class="btn-primary-gradient" onclick="abrirModalPeca()">
+            <i class="fas fa-plus"></i> Nova Peça
+        </button>
     </div>
 
-    <div id="modal-peca" class="modal-overlay hidden">
-        <div class="form-card animate-in" style="max-width: 450px;">
-            <h2>Cadastrar Peça</h2>
-            <form id="pecaForm" onsubmit="event.preventDefault(); salvarPecaModal();">
-                <div class="input-group">
-                    <label for="modal-stk-nome">Nome</label>
-                    <input type="text" id="modal-stk-nome" class="input-dark" required>
-                </div>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-                    <div class="input-group">
-                        <label for="modal-stk-qtd">Qtd</label>
-                        <input type="number" id="modal-stk-qtd" class="input-dark" min="1" value="1" required>
-                    </div>
-                    <div class="input-group">
-                        <label for="modal-stk-preco">Preço Custo</label>
-                        <input type="number" step="0.01" id="modal-stk-preco" class="input-dark" required>
-                    </div>
-                </div>
-                <div style="margin-top: 15px;" class="input-group">
-                    <label for="modal-stk-fone">WhatsApp do Fornecedor</label>
-                    <input type="text" id="modal-stk-fone" class="input-dark" placeholder="Ex: 21999999999">
-                </div>
-                <div class="confirm-buttons" style="margin-top: 20px; display: flex; gap: 10px; justify-content: flex-end;">
-                    <button type="button" onclick="fecharModalPeca()" class="btn-no" style="background: transparent; border: 1px solid #444; color: #fff; padding: 10px 20px; border-radius: 8px; cursor: pointer;">Cancelar</button>
-                    <button type="submit" class="btn-primary" style="padding: 10px 20px; border-radius: 8px; cursor: pointer;">Salvar</button>
-                </div>
-            </form>
+    <!-- Indicadores Rápidos de Estoque -->
+    <div class="stats-grid" style="margin-bottom: 25px;">
+        <div class="stat-card">
+            <h3>Total de Itens Cadastrados</h3>
+            <span id="stk-stat-total">0</span>
+        </div>
+        <div class="stat-card" style="border-left: 4px solid #e74c3c;">
+            <h3>Alertas / Estoque Baixo</h3>
+            <span id="stk-stat-alertas" style="color: #e74c3c;">0</span>
+        </div>
+        <div class="stat-card">
+            <h3>Valor Investido (Custo)</h3>
+            <span id="stk-stat-valor">R$ 0,00</span>
         </div>
     </div>
+
+    <!-- Barra de Ferramentas: Busca e Filtros -->
+    <div class="stock-toolbar" style="display: flex; gap: 15px; margin-bottom: 20px; flex-wrap: wrap;">
+        <div style="flex: 1; min-width: 250px;">
+            <input type="text" id="stk-search" class="input-dark" placeholder="🔍 Buscar peça por nome ou código..." oninput="filtrarEstoque()">
+        </div>
+        <div style="width: 200px;">
+            <select id="stk-filter-status" class="input-dark" onchange="filtrarEstoque()">
+                <option value="todos">Todos os Status</option>
+                <option value="ok">Em Estoque</option>
+                <option value="baixo">Estoque Baixo</option>
+                <option value="zero">Esgotado</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- Tabela de Estoque -->
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Código / SKU</th>
+                    <th>Peça</th>
+                    <th>Localização</th>
+                    <th style="width: 160px; text-align: center;">Qtd. Atual</th>
+                    <th>Status</th>
+                    <th>Preço Custo</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody id="stock-body"></tbody>
+        </table>
+    </div>
+</section>
+
+<!-- ================= MODAL DE CADASTRO/EDIÇÃO DE PEÇA ================= -->
+<div id="modal-peca" class="modal-overlay hidden">
+    <div class="form-card animate-in" style="max-width: 520px;">
+        <h2 id="modal-peca-titulo">Cadastrar Peça</h2>
+        <form id="pecaForm" onsubmit="event.preventDefault(); salvarPecaModal();">
+            <input type="hidden" id="modal-stk-id">
+            
+            <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 15px;">
+                <div class="input-group">
+                    <label for="modal-stk-sku">Código/SKU</label>
+                    <input type="text" id="modal-stk-sku" class="input-dark" placeholder="Ex: PEC-001">
+                </div>
+                <div class="input-group">
+                    <label for="modal-stk-nome">Nome da Peça</label>
+                    <input type="text" id="modal-stk-nome" class="input-dark" placeholder="Ex: Tela iPhone 11" required>
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px;">
+                <div class="input-group">
+                    <label for="modal-stk-qtd">Qtd. Atual</label>
+                    <input type="number" id="modal-stk-qtd" class="input-dark" min="0" value="1" required>
+                </div>
+                <div class="input-group">
+                    <label for="modal-stk-min">Estoque Mín.</label>
+                    <input type="number" id="modal-stk-min" class="input-dark" min="1" value="2" title="Alerta disparado ao atingir esta quantidade" required>
+                </div>
+                <div class="input-group">
+                    <label for="modal-stk-preco">Preço Custo (R$)</label>
+                    <input type="number" step="0.01" id="modal-stk-preco" class="input-dark" placeholder="0.00" required>
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 10px;">
+                <div class="input-group">
+                    <label for="modal-stk-local">Local / Gaveteiro</label>
+                    <input type="text" id="modal-stk-local" class="input-dark" placeholder="Ex: Gaveta B3">
+                </div>
+                <div class="input-group">
+                    <label for="modal-stk-fone">Whats Fornecedor</label>
+                    <input type="text" id="modal-stk-fone" class="input-dark" placeholder="Ex: 21999999999">
+                </div>
+            </div>
+
+            <div class="confirm-buttons" style="margin-top: 20px; display: flex; gap: 10px; justify-content: flex-end;">
+                <button type="button" onclick="fecharModalPeca()" class="btn-no" style="background: transparent; border: 1px solid #444; color: #fff; padding: 10px 20px; border-radius: 8px; cursor: pointer;">Cancelar</button>
+                <button type="submit" class="btn-primary-gradient" style="padding: 10px 20px; border-radius: 8px; cursor: pointer;">Salvar Peça</button>
+            </div>
+        </form>
+    </div>
+</div>
 
     <div id="custom-confirm" class="modal-overlay hidden">
         <div class="confirm-card">
@@ -295,7 +351,12 @@
             <small id="etiqueta-data"></small>
         </div>
     </div>
+<!-- Firebase App (obrigatório) -->
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+<!-- Firebase Firestore (Banco de dados) -->
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
 
+<!-- Seu script do projeto -->
     <script src="dashboard.js"></script>
 
 </body>
