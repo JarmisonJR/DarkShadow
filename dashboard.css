@@ -1,53 +1,82 @@
 @import url('https://fonts.googleapis.com/css2?family=Forum&family=Inter:wght@300;400;500;600;700&display=swap');
 
-/* --- VARIÁVEIS DE CORES (Glassmorphism de Alto Padrão & Minimalismo) --- */
+/* ==========================================================================
+   1. VARIÁVEIS DE CORES E DESIGN TOKENS (Vibrante, Dark & Glassmorphism)
+   ========================================================================== */
 :root {
-    --bg-black: #08080a;
-    --sidebar-bg: #0c0c0e;
+    /* Fundo & Camadas */
+    --bg-black: #090510;
+    --bg-mesh: radial-gradient(circle at 50% 0%, rgba(147, 51, 234, 0.15), transparent 70%);
+    --sidebar-bg: rgba(15, 10, 26, 0.95);
+    --card-bg: rgba(255, 255, 255, 0.03);
+    --bg-input: rgba(18, 11, 32, 0.7);
+
+    /* Cores de Destaque Neon & Roxo */
+    --primary-sunset: #d8b4fe;
+    --pessego-ref: #c084fc;
+    --primary-teal: #06b6d4;
     
-    /* Vidro translúcido refinado */
-    --card-bg: rgba(255, 255, 255, 0.02);        
-    --bg-input: rgba(0, 0, 0, 0.4);        
+    /* Glows & Brilhos */
+    --sunset-glow: rgba(192, 132, 252, 0.3);
+    --teal-glow: rgba(6, 182, 212, 0.3);
 
-    /* Paleta Identidade Mantida e Polida */
-    --primary-sunset: #ffb38a;       
-    --pessego-ref: #e9a680;           
-    --primary-teal: #155e63;          
-    --sunset-glow: rgba(255, 179, 138, 0.15);
-    --teal-glow: rgba(21, 94, 99, 0.2);
+    /* Tipografia & Bordas */
+    --text-white: #f8fafc;
+    --text-muted: #a78bfa;
+    --text-muted-lux: #cbd5e1;
+    --border-color: rgba(192, 132, 252, 0.18);
+    --border-light: rgba(255, 255, 255, 0.06);
 
-    --text-white: #ffffff;
-    --text-muted: #8e929e;
-    --text-muted-lux: #a0aec0;       
-    --border-color: rgba(255, 255, 255, 0.05);  
-    --border-light: rgba(255, 255, 255, 0.02);
-
-    --danger: #ef4444;
-    --danger-intense: #ff5252;
+    /* Feedback de Status */
+    --danger: #f43f5e;
+    --danger-intense: #ff4d6d;
     --success: #10b981;
-    --info: #3b82f6;
+    --info: #0ea5e9;
     --warning: #f59e0b;
 
-    --shadow: 0 20px 50px 0 rgba(0, 0, 0, 0.5); 
-    --blur-intensity: blur(16px);
-    --transition-premium: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    /* Efeitos de Camada */
+    --shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.8);
+    --shadow-hover: 0 30px 60px -12px rgba(0, 0, 0, 0.9), 0 0 25px rgba(192, 132, 252, 0.15);
+    --blur-intensity: blur(20px);
+    --transition-premium: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* --- RESET & GLOBAL MINIMALISTA --- */
-* { 
+/* ==========================================================================
+   2. RESET GLOBAL & BASE ELEGANTE
+   ========================================================================== */
+*, *::before, *::after { 
     margin: 0; 
     padding: 0; 
     box-sizing: border-box; 
     -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 
 body { 
     background-color: var(--bg-black); 
+    background-image: var(--bg-mesh);
+    background-attachment: fixed;
     color: var(--text-white);
-    font-family: 'Inter', sans-serif; 
+    font-family: 'Inter', system-ui, -apple-system, sans-serif; 
     min-height: 100vh;
     overflow-x: hidden;
     letter-spacing: -0.01em;
+}
+
+/* Custom Scrollbar Global */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+::-webkit-scrollbar-track {
+    background: var(--bg-black);
+}
+::-webkit-scrollbar-thumb {
+    background: rgba(192, 132, 252, 0.25);
+    border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: var(--pessego-ref);
 }
 
 h1, h2, h3, h4, .sidebar-logo, .kanban-title { 
@@ -57,12 +86,14 @@ h1, h2, h3, h4, .sidebar-logo, .kanban-title {
 
 .hidden { display: none !important; }
 
-/* --- SIDEBAR LUXO --- */
+/* ==========================================================================
+   3. SIDEBAR ULTRALUXO
+   ========================================================================== */
 .sidebar {
     width: 260px;
     background-color: var(--sidebar-bg);
     border-right: 1px solid var(--border-color);
-    padding: 40px 24px;
+    padding: 40px 20px;
     display: flex;
     flex-direction: column;
     position: fixed;
@@ -70,12 +101,14 @@ h1, h2, h3, h4, .sidebar-logo, .kanban-title {
     top: 0;
     left: 0;
     z-index: 1000;
+    backdrop-filter: var(--blur-intensity);
+    -webkit-backdrop-filter: var(--blur-intensity);
 }
 
 .sidebar-logo {
     font-size: 1.4rem;
     text-transform: uppercase;
-    margin-bottom: 45px;
+    margin-bottom: 40px;
     letter-spacing: 4px;
     color: var(--text-white);
     text-align: center;
@@ -83,22 +116,22 @@ h1, h2, h3, h4, .sidebar-logo, .kanban-title {
 
 .sidebar-logo span { 
     color: var(--primary-sunset); 
-    text-shadow: 0 0 15px var(--sunset-glow); 
+    text-shadow: 0 0 18px var(--sunset-glow); 
 }
 
 .sidebar-logo h2 {
     color: #ffffff;
-    font-size: 1.1rem;
+    font-size: 1rem;
     letter-spacing: 2px;
-    margin-top: 5px;
-    opacity: 0.9;
+    margin-top: 6px;
+    opacity: 0.85;
 }
 
 .nav-menu { 
     flex-grow: 1; 
     display: flex; 
     flex-direction: column; 
-    gap: 6px; 
+    gap: 8px; 
 }
 
 .nav-item {
@@ -108,7 +141,7 @@ h1, h2, h3, h4, .sidebar-logo, .kanban-title {
     color: var(--text-muted-lux);
     border-left: 3px solid transparent;
     padding: 12px 16px;
-    border-radius: 6px;
+    border-radius: 8px;
     font-size: 0.9rem;
     font-weight: 400;
     cursor: pointer;
@@ -120,53 +153,53 @@ h1, h2, h3, h4, .sidebar-logo, .kanban-title {
 }
 
 .nav-item i {
-    width: 16px;
+    width: 18px;
     text-align: center;
-    font-size: 1rem;
+    font-size: 1.05rem;
     color: var(--text-muted);
     transition: var(--transition-premium);
 }
 
 .nav-item:hover {
-    background: rgba(233, 166, 128, 0.03); 
+    background: rgba(192, 132, 252, 0.1); 
     color: var(--pessego-ref); 
-    border-left: 3px solid var(--pessego-ref); 
+    border-left-color: var(--pessego-ref); 
     padding-left: 20px; 
 }
 
 .nav-item:hover i {
     color: var(--pessego-ref);
-    transform: scale(1.05);
+    transform: scale(1.1);
 }
 
 .nav-item.active {
-    background: rgba(21, 94, 99, 0.08); 
+    background: rgba(6, 182, 212, 0.15); 
     color: #ffffff;
-    border-left: 3px solid var(--primary-teal); 
+    border-left-color: var(--primary-teal); 
     font-weight: 500;
     box-shadow: inset 10px 0 20px -10px var(--teal-glow);
 }
 
 .nav-item.active i {
-    color: #4db6ac;
-    text-shadow: 0 0 10px var(--teal-glow);
+    color: #22d3ee;
+    text-shadow: 0 0 12px var(--teal-glow);
 }
 
 .sidebar-footer {
-    padding-top: 25px;
+    padding-top: 20px;
     border-top: 1px solid var(--border-light);
 }
 
 .btn-logout {
     width: 100%;
-    background: rgba(239, 68, 68, 0.02);
-    color: var(--text-muted);
+    background: rgba(244, 63, 94, 0.05);
+    color: var(--text-muted-lux);
     border: 1px solid var(--border-color);
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 12px 16px;
-    border-radius: 6px;
+    border-radius: 8px;
     cursor: pointer;
     font-size: 0.85rem;
     font-weight: 500;
@@ -174,15 +207,17 @@ h1, h2, h3, h4, .sidebar-logo, .kanban-title {
 }
 
 .btn-logout:hover {
-    background: rgba(239, 68, 68, 0.1);
+    background: rgba(244, 63, 94, 0.18);
     color: var(--danger-intense);
-    border-color: rgba(239, 68, 68, 0.2);
-    box-shadow: 0 10px 30px rgba(239, 68, 68, 0.05);
+    border-color: rgba(244, 63, 94, 0.4);
+    box-shadow: 0 10px 25px rgba(244, 63, 94, 0.2);
 }
 
-/* --- MAIN CONTENT & CANVAS DE REPARO --- */
+/* ==========================================================================
+   4. ÁREA PRINCIPAL & CONTAINERS
+   ========================================================================== */
 .main-wrapper, .main-content {
-    background-image: linear-gradient(rgba(8, 8, 10, 0.75), rgba(8, 8, 10, 0.85)), 
+    background-image: linear-gradient(rgba(9, 5, 16, 0.85), rgba(9, 5, 16, 0.93)), 
                       url('Imagem4.jpg');
     background-size: cover;        
     background-position: center;    
@@ -193,13 +228,13 @@ h1, h2, h3, h4, .sidebar-logo, .kanban-title {
     padding: 40px;
 }
 
-/* --- WELCOME BANNER (GLASS REAL) --- */
+/* Welcome Banner */
 .welcome-banner {
-    background: rgba(255, 255, 255, 0.01);
+    background: rgba(147, 51, 234, 0.06);
     border: 1px solid var(--border-color);
     border-radius: 16px;
-    padding: 35px;
-    margin-bottom: 35px;
+    padding: 32px;
+    margin-bottom: 32px;
     backdrop-filter: var(--blur-intensity); 
     -webkit-backdrop-filter: var(--blur-intensity);
     box-shadow: var(--shadow);
@@ -216,12 +251,12 @@ h1, h2, h3, h4, .sidebar-logo, .kanban-title {
 
 .welcome-text h1 span { 
     color: var(--pessego-ref); 
-    text-shadow: 0 0 15px var(--sunset-glow);
+    text-shadow: 0 0 18px var(--sunset-glow);
 }
 
 .welcome-text p {
     color: var(--text-muted);
-    margin-top: 8px;
+    margin-top: 6px;
     font-size: 0.95rem;
     font-weight: 300;
 }
@@ -236,20 +271,23 @@ h1, h2, h3, h4, .sidebar-logo, .kanban-title {
 }
 
 #current-date {
-    color: var(--primary-sunset); 
+    color: var(--primary-teal); 
     font-size: 0.75rem;
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 2px;
     margin-top: 4px;
+    text-shadow: 0 0 10px var(--teal-glow);
 }
 
-/* --- CARDS DE ESTATÍSTICA SLIM --- */
+/* ==========================================================================
+   5. CARDS DE ESTATÍSTICA SLIM
+   ========================================================================== */
 .stats-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
     gap: 24px;
-    margin-bottom: 35px;
+    margin-bottom: 32px;
 }
 
 .stat-card {
@@ -257,16 +295,16 @@ h1, h2, h3, h4, .sidebar-logo, .kanban-title {
     border: 1px solid var(--border-color);
     backdrop-filter: var(--blur-intensity);
     -webkit-backdrop-filter: var(--blur-intensity);
-    padding: 30px 24px;
-    border-radius: 12px;
+    padding: 26px 24px;
+    border-radius: 14px;
     text-align: left;
     transition: var(--transition-premium);
     box-shadow: var(--shadow);
 }
 
 .stat-card h3 { 
-    font-size: 0.7rem; 
-    color: var(--text-muted-lux); 
+    font-size: 0.72rem; 
+    color: var(--text-muted); 
     text-transform: uppercase; 
     letter-spacing: 2px;
 }
@@ -277,19 +315,21 @@ h1, h2, h3, h4, .sidebar-logo, .kanban-title {
     font-family: 'Inter', sans-serif;
     font-weight: 300;
     color: #ffffff;
-    margin-top: 12px;
+    margin-top: 10px;
 }
 
-/* --- KANBAN MINIMALISTA --- */
+/* ==========================================================================
+   6. KANBAN BOARD SYSTEM
+   ========================================================================== */
 .kanban-container {
     display: flex;
     gap: 24px;
     overflow-x: auto;
-    padding-bottom: 20px;
+    padding-bottom: 16px;
 }
 
 .kanban-column {
-    background: rgba(10, 10, 12, 0.2);
+    background: rgba(18, 11, 32, 0.55);
     border: 1px solid var(--border-color);
     backdrop-filter: var(--blur-intensity);
     -webkit-backdrop-filter: var(--blur-intensity);
@@ -304,7 +344,7 @@ h1, h2, h3, h4, .sidebar-logo, .kanban-title {
 }
 
 .kanban-title {
-    padding: 24px;
+    padding: 20px 24px;
     font-size: 1.1rem;
     letter-spacing: 2px;
     color: var(--primary-sunset);
@@ -320,10 +360,10 @@ h1, h2, h3, h4, .sidebar-logo, .kanban-title {
 }
 
 .kanban-card {
-    background: rgba(255, 255, 255, 0.02);
+    background: rgba(255, 255, 255, 0.035);
     border: 1px solid var(--border-light);
     padding: 18px;
-    border-radius: 10px;
+    border-radius: 12px;
     margin-bottom: 14px;
     border-left: 3px solid var(--primary-teal);
     transition: var(--transition-premium);
@@ -331,7 +371,7 @@ h1, h2, h3, h4, .sidebar-logo, .kanban-title {
 }
 
 .kanban-card h4 {
-    font-size: 1.1rem;
+    font-size: 1.05rem;
     color: #ffffff;
     margin-bottom: 6px;
 }
@@ -346,15 +386,17 @@ h1, h2, h3, h4, .sidebar-logo, .kanban-title {
 
 .os-urgente {
     border-left: 3px solid var(--danger-intense) !important;
-    background: linear-gradient(to right, rgba(239, 68, 68, 0.03), transparent) !important;
+    background: linear-gradient(to right, rgba(244, 63, 94, 0.12), transparent) !important;
 }
 
-/* --- TABELAS LIMPAS --- */
+/* ==========================================================================
+   7. TABELAS DE DADOS
+   ========================================================================== */
 .table-container { 
-    background: rgba(10, 10, 12, 0.15); 
+    background: rgba(18, 11, 32, 0.5); 
     backdrop-filter: var(--blur-intensity);
     -webkit-backdrop-filter: var(--blur-intensity);
-    border-radius: 14px; 
+    border-radius: 16px; 
     border: 1px solid var(--border-color); 
     box-shadow: var(--shadow);
     overflow-x: auto;
@@ -368,8 +410,8 @@ table {
 }
 
 th, .table-header { 
-    background: rgba(0, 0, 0, 0.3); 
-    color: var(--text-muted-lux); 
+    background: rgba(9, 5, 16, 0.6); 
+    color: var(--text-muted); 
     padding: 18px 24px; 
     text-align: left; 
     font-size: 0.75rem; 
@@ -380,7 +422,7 @@ th, .table-header {
 }
 
 td { 
-    padding: 20px 24px; 
+    padding: 18px 24px; 
     border-bottom: 1px solid var(--border-light); 
     color: var(--text-white);
     font-size: 0.9rem;
@@ -389,10 +431,68 @@ td {
 }
 
 tr:hover td {
-    background: rgba(255, 255, 255, 0.01);
+    background: rgba(192, 132, 252, 0.04);
 }
 
-/* --- SINC DO MÓDULO DE BOTÕES (CSS vs JS) --- */
+/* ==========================================================================
+   8. FORMULÁRIOS & CAMPOS DE ENTRADA
+   ========================================================================== */
+.form-card {
+    background: rgba(18, 11, 32, 0.65);
+    backdrop-filter: var(--blur-intensity);
+    -webkit-backdrop-filter: var(--blur-intensity);
+    border: 1px solid var(--border-color);
+    padding: 36px;
+    border-radius: 16px;
+    margin-top: 20px;
+    box-shadow: var(--shadow);
+}
+
+.form-group {
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+label { 
+    margin-bottom: 8px; 
+    color: var(--text-muted); 
+    font-size: 0.78rem; 
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+}
+
+input[type="text"], 
+input[type="password"], 
+input[type="email"], 
+input[type="number"], 
+textarea, 
+select, 
+input[type="date"].input-dark {
+    width: 100%;
+    background: var(--bg-input);
+    border: 1px solid var(--border-color);
+    padding: 14px 18px;
+    color: var(--text-white);
+    border-radius: 8px;
+    outline: none;
+    font-size: 0.95rem;
+    font-family: 'Inter', sans-serif;
+    transition: var(--transition-premium);
+}
+
+input:focus, 
+textarea:focus, 
+select:focus, 
+input[type="date"].input-dark:focus { 
+    border-color: var(--pessego-ref); 
+    background: rgba(9, 5, 16, 0.85); 
+    box-shadow: 0 0 20px rgba(192, 132, 252, 0.2);
+}
+
+/* ==========================================================================
+   9. BOTÕES & CONTROLES INTERATIVOS
+   ========================================================================== */
 .btn-acao, .btn-action, .btn-del {
     width: 36px;
     height: 36px;
@@ -410,20 +510,20 @@ tr:hover td {
 
 .btn-acao:hover, .btn-action:hover { 
     border-color: var(--primary-teal); 
-    color: #4db6ac;
-    box-shadow: 0 0 15px var(--teal-glow);
+    color: #22d3ee;
+    box-shadow: 0 0 18px var(--teal-glow);
 }
 
 .btn-delete:hover, .btn-del:hover { 
-    background: rgba(239, 68, 68, 0.1) !important; 
+    background: rgba(244, 63, 94, 0.2) !important; 
     border-color: var(--danger) !important; 
     color: var(--danger-intense) !important; 
 }
 
 .btn-whatsapp:hover {
-    background: #25d366 !important;
+    background: #10b981 !important;
     color: #fff !important;
-    box-shadow: 0 0 15px rgba(37, 211, 102, 0.4);
+    box-shadow: 0 0 18px rgba(16, 185, 129, 0.5);
 }
 
 .btn-qtd, .btn-mini, .btn-qtd-tabela {
@@ -432,146 +532,122 @@ tr:hover td {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    background: rgba(255, 255, 255, 0.04);
+    background: rgba(255, 255, 255, 0.06);
     border: 1px solid var(--border-color);
     color: var(--text-white);
     font-size: 0.9rem;
-    border-radius: 4px;
+    border-radius: 6px;
     cursor: pointer;
     transition: var(--transition-premium);
 }
 .btn-qtd:hover { border-color: var(--pessego-ref); color: var(--pessego-ref); }
 
-.btn-primary-gradient {
+.btn-primary-gradient, button[type="submit"] {
     background: transparent;
-    color: var(--pessego-ref);
-    border: 1px solid var(--pessego-ref);
-    padding: 12px 24px;
-    border-radius: 6px;
-    font-weight: 500;
-    font-size: 0.8rem;
-    text-transform: uppercase;
-    letter-spacing: 1.5px;
-    transition: var(--transition-premium);
-}
-
-.btn-primary-gradient:hover {
-    background: var(--pessego-ref);
-    color: var(--bg-black);
-    box-shadow: 0 0 25px var(--sunset-glow);
-    transform: translateY(-1px);
-}
-
-button[type="submit"] {
-    background: transparent;
+    color: var(--primary-sunset);
     border: 1px solid var(--primary-sunset);
-    color: var(--primary-sunset); 
-    padding: 16px;
+    padding: 14px 24px;
     border-radius: 8px;
     font-weight: 600;
     font-size: 0.85rem;
     text-transform: uppercase;
     letter-spacing: 2px;
     transition: var(--transition-premium);
-    width: 100%;
     cursor: pointer;
 }
 
-button[type="submit"]:hover {
+button[type="submit"] { width: 100%; }
+
+.btn-primary-gradient:hover, button[type="submit"]:hover {
     background: var(--primary-sunset);
     color: var(--bg-black);
-    box-shadow: 0 0 30px var(--sunset-glow);
-    transform: translateY(-1px);
+    box-shadow: 0 0 25px var(--sunset-glow);
+    transform: translateY(-2px);
 }
 
-/* --- FORMULÁRIOS SECOS E SOFISTICADOS --- */
-.form-card {
-    background: rgba(10, 10, 12, 0.4);
-    backdrop-filter: var(--blur-intensity);
-    -webkit-backdrop-filter: var(--blur-intensity);
-    border: 1px solid var(--border-color);
-    padding: 40px;
-    border-radius: 16px;
-    margin-top: 20px;
-}
-
-.form-group {
-    margin-bottom: 20px;
-    display: flex;
-    flex-direction: column;
-}
-
-label { 
-    margin-bottom: 10px; 
-    color: var(--text-muted); 
-    font-size: 0.8rem; 
-    text-transform: uppercase;
-    letter-spacing: 1.5px;
-}
-
-input[type="text"], input[type="password"], input[type="email"], input[type="number"], textarea, select, input[type="date"].input-dark {
-    width: 100%;
-    background: var(--bg-input);
-    border: 1px solid var(--border-color);
-    padding: 14px 18px;
-    color: white;
+.btn-action-dark, .btn-cancel, .btn-del-mini, .btn-limpar-banco {
+    padding: 10px 18px;
     border-radius: 8px;
-    outline: none;
-    font-size: 0.95rem;
-    font-family: 'Inter', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
     transition: var(--transition-premium);
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid var(--border-color);
+    color: var(--text-muted-lux);
 }
 
-input:focus, textarea:focus, select:focus, input[type="date"].input-dark:focus { 
-    border-color: var(--pessego-ref); 
-    background: rgba(0, 0, 0, 0.6); 
-    box-shadow: 0 0 20px rgba(233, 166, 128, 0.05);
+.btn-action-dark:hover { background: rgba(255, 255, 255, 0.1); color: #fff; }
+.btn-cancel:hover { border-color: var(--pessego-ref); color: #ffffff; }
+.btn-del-mini:hover { background: rgba(244, 63, 94, 0.15); color: var(--danger-intense); border-color: rgba(244, 63, 94, 0.4); }
+
+.btn-limpar-banco {
+    background-color: rgba(244, 63, 94, 0.06);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.btn-limpar-banco:hover {
+    background-color: rgba(244, 63, 94, 0.2);
+    color: #ffffff;
+    border-color: var(--danger);
+    box-shadow: 0 10px 25px rgba(244, 63, 94, 0.2);
 }
 
-/* --- BADGES DE STATUS (MAPEADOS COM O JS) --- */
+/* ==========================================================================
+   10. HOVERS, CARDS E ANIMAÇÕES
+   ========================================================================== */
+.stat-card:hover, .form-card:hover, .kanban-card:hover {
+    border-color: rgba(192, 132, 252, 0.45) !important;
+    box-shadow: var(--shadow-hover) !important;
+    transform: translateY(-4px);
+}
+
+.kanban-column:hover {
+    border-color: rgba(6, 182, 212, 0.45) !important;
+    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.8), 0 0 25px rgba(6, 182, 212, 0.15) !important;
+}
+
+/* Badges */
 .badge, .status-badge {
     padding: 6px 12px;
-    border-radius: 4px;
+    border-radius: 6px;
     font-size: 0.7rem;
     text-transform: uppercase;
     letter-spacing: 1px;
     font-weight: 600;
     display: inline-block;
 }
-.badge-pendente, .status-pendente { background: rgba(245, 158, 11, 0.06); border: 1px solid rgba(245, 158, 11, 0.2); color: #f59e0b; }
-.badge-andamento, .status-andamento { background: rgba(59, 130, 246, 0.06); border: 1px solid rgba(59, 130, 246, 0.2); color: #3b82f6; }
-.badge-concluido, .status-concluido { background: rgba(16, 185, 129, 0.06); border: 1px solid rgba(16, 185, 129, 0.2); color: #10b981; }
+.badge-pendente, .status-pendente { background: rgba(245, 158, 11, 0.15); border: 1px solid rgba(245, 158, 11, 0.4); color: #fbbf24; }
+.badge-andamento, .status-andamento { background: rgba(14, 165, 233, 0.15); border: 1px solid rgba(14, 165, 233, 0.4); color: #38bdf8; }
+.badge-concluido, .status-concluido { background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.4); color: #34d399; }
 
-/* --- INTERATIVIDADE E BRILHO UNIFICADO NO HOVER --- */
-.stat-card:hover, .form-card:hover, .kanban-card:hover {
-    border-color: rgba(233, 166, 128, 0.25) !important;
-    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6), 
-                0 0 30px rgba(233, 166, 128, 0.05) !important;
-    transform: translateY(-4px);
-}
-
-.kanban-column:hover {
-    border-color: rgba(21, 94, 99, 0.25) !important;
-    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6), 
-                0 0 30px rgba(21, 94, 99, 0.03) !important;
-}
-
-/* --- CONTROLADOR DE QUANTIDADE COMPACTO --- */
+/* Controladores & Alertas */
 .qtd-control, .qtd-control-tabela {
     display: inline-flex;
     align-items: center;
-    background: rgba(0, 0, 0, 0.2);
+    background: rgba(0, 0, 0, 0.4);
     border: 1px solid var(--border-color);
     border-radius: 6px;
     padding: 2px;
 }
 
-/* --- MODAIS VESTIDOS DE CRISTAL --- */
+.card-atrasado {
+    border-left: 3px solid var(--danger-intense) !important;
+    animation: pulsoAlerta 2.5s infinite ease-in-out;
+}
+
+.estoque-critico { background-color: rgba(244, 63, 94, 0.08) !important; }
+.estoque-critico td { color: #fda4af !important; }
+
+/* ==========================================================================
+   11. MODAIS & OVERLAYS
+   ========================================================================== */
 .modal-overlay {
     position: fixed;
     top: 0; left: 0;
     width: 100%; height: 100%;
-    background: rgba(4, 4, 5, 0.7);
+    background: rgba(7, 4, 12, 0.85);
     backdrop-filter: blur(20px);
     display: flex;
     align-items: center;
@@ -580,7 +656,7 @@ input:focus, textarea:focus, select:focus, input[type="date"].input-dark:focus {
 }
 
 .modal-content, .confirm-card {
-    background: rgba(12, 12, 14, 0.9);
+    background: rgba(18, 11, 32, 0.95);
     border: 1px solid var(--border-color);
     backdrop-filter: var(--blur-intensity);
     padding: 40px;
@@ -588,61 +664,9 @@ input:focus, textarea:focus, select:focus, input[type="date"].input-dark:focus {
     box-shadow: var(--shadow);
     width: 100%;
     max-width: 500px;
-    animation: modalEntrada 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    animation: modalEntrada 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* --- CUSTOMIZAÇÃO DO INPUT DE DATA --- */
-input[type="date"].input-dark::-webkit-calendar-picker-indicator {
-    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="%23e9a680" class="bi bi-calendar-event" viewBox="0 0 16 16"><path d="M11 6.5a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0zM10.5 8a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1zM13 6.5a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0z"/><path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4H1z"/></svg>');
-    cursor: pointer;
-    filter: drop-shadow(0px 0px 4px rgba(233, 166, 128, 0.3));
-    transition: transform 0.2s ease;
-}
-input[type="date"].input-dark::-webkit-calendar-picker-indicator:hover { transform: scale(1.1); }
-
-/* Alerta de Atraso */
-.card-atrasado {
-    border-left: 3px solid var(--danger-intense) !important;
-    animation: pulsoAlerta 2.5s infinite ease-in-out;
-}
-
-@keyframes pulsoAlerta {
-    0% { box-shadow: 0 0 0 0 rgba(255, 82, 82, 0.2); }
-    70% { box-shadow: 0 0 0 12px rgba(255, 82, 82, 0); }
-    100% { box-shadow: 0 0 0 0 rgba(255, 82, 82, 0); }
-}
-
-/* --- BOTÕES COMPLEMENTARES --- */
-.btn-action-dark, .btn-cancel, .btn-del-mini, .btn-limpar-banco {
-    padding: 10px 18px;
-    border-radius: 8px;
-    font-size: 0.85rem;
-    font-weight: 500;
-    cursor: pointer;
-    transition: var(--transition-premium);
-    background: rgba(255, 255, 255, 0.02);
-    border: 1px solid var(--border-color);
-    color: var(--text-muted-lux);
-}
-
-.btn-action-dark:hover { background: rgba(255, 255, 255, 0.08); border-color: var(--text-muted-lux); color: #fff; }
-.btn-cancel:hover { background-color: rgba(255, 255, 255, 0.02); border-color: var(--pessego-ref); color: #ffffff; }
-.btn-del-mini:hover { background: rgba(239, 68, 68, 0.08); color: var(--danger-intense); border-color: rgba(239, 68, 68, 0.2); }
-
-.btn-limpar-banco {
-    background-color: rgba(239, 68, 68, 0.02);
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-.btn-limpar-banco:hover {
-    background-color: rgba(239, 68, 68, 0.1);
-    color: #ffffff;
-    border-color: var(--danger);
-    box-shadow: 0 10px 25px rgba(239, 68, 68, 0.05);
-}
-
-/* --- CONFIGURAÇÕES INTERNAS DOS MODAIS DE CONFIRMAÇÃO --- */
 .modal-buttons {
     display: flex;
     gap: 12px;
@@ -650,7 +674,7 @@ input[type="date"].input-dark::-webkit-calendar-picker-indicator:hover { transfo
 }
 
 #confirm-no {
-    background: rgba(255, 255, 255, 0.02);
+    background: rgba(255, 255, 255, 0.04);
     color: var(--text-muted-lux);
     border: 1px solid var(--border-color);
     padding: 12px 24px;
@@ -661,7 +685,7 @@ input[type="date"].input-dark::-webkit-calendar-picker-indicator:hover { transfo
     flex: 1;
     transition: var(--transition-premium);
 }
-#confirm-no:hover { background: rgba(255, 255, 255, 0.05); border-color: var(--text-white); color: #ffffff; }
+#confirm-no:hover { background: rgba(255, 255, 255, 0.1); color: #ffffff; }
 
 #confirm-yes {
     background: transparent;
@@ -678,21 +702,22 @@ input[type="date"].input-dark::-webkit-calendar-picker-indicator:hover { transfo
 #confirm-yes:hover {
     background: var(--danger-intense);
     color: #ffffff;
-    box-shadow: 0 15px 30px rgba(255, 82, 82, 0.1);
+    box-shadow: 0 15px 30px rgba(255, 77, 109, 0.3);
     transform: translateY(-2px);
 }
 
-/* --- ESTOQUE CRÍTICO --- */
-.estoque-critico { background-color: rgba(239, 68, 68, 0.03) !important; }
-.estoque-critico td { color: #ff7878 !important; }
-
-/* --- ANIMAÇÕES GERAIS --- */
-@keyframes modalEntrada {
-    from { opacity: 0; transform: scale(0.96) translateY(10px); }
-    to { opacity: 1; transform: scale(1) translateY(0); }
+/* Custom Calendar Icon */
+input[type="date"].input-dark::-webkit-calendar-picker-indicator {
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="%23d8b4fe" viewBox="0 0 16 16"><path d="M11 6.5a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0zM10.5 8a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1zM13 6.5a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0z"/><path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4H1z"/></svg>');
+    cursor: pointer;
+    filter: drop-shadow(0px 0px 6px rgba(216, 180, 254, 0.5));
+    transition: transform 0.2s ease;
 }
+input[type="date"].input-dark::-webkit-calendar-picker-indicator:hover { transform: scale(1.15); }
 
-/* --- CHAT & NOTIFICAÇÕES ORDENS --- */
+/* ==========================================================================
+   12. CHAT & TEMPLATES
+   ========================================================================== */
 .messages-container {
     display: flex;
     flex-direction: column;
@@ -709,11 +734,11 @@ input[type="date"].input-dark::-webkit-calendar-picker-indicator:hover { transfo
     display: flex;
     align-items: flex-start;
     gap: 12px;
-    background: rgba(255, 255, 255, 0.02);
+    background: rgba(255, 255, 255, 0.04);
     border: 1px solid var(--border-color);
     backdrop-filter: var(--blur-intensity);
     padding: 14px 18px;
-    border-radius: 8px;
+    border-radius: 10px;
     box-shadow: var(--shadow);
     width: 100%;
     flex-shrink: 0; 
@@ -727,20 +752,25 @@ input[type="date"].input-dark::-webkit-calendar-picker-indicator:hover { transfo
     font-size: 0.9rem;
     line-height: 1.5;
     word-wrap: break-word;
-    overflow-wrap: break-word;
 }
 
-.message-time { font-size: 0.75rem; color: var(--text-muted-lux); white-space: nowrap; align-self: flex-end; }
+.message-time { font-size: 0.75rem; color: var(--text-muted); white-space: nowrap; align-self: flex-end; }
+
+/* Animações Keyframes */
+@keyframes modalEntrada {
+    from { opacity: 0; transform: scale(0.95) translateY(12px); }
+    to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+@keyframes pulsoAlerta {
+    0% { box-shadow: 0 0 0 0 rgba(255, 77, 109, 0.4); }
+    70% { box-shadow: 0 0 0 12px rgba(255, 77, 109, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(255, 77, 109, 0); }
+}
 
 @keyframes mensagemSincronizada {
     from { opacity: 0; transform: translateY(8px) scale(0.99); }
     to { opacity: 1; transform: translateY(0) scale(1); }
 }
 
-.messages-container::-webkit-scrollbar { width: 4px; }
-.messages-container::-webkit-scrollbar-track { background: transparent; }
-.messages-container::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 10px; }
-.messages-container::-webkit-scrollbar-thumb:hover { background: var(--pessego-ref); }
-
-/* --- TEMPLATES OCULTOS DE IMPRESSÃO --- */
 #pdf-template, #etiqueta-template { display: none; }
